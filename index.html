@@ -13,12 +13,15 @@
         .container { padding: 20px; max-width: 500px; margin: 0 auto; margin-bottom: 90px; }
         .app-page { display: none; }
         .app-page.active { display: block; }
-        .card { background-color: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .title-section { text-align: center; margin-bottom: 20px; color: var(--primary-green); font-weight: bold; font-size: 20px; }
         .hzb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .hzb-card { background-color: white; border: 2px solid var(--primary-green); border-radius: 12px; padding: 15px; text-align: center; font-weight: bold; color: var(--primary-green); cursor: pointer; }
-        button { background-color: var(--primary-green); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .quran-view { display: none; background-color: #fdfbf7; border-radius: 12px; padding: 20px; border: 1px solid #e0dcd3; }
+        .prayer-card { background-color: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .time-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; font-size: 17px; }
+        .radio-card { background-color: white; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
-        .nav-item { color: #a3c2b8; text-align: center; cursor: pointer; font-size: 13px; }
+        .nav-item { color: #a3c2b8; cursor: pointer; text-align: center; font-size: 13px; }
         .nav-item.active { color: white; font-weight: bold; }
     </style>
 </head>
@@ -29,45 +32,65 @@
     <div class="container">
         <div id="quranPage" class="app-page active">
             <div class="hzb-grid" id="hzbGrid"></div>
-            <audio id="audioPlayer" controls style="width:100%; margin-top:20px;"></audio>
+            <div id="quranReaderView" class="quran-view">
+                <button class="back-btn" onclick="closeHusb()">← العودة</button>
+                <audio id="audioPlayer" controls style="width:100%"></audio>
+            </div>
+        </div>
+
+        <div id="prayerPage" class="app-page">
+            <div class="title-section">مواقيت الصلاة في نيس</div>
+            <div class="prayer-card">
+                <h3 id="dateDisplay" style="text-align:center;">جاري التحديث...</h3>
+                <div id="prayerTimesList">جاري جلب البيانات...</div>
+            </div>
         </div>
 
         <div id="radioPage" class="app-page">
-            <div class="card">
-                <h3>إذاعة القرآن الكريم</h3>
-                <audio id="radioPlayer" controls style="width:100%">
-                    <source src="https://radio.quran.com.sa/makkah" type="audio/mpeg">
-                </audio>
-                <br>
-                <button onclick="document.getElementById('radioPlayer').play()">اضغط هنا لتشغيل البث مباشرة</button>
+            <div class="radio-card">
+                <audio id="liveRadioPlayer" src="https://stream.radiojar.com/8s9u5t6w7uzzv"></audio>
+                <button onclick="toggleRadio()" id="radioPlayBtn">▶ تشغيل الإذاعة</button>
             </div>
         </div>
     </div>
 
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchPage('quranPage', this)">📖 القرآن</div>
+        <div class="nav-item" onclick="switchPage('prayerPage', this)">🕋 المواقيت</div>
         <div class="nav-item" onclick="switchPage('radioPage', this)">📻 الإذاعة</div>
     </nav>
 
     <script>
-        // تفعيل الأحزاب
-        const grid = document.getElementById('hzbGrid');
-        const player = document.getElementById('audioPlayer');
-        for (let i = 1; i <= 60; i++) {
-            const card = document.createElement('div');
-            card.className = 'hzb-card'; card.innerText = `حزب ${i}`;
-            card.onclick = () => {
-                player.src = "https://server8.mp3quran.net/lhdan/" + i.toString().padStart(3, '0') + ".mp3";
-                player.play();
-            };
-            grid.appendChild(card);
-        }
-
-        function switchPage(pageId, btn) {
+        // تبديل الصفحات
+        function switchPage(id, btn) {
             document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
+            document.getElementById(id).classList.add('active');
             btn.classList.add('active');
+        }
+
+        // جلب المواقيت
+        fetch('https://api.aladhan.com/v1/timingsByCity?city=Nice&country=France&method=3')
+            .then(response => response.json())
+            .then(data => {
+                const t = data.data.timings;
+                document.getElementById('dateDisplay').innerText = data.data.date.readable;
+                document.getElementById('prayerTimesList').innerHTML = `
+                    <div class="time-row"><span>الفجر</span><span>${t.Fajr}</span></div>
+                    <div class="time-row"><span>الشروق</span><span>${t.Sunrise}</span></div>
+                    <div class="time-row"><span>الظهر</span><span>${t.Dhuhr}</span></div>
+                    <div class="time-row"><span>العصر</span><span>${t.Asr}</span></div>
+                    <div class="time-row"><span>المغرب</span><span>${t.Maghrib}</span></div>
+                    <div class="time-row"><span>العشاء</span><span>${t.Isha}</span></div>
+                `;
+            });
+
+        // الإذاعة
+        function toggleRadio() {
+            const radio = document.getElementById('liveRadioPlayer');
+            const btn = document.getElementById('radioPlayBtn');
+            if (radio.paused) { radio.play(); btn.innerText = "⏸ إيقاف"; }
+            else { radio.pause(); btn.innerText = "▶ تشغيل"; }
         }
     </script>
 </body>
