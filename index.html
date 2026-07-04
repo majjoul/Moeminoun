@@ -5,54 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تطبيق مؤمنون</title>
     <style>
-        :root { --primary-green: #1b4d3e; --light-green: #e8f5e9; }
-        body { font-family: sans-serif; background-color: var(--light-green); margin: 0; padding-bottom: 80px; }
-        .container { padding: 15px; }
-        .app-page { display: none; }
-        .app-page.active { display: block; }
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #ccc; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; color: white; }
+        body { font-family: sans-serif; background: #e8f5e9; margin: 0; padding-bottom: 70px; }
+        .page { display: none; padding: 20px; }
+        .active { display: block; }
+        .card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        button { background: #1b4d3e; color: white; border: none; padding: 10px; border-radius: 8px; margin: 5px; cursor: pointer; }
+        .nav { position: fixed; bottom: 0; width: 100%; background: #1b4d3e; display: flex; justify-content: space-around; padding: 10px 0; color: white; }
+        .nav div { cursor: pointer; text-align: center; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="quranPage" class="app-page active">
-            <h3>القرآن الكريم</h3>
-            <div id="quranList" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                </div>
-            <audio id="mainAudio" controls style="width:100%; margin-top:20px;"></audio>
+    <!-- القرآن -->
+    <div id="quran" class="page active">
+        <h3>القرآن الكريم</h3>
+        <div class="card">
+            <button onclick="playAudio('https://server8.mp3quran.net/afs/001.mp3')">سورة الفاتحة</button>
+            <button onclick="playAudio('https://server8.mp3quran.net/afs/002.mp3')">سورة البقرة</button>
         </div>
+        <audio id="audioPlayer" controls style="width:100%"></audio>
+    </div>
 
-        <div id="radioPage" class="app-page">
-            <h3>إذاعة القرآن ومواقيت الصلاة</h3>
-            <audio controls style="width:100%"><source src="https://radio.quran.com.sa/makkah" type="audio/mpeg"></audio>
-            <iframe src="https://www.aladhan.com/prayer-times-widget.php?city=Riyadh&country=SA&timeformat=12" style="width:100%; height:400px; border:none; margin-top:20px;"></iframe>
+    <!-- الراديو -->
+    <div id="radio" class="page">
+        <h3>إذاعة القرآن الكريم</h3>
+        <div class="card">
+            <audio controls style="width:100%">
+                <source src="https://radio.quran.com.sa/makkah" type="audio/mpeg">
+            </audio>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <div onclick="switchPage('quran')">📖 القرآن</div>
-        <div onclick="switchPage('radio')">📻 الراديو والمواقيت</div>
-    </nav>
+    <!-- الأذكار -->
+    <div id="azkar" class="page">
+        <h3>الأذكار</h3>
+        <div class="card">
+            <p id="dhikrText">سبحان الله وبحمده</p>
+            <button onclick="changeDhikr()">ذكر آخر</button>
+        </div>
+    </div>
+
+    <!-- التسبيح -->
+    <div id="tasbeeh" class="page">
+        <h3>التسبيح</h3>
+        <div class="card">
+            <h1 id="count">0</h1>
+            <button onclick="count++ ; document.getElementById('count').innerText = count">سبّح</button>
+            <button onclick="count=0 ; document.getElementById('count').innerText = count">تصفير</button>
+        </div>
+    </div>
+
+    <div class="nav">
+        <div onclick="show('quran')">📖<br>القرآن</div>
+        <div onclick="show('radio')">📻<br>الراديو</div>
+        <div onclick="show('azkar')">📿<br>الأذكار</div>
+        <div onclick="show('tasbeeh')">📿<br>السبحة</div>
+    </div>
 
     <script>
-        // تصحيح أزرار القرآن (تشغيل مباشر)
-        const quranList = document.getElementById('quranList');
-        for(let i=1; i<=10; i++) {
-            let btn = document.createElement('button');
-            btn.innerText = "الحزب " + i;
-            btn.onclick = () => {
-                let audio = document.getElementById('mainAudio');
-                audio.src = "https://server8.mp3quran.net/afs/" + i.toString().padStart(3, '0') + ".mp3";
-                audio.play();
-            };
-            quranList.appendChild(btn);
+        function show(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
-
-        function switchPage(p) {
-            document.querySelectorAll('.app-page').forEach(x => x.classList.remove('active'));
-            document.getElementById(p + 'Page').classList.add('active');
+        function playAudio(url) {
+            let p = document.getElementById('audioPlayer');
+            p.src = url;
+            p.play();
+        }
+        let count = 0;
+        function changeDhikr() {
+            let list = ["سبحان الله", "الحمد لله", "الله أكبر"];
+            document.getElementById('dhikrText').innerText = list[Math.floor(Math.random()*list.length)];
         }
     </script>
 </body>
