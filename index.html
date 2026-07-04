@@ -3,67 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق مؤمنون</title>
+    <title>تطبيق مؤمنون الشامل</title>
     <style>
-        /* الواجهة الخضراء */
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #dcedc8; text-align: center; padding: 10px; color: #2e7d32; }
-        .card { background-color: #ffffff; border: 2px solid #a5d6a7; padding: 20px; margin: 15px auto; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; }
-        h1 { color: #1b5e20; }
-        h3 { color: #2e7d32; }
-        button { background-color: #388e3c; color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-size: 16px; margin: 5px; }
-        button:hover { background-color: #2e7d32; }
-        #counter { font-size: 50px; font-weight: bold; }
-        #compass { width: 120px; height: 120px; border: 6px solid #388e3c; border-radius: 50%; margin: 15px auto; display: flex; align-items: center; justify-content: center; font-size: 40px; transition: transform 0.5s; color: #1b5e20; }
-        audio { width: 100%; border-radius: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8f9fa; text-align: center; padding: 15px; color: #333; }
+        .container { max-width: 500px; margin: auto; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h3 { margin-top: 0; color: #27ae60; }
+        button { padding: 12px 25px; margin: 5px; border: none; border-radius: 8px; background: #27ae60; color: white; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:active { background: #219150; }
+        #counter { font-size: 48px; color: #2c3e50; margin: 10px 0; }
+        audio { width: 100%; margin-top: 10px; }
+        #compass { width: 150px; height: 150px; border: 5px solid #27ae60; border-radius: 50%; margin: 10px auto; display: flex; align-items: center; justify-content: center; font-size: 40px; transition: transform 0.3s; }
     </style>
 </head>
 <body>
 
+<div class="container">
     <h1>تطبيق مؤمنون</h1>
 
+    <!-- 1. عداد التسبيح -->
     <div class="card">
         <h3>عداد التسبيح</h3>
         <div id="counter">0</div>
         <button onclick="increment()">سبّح</button>
-        <button onclick="reset()" style="background-color: #c62828;">تصفير</button>
+        <button onclick="reset()" style="background: #e74c3c;">تصفير</button>
     </div>
 
+    <!-- 2. إذاعة القرآن -->
     <div class="card">
-        <h3>إذاعة مكة المكرمة</h3>
+        <h3>إذاعة القرآن الكريم</h3>
         <audio controls>
-            <source src="https://radio.quran.com.sa/makkah" type="audio/mpeg">
+            <source src="https://n03.radiojar.com/8s5u5tpdtf0vv" type="audio/mpeg">
+            متصفحك لا يدعم مشغل الصوت.
         </audio>
     </div>
 
+    <!-- 3. الأذكار -->
     <div class="card">
         <h3>ذكر اليوم</h3>
-        <p id="dhikr" style="font-size: 20px; min-height: 30px;">سبحان الله وبحمده</p>
-        <button onclick="changeDhikr()">ذكر آخر</button>
+        <p id="dhikr" style="font-size: 18px; min-height: 50px;">سبحان الله وبحمده</p>
+        <button onclick="changeDhikr()">تغيير الذكر</button>
     </div>
 
+    <!-- 4. القبلة -->
     <div class="card">
         <h3>اتجاه القبلة</h3>
         <div id="compass">⬆</div>
-        <p>حرك الهاتف لتحديد الاتجاه</p>
+        <p style="font-size: 12px;">حرك هاتفك لاختبار اتجاه الحساس</p>
     </div>
+</div>
 
-    <script>
-        // برمجة التسبيح
-        let count = 0;
-        function increment() { count++; document.getElementById("counter").innerText = count; }
-        function reset() { count = 0; document.getElementById("counter").innerText = count; }
+<script>
+    // التسبيح
+    let count = 0;
+    function increment() { count++; document.getElementById("counter").innerText = count; }
+    function reset() { count = 0; document.getElementById("counter").innerText = count; }
 
-        // برمجة الأذكار
-        const dhikrs = ["سبحان الله وبحمده", "استغفر الله العظيم", "لا إله إلا الله", "اللهم صل على محمد", "لاحول ولا قوة إلا بالله"];
-        function changeDhikr() {
-            document.getElementById("dhikr").innerText = dhikrs[Math.floor(Math.random() * dhikrs.length)];
-        }
+    // الأذكار
+    const dhikrs = ["سبحان الله وبحمده", "استغفر الله العظيم", "لا إله إلا الله", "اللهم صل على محمد", "لاحول ولا قوة إلا بالله"];
+    function changeDhikr() {
+        const randomIndex = Math.floor(Math.random() * dhikrs.length);
+        document.getElementById("dhikr").innerText = dhikrs[randomIndex];
+    }
 
-        // برمجة البوصلة
-        window.addEventListener("deviceorientation", (event) => {
-            const compass = event.webkitCompassHeading || event.alpha;
-            document.getElementById("compass").style.transform = `rotate(${-compass}deg)`;
-        });
-    </script>
+    // القبلة (البوصلة)
+    window.addEventListener("deviceorientation", (event) => {
+        const compass = event.webkitCompassHeading || event.alpha;
+        document.getElementById("compass").style.transform = `rotate(${-compass}deg)`;
+    });
+</script>
+
 </body>
 </html>
