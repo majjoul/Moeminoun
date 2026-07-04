@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تطبيق مؤمنون</title>
-    
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
-
     <style>
         :root {
             --primary-green: #1b4d3e;
@@ -16,16 +12,29 @@
             --bright-gold: #ffd700;
         }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light-green); margin: 0; padding: 0; color: #333; -webkit-tap-highlight-color: transparent; }
-        
-        header { background-color: var(--primary-green); color: white; text-align: center; padding: 15px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-green);
+            margin: 0; padding: 0; color: #333;
+            -webkit-tap-highlight-color: transparent; /* منع الوميض عند الضغط في الجوال */
+        }
+
+        header {
+            background-color: var(--primary-green);
+            color: white; text-align: center; padding: 15px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;
+        }
+
         header h1 { margin: 0; font-size: 24px; }
-        .container { padding: 20px; max-width: 500px; margin: 0 auto; margin-bottom: 90px; }
+
+        .container { padding: 20px; max-width: 500px; margin: 0 auto; margin-bottom: 80px; }
+
         .app-page { display: none; }
         .app-page.active { display: block; }
+
         .title-section { text-align: center; margin-bottom: 20px; color: var(--primary-green); font-weight: bold; font-size: 20px; }
 
-        /* القرآن */
+        /* --- قسم القرآن الكريم --- */
         .hzb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .hzb-card { background-color: white; border: 2px solid var(--primary-green); border-radius: 12px; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; color: var(--primary-green); cursor: pointer; }
         .quran-view { display: none; background-color: #fdfbf7; border-radius: 12px; padding: 20px; border: 1px solid #e0dcd3; }
@@ -35,47 +44,74 @@
         .quran-text { font-size: 22px; line-height: 1.8; text-align: justify; }
         .back-btn { background-color: var(--primary-green); color: white; border: none; padding: 10px 20px; border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer; }
 
-        /* الأذكار */
-        .azkar-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; }
-        .tab-btn { background-color: white; border: 1px solid var(--primary-green); color: var(--primary-green); padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-        .tab-btn.active { background-color: var(--primary-green); color: white; }
-        .azkar-list { display: none; }
-        .azkar-list.active { display: block; }
-        .azkar-card { background-color: white; border: 1px solid #c8e6c9; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: center; }
-        .counter-btn { background-color: var(--primary-green); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+        /* --- قسم الأذكار --- */
+        .azkar-card { background-color: white; border: 1px solid #c8e6c9; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .azkar-text { font-size: 18px; line-height: 1.6; margin-bottom: 10px; color: #222; }
+        .counter-btn { background-color: var(--primary-green); color: white; border: none; padding: 10px 25px; border-radius: 20px; font-size: 16px; cursor: pointer; min-width: 140px; font-weight: bold; }
 
-        /* السبحة */
-        .tasbeeh-circle { width: 200px; height: 200px; background-color: white; border: 10px solid var(--primary-green); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; margin: 0 auto; }
-        .tasbeeh-number { font-size: 40px; font-weight: bold; color: var(--primary-green); }
+        /* --- قسم السبحة الإلكترونية التفاعلية --- */
+        .tasbeeh-container { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 10px; }
+        
+        /* دائرة السبحة الكبيرة للضغط عليها */
+        .tasbeeh-circle {
+            width: 220px; height: 220px;
+            background-color: white;
+            border: 10px solid var(--primary-green);
+            border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            user-select: none;
+        }
+        /* تأثير النبض عند الضغط على السبحة */
+        .tasbeeh-circle:active {
+            transform: scale(0.96);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            border-color: var(--accent-gold);
+        }
+        .tasbeeh-number { font-size: 48px; font-weight: bold; color: var(--primary-green); margin: 0; }
+        .tasbeeh-label { font-size: 16px; color: #666; margin-top: 5px; }
 
-        /* مواقيت الصلاة والقبلة */
-        .prayer-card { background-color: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-        .time-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
-        .compass { width: 150px; height: 150px; border: 5px solid var(--primary-green); border-radius: 50%; margin: 20px auto; position: relative; }
-        .compass-pointer { width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 60px solid #d32f2f; position: absolute; top: 15px; left: 65px; }
+        .tasbeeh-phrase { font-size: 22px; font-weight: bold; color: var(--primary-green); margin-bottom: 25px; text-align: center; min-height: 33px; }
+        
+        .tasbeeh-controls { display: flex; gap: 15px; margin-top: 30px; width: 100%; }
+        .tasbeeh-btn { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn-reset { background-color: #d32f2f; color: white; }
+        .btn-phrase { background-color: var(--accent-gold); color: white; }
 
-        /* التنقل */
+        /* --- شريط التنقل السفلي الثلاثي --- */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
-        .nav-item { color: #a3c2b8; text-align: center; cursor: pointer; font-size: 12px; }
+        .nav-item { color: #a3c2b8; text-decoration: none; font-size: 15px; text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: white; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <header><h1>مؤمنون</h1></header>
+    <header>
+        <h1>مؤمنون</h1>
+    </header>
 
     <div class="container">
+
+        <!-- 1. شاشة القرآن الكريم -->
         <div id="quranPage" class="app-page active">
             <div id="mainListView">
-                <div class="title-section">القرآن الكريم</div>
+                <div class="title-section">القرآن الكريم - الستين حزباً</div>
                 <div class="hzb-grid" id="hzbGrid"></div>
             </div>
+
             <div id="quranReaderView" class="quran-view">
-                <button class="back-btn" onclick="closeHusb()">← العودة</button>
+                <button class="back-btn" onclick="closeHusb()">← العودة لقائمة الأحزاب</button>
+                <div class="title-section" id="currentHusbTitle">اسم الحزب</div>
+                
                 <div class="audio-section">
+                    <label for="sheikhSelect" style="display:block; margin-bottom:5px; color:var(--primary-green); font-weight:bold;">اختر القارئ:</label>
                     <select id="sheikhSelect" class="sheikh-select" onchange="changeReciter()">
                         <option value="lhdan">محمد اللحيدان</option>
                         <option value="dosari">ياسر الدوسري</option>
+                        <option value="muaiqly">ماهر المعيقلي</option>
+                        <option value="ayyoub">محمد أيوب</option>
                     </select>
                     <audio id="audioPlayer" controls></audio>
                 </div>
@@ -83,66 +119,160 @@
             </div>
         </div>
 
+        <!-- 2. شاشة الأذكار -->
         <div id="azkarPage" class="app-page">
-            <div class="title-section">حصن المسلم</div>
-            <div class="azkar-tabs">
-                <button class="tab-btn active" onclick="switchAzkarTab('sabah', this)">الصباح</button>
-                <button class="tab-btn" onclick="switchAzkarTab('masaa', this)">المساء</button>
+            <div class="title-section">الأذكار والتحصين اليومي</div>
+            
+            <div class="azkar-card">
+                <div class="azkar-text">قراءة آية الكرسي: "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ..."</div>
+                <button class="counter-btn" onclick="countUp(this)">التكرار: <span class="count">1</span></button>
             </div>
-            <div id="tab-sabah" class="azkar-list active">
-                <div class="azkar-card">"اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ"<br><button class="counter-btn" onclick="countUp(this)">تكرار: <span class="count">1</span></button></div>
+
+            <div class="azkar-card">
+                <div class="azkar-text">"أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ"</div>
+                <button class="counter-btn" onclick="countUp(this)">التكرار: <span class="count">3</span></button>
+            </div>
+
+            <div class="azkar-card">
+                <div class="azkar-text">"بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ"</div>
+                <button class="counter-btn" onclick="countUp(this)">التكرار: <span class="count">3</span></button>
+            </div>
+
+            <div class="azkar-card">
+                <div class="azkar-text">"يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ أَصْلِحْ لِي شَأْنِي كُلَّهُ وَلَا تَكِلْنِي إِلَىٰ نَفْسِي طَرْفَةَ عَيْنٍ"</div>
+                <button class="counter-btn" onclick="countUp(this)">التكرار: <span class="count">1</span></button>
+            </div>
+
+            <div class="azkar-card">
+                <div class="azkar-text">"سُبْحَانَ اللَّهِ وَبِحَمْدِهِ"</div>
+                <button class="counter-btn" onclick="countUp(this)">التكرار: <span class="count">100</span></button>
             </div>
         </div>
 
+        <!-- 3. شاشة السبحة الإلكترونية الحديثة -->
         <div id="tasbeehPage" class="app-page">
-            <div class="title-section">السبحة</div>
-            <div class="tasbeeh-circle" onclick="incrementTasbeeh()"><span class="tasbeeh-number" id="tasbeehCount">0</span></div>
-        </div>
+            <div class="title-section">السبحة الإلكترونية</div>
+            <div class="tasbeeh-container">
+                <div class="tasbeeh-phrase" id="currentPhrase">سُبْحَانَ اللَّهِ</div>
+                
+                <!-- المنطقة القابلة للضغط لزيادة الرقم -->
+                <div class="tasbeeh-circle" onclick="incrementTasbeeh()">
+                    <span class="tasbeeh-number" id="tasbeehCount">0</span>
+                    <span class="tasbeeh-label">اضغط للتسبيح</span>
+                </div>
 
-        <div id="prayerPage" class="app-page">
-            <div class="title-section">مواقيت الصلاة</div>
-            <div class="prayer-card">
-                <div class="time-row"><span>الفجر</span><span>04:30 ص</span></div>
-                <div class="time-row"><span>الظهر</span><span>12:30 م</span></div>
+                <div class="tasbeeh-controls">
+                    <button class="tasbeeh-btn btn-phrase" onclick="nextPhrase()">تغيير الذِكر ↻</button>
+                    <button class="tasbeeh-btn btn-reset" onclick="resetTasbeeh()">تصفير العداد ↩</button>
+                </div>
             </div>
-            <div class="compass" id="compassDisk"><div class="compass-pointer"></div></div>
         </div>
 
-        <div id="radioPage" class="app-page">
-            <div class="title-section">إذاعة القرآن الكريم</div>
-            <button class="back-btn" onclick="toggleRadio()">تشغيل/إيقاف</button>
-            <audio id="liveRadioPlayer" src="https://stream.radiojar.com/8s9u5t6w7uzzv"></audio>
-        </div>
     </div>
 
+    <!-- شريط التنقل السفلي الموزع بالتساوي -->
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchPage('quran')">📖<br>القرآن</div>
-        <div class="nav-item" onclick="switchPage('azkar')">🌙<br>الأذكار</div>
-        <div class="nav-item" onclick="switchPage('tasbeeh')">📿<br>السبحة</div>
-        <div class="nav-item" onclick="switchPage('prayer')">🕋<br>المواقيت</div>
-        <div class="nav-item" onclick="switchPage('radio')">📻<br>الإذاعة</div>
+        <div class="nav-item active" id="btnQuran" onclick="switchPage('quran')">📖<br>القرآن</div>
+        <div class="nav-item" id="btnAzkar" onclick="switchPage('azkar')">📿<br>الأذكار</div>
+        <div class="nav-item" id="btnTasbeeh" onclick="switchPage('tasbeeh')">📿<br>السبحة</div>
     </nav>
 
     <script>
-        function switchPage(p) {
-            document.querySelectorAll('.app-page').forEach(e => e.classList.remove('active'));
-            document.getElementById(p + 'Page').classList.add('active');
+        // --- إدارة الشاشات ---
+        function switchPage(pageName) {
+            document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            if(pageName === 'quran') {
+                document.getElementById('quranPage').classList.add('active');
+                document.getElementById('btnQuran').classList.add('active');
+            } else if(pageName === 'azkar') {
+                document.getElementById('azkarPage').classList.add('active');
+                document.getElementById('btnAzkar').classList.add('active');
+                document.getElementById('audioPlayer').pause();
+            } else if(pageName === 'tasbeeh') {
+                document.getElementById('tasbeehPage').classList.add('active');
+                document.getElementById('btnTasbeeh').classList.add('active');
+                document.getElementById('audioPlayer').pause();
+            }
         }
-        function switchAzkarTab(t, b) {
-            document.querySelectorAll('.azkar-list').forEach(e => e.classList.remove('active'));
-            document.getElementById('tab-' + t).classList.add('active');
-            document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-            b.classList.add('active');
+
+        // --- كود القرآن الكريم ---
+        let currentHusbNumber = 1;
+        const quranData = {
+            1: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾ الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾ مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾ ... الم ﴿١﴾ ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِلْمُتَّقِينَ ﴿٢﴾",
+            2: "سَيَقُولُ السُّفَهَاءُ مِنَ النَّاسِ مَا وَلَّاهُمْ عَنْ قِبْلَتِهِمُ الَّتِي كَانُوا عَلَيْهَا ۚ قُلْ لِلَّهِ الْمَشْرِقُ وَالْمَغْرِبُ ۚ يَهْدِي مَنْ يَشَاءُ إِلَىٰ صِرَاطٍ مُسْتَقِيمٍ ﴿١٤٢﴾ وَكَذَٰلِكَ جَعَلْنَاكُمْ أُمَّةً وَسَطًا لِتَكُونُوا شُهَدَاءَ عَلَى النَّاسِ..."
+        };
+
+        function getAudioUrl(sheikh, hzb) {
+            const baseUrls = {
+                lhdan: "https://server8.mp3quran.net/lhdan/",
+                dosari: "https://server11.mp3quran.net/yasser/",
+                muaiqly: "https://server12.mp3quran.net/maher/",
+                ayyoub: "https://server8.mp3quran.net/ayyoub/"
+            };
+            return `${baseUrls[sheikh]}${hzb.toString().padStart(3, '0')}.mp3`;
         }
-        function incrementTasbeeh() { let c = document.getElementById('tasbeehCount'); c.innerText = parseInt(c.innerText) + 1; }
-        function countUp(btn) { let s = btn.querySelector('.count'); s.innerText = parseInt(s.innerText) - 1; }
-        function toggleRadio() { let a = document.getElementById('liveRadioPlayer'); a.paused ? a.play() : a.pause(); }
-        
-        // بناء أحزاب القرآن
+
         const grid = document.getElementById('hzbGrid');
-        for(let i=1; i<=60; i++) {
-            let card = document.createElement('div'); card.className = 'hzb-card'; card.innerText = 'الحزب ' + i;
-            card.onclick = () => alert('فتح الحزب ' + i); grid.appendChild(card);
+        for (let i = 1; i <= 60; i++) {
+            const card = document.createElement('div'); card.className = 'hzb-card'; card.innerText = `الحزب ${i}`;
+            card.onclick = function() { openHusb(i); }; grid.appendChild(card);
+        }
+
+        function openHusb(hzbNumber) {
+            currentHusbNumber = hzbNumber;
+            document.getElementById('mainListView').style.display = 'none';
+            document.getElementById('quranReaderView').style.display = 'block';
+            document.getElementById('currentHusbTitle').innerText = `الحزب رقم ${hzbNumber}`;
+            document.getElementById('quranTextContent').innerText = quranData[hzbNumber] || `جاري استدعاء نص الحزب رقم ${hzbNumber} بالرسم الموثق...`;
+            changeReciter();
+        }
+
+        function changeReciter() {
+            document.getElementById('audioPlayer').src = getAudioUrl(document.getElementById('sheikhSelect').value, currentHusbNumber);
+            document.getElementById('audioPlayer').load(); 
+        }
+
+        function closeHusb() { document.getElementById('audioPlayer').pause(); document.getElementById('quranReaderView').style.display = 'none'; document.getElementById('mainListView').style.display = 'block'; }
+
+        // --- كود الأذكار ---
+        function countUp(button) {
+            const countSpan = button.querySelector('.count');
+            let currentCount = parseInt(countSpan.innerText);
+            if (currentCount > 0) {
+                currentCount--;
+                countSpan.innerText = currentCount;
+                if(currentCount === 0) {
+                    button.style.backgroundColor = "#757575";
+                    button.innerText = "تم ✓";
+                }
+            }
+        }
+
+        // --- كود السبحة الإلكترونية التفاعلية ---
+        let count = 0;
+        const phrases = ["سُبْحَانَ اللَّهِ", "الْحَمْدُ لِلَّهِ", "لَا إِلَٰهَ إِلَّا اللَّهُ", "اللَّهُ أَكْبَرُ", "أَسْتَغْفِرُ اللَّهَ", "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ"];
+        let phraseIndex = 0;
+
+        function incrementTasbeeh() {
+            count++;
+            document.getElementById('tasbeehCount').innerText = count;
+            
+            // اهتزاز خفيف جداً في الجوالات التي تدعم الاهتزاز عند كل تسبيحة لإعطاء شعور حقيقي
+            if (navigator.vibrate) {
+                navigator.vibrate(40);
+            }
+        }
+
+        function resetTasbeeh() {
+            count = 0;
+            document.getElementById('tasbeehCount').innerText = count;
+        }
+
+        function nextPhrase() {
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            document.getElementById('currentPhrase').innerText = phrases[phraseIndex];
         }
     </script>
 </body>
