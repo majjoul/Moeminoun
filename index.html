@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تطبيق مؤمنون</title>
+    
+    <!-- كود الأيقونة الإسلامية لشاشة الجوال الرئيسية -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+
     <style>
         :root {
             --primary-green: #1b4d3e;
@@ -252,14 +256,13 @@
 
         // --- كود السبحة الإلكترونية التفاعلية ---
         let count = 0;
-        const phrases = ["سُبْحَانَ اللَّهِ", "الْحَمْدُ لِلَّهِ", "لَا إِلَٰهَ إِلَّا اللَّهُ", "اللَّهُ أَكْبَرُ", "أَسْتَغْفِرُ اللَّهَ", "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ"];
+        const phrases = ["سُبْحَانَ اللَّهِ", "الْحَمْدُ لِلَّهِ", "لَا إِلَٰهَ إِلَّا اللَّهُ", "اللَّهُ أَكْبَرُ", "أَسْتغْفِرُ اللَّهَ", "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ"];
         let phraseIndex = 0;
 
         function incrementTasbeeh() {
             count++;
             document.getElementById('tasbeehCount').innerText = count;
             
-            // اهتزاز خفيف جداً في الجوالات التي تدعم الاهتزاز عند كل تسبيحة لإعطاء شعور حقيقي
             if (navigator.vibrate) {
                 navigator.vibrate(40);
             }
@@ -277,4 +280,3 @@
     </script>
 </body>
 </html>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🕌</text></svg>">
