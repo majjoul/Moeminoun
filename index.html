@@ -2,63 +2,31 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>تطبيق مؤمنون</title>
+    <title>مؤمنون</title>
     <style>
-        body { font-family: sans-serif; background: #e8f5e9; text-align: center; padding: 10px; }
-        .box { background: white; padding: 20px; border-radius: 15px; margin: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        select, button { width: 100%; padding: 12px; margin: 5px 0; border-radius: 8px; border: 1px solid #1b4d3e; background: #1b4d3e; color: white; }
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1b4d3e; display: flex; justify-content: space-around; padding: 10px 0; }
-        .nav div { color: white; cursor: pointer; }
+        body { font-family: sans-serif; background: #e8f5e9; text-align: center; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+        button { padding: 15px; background: #1b4d3e; color: white; border: none; border-radius: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
-
-    <div id="quranPage" class="page">
-        <h3>القرآن الكريم</h3>
-        <select id="sheikhSelect">
-            <option value="https://server8.mp3quran.net/lhdan/">محمد اللحيدان</option>
-            <option value="https://server12.mp3quran.net/maher/">ماهر المعيقلي</option>
-        </select>
-        <div id="hzbGrid" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:5px;"></div>
-        <audio id="audioPlayer" controls style="width:100%; margin-top:10px;"></audio>
-    </div>
-
-    <div id="radioPage" class="page">
-        <h3>إذاعة القرآن الكريم</h3>
-        <audio controls style="width:100%"><source src="https://radio.quran.com.sa/makkah" type="audio/mpeg"></audio>
-    </div>
-
-    <div id="azkarPage" class="page">
-        <div class="box"><h3>التسبيح</h3><h1 id="count">0</h1><button onclick="count++ ; document.getElementById('count').innerText = count">سبّح</button></div>
-        <div class="box"><h3>الأذكار</h3><p id="dhikrText">سبحان الله وبحمده</p></div>
-    </div>
-
-    <div class="nav">
-        <div onclick="show('quranPage')">📖 قرآن</div>
-        <div onclick="show('radioPage')">📻 راديو</div>
-        <div onclick="show('azkarPage')">📿 أذكار</div>
-    </div>
+    <h1>تطبيق مؤمنون</h1>
+    <audio id="player" controls style="width:100%"></audio>
+    <div class="grid" id="container"></div>
 
     <script>
-        // الأحزاب
-        const grid = document.getElementById('hzbGrid');
+        const container = document.getElementById('container');
+        const player = document.getElementById('player');
+        
         for(let i=1; i<=60; i++) {
             let btn = document.createElement('button');
             btn.innerText = i;
             btn.onclick = () => {
-                let s = document.getElementById('sheikhSelect').value;
-                let p = document.getElementById('audioPlayer');
-                p.src = s + i.toString().padStart(3, '0') + ".mp3";
-                p.play();
+                player.src = "https://server8.mp3quran.net/lhdan/" + i.toString().padStart(3, '0') + ".mp3";
+                player.play();
             };
-            grid.appendChild(btn);
+            container.appendChild(btn);
         }
-        function show(id) {
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
-        }
-        show('quranPage');
-        let count = 0;
     </script>
 </body>
 </html>
