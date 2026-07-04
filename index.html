@@ -3,75 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق مؤمنون الشامل</title>
+    <title>تطبيق مؤمنون</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8f9fa; text-align: center; padding: 15px; color: #333; }
-        .container { max-width: 500px; margin: auto; }
-        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h3 { margin-top: 0; color: #27ae60; }
-        button { padding: 12px 25px; margin: 5px; border: none; border-radius: 8px; background: #27ae60; color: white; cursor: pointer; font-size: 16px; font-weight: bold; }
-        button:active { background: #219150; }
-        #counter { font-size: 48px; color: #2c3e50; margin: 10px 0; }
-        audio { width: 100%; margin-top: 10px; }
-        #compass { width: 150px; height: 150px; border: 5px solid #27ae60; border-radius: 50%; margin: 10px auto; display: flex; align-items: center; justify-content: center; font-size: 40px; transition: transform 0.3s; }
+        :root { --primary-green: #1b4d3e; --light-green: #e8f5e9; --accent-gold: #d4af37; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--light-green); margin: 0; padding: 0; color: #333; }
+        header { background-color: var(--primary-green); color: white; text-align: center; padding: 15px 0; }
+        .container { padding: 20px; max-width: 500px; margin: 0 auto; margin-bottom: 80px; }
+        
+        /* قسم الراديو الجديد */
+        .radio-card { background: white; border: 2px solid var(--primary-green); border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
+        .radio-select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid var(--primary-green); }
+        
+        /* باقي التنسيقات كما هي */
+        .app-page { display: none; }
+        .app-page.active { display: block; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; color: white; }
+        .nav-item { cursor: pointer; text-align: center; opacity: 0.7; }
+        .nav-item.active { opacity: 1; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>تطبيق مؤمنون</h1>
+    <header><h1>مؤمنون</h1></header>
 
-    <!-- 1. عداد التسبيح -->
-    <div class="card">
-        <h3>عداد التسبيح</h3>
-        <div id="counter">0</div>
-        <button onclick="increment()">سبّح</button>
-        <button onclick="reset()" style="background: #e74c3c;">تصفير</button>
+    <div class="container">
+        <div id="radioPage" class="app-page active">
+            <div class="radio-card">
+                <h3>إذاعات القرآن الكريم</h3>
+                <select id="radioSelect" class="radio-select" onchange="playRadio()">
+                    <option value="https://radio.quran.com.sa/makkah">إذاعة مكة المكرمة</option>
+                    <option value="https://stream.radiojar.com/8s5u5tpdtf0vv">إذاعة القرآن الكريم (القاهرة)</option>
+                    <option value="https://n03.radiojar.com/8s5u5tpdtf0vv">إذاعة القراء</option>
+                </select>
+                <audio id="radioPlayer" controls style="width:100%"></audio>
+            </div>
+        </div>
+
+        <div id="tasbeehPage" class="app-page">
+            <div class="radio-card">
+                <h3 id="currentPhrase">سُبْحَانَ اللَّهِ</h3>
+                <div style="font-size: 50px; font-weight: bold; color: var(--primary-green);" id="tasbeehCount">0</div>
+                <button onclick="count++ ; document.getElementById('tasbeehCount').innerText = count;" style="padding:15px 30px; background:var(--primary-green); color:white; border:none; border-radius:10px;">سبّح</button>
+                <button onclick="count=0 ; document.getElementById('tasbeehCount').innerText = count;" style="padding:15px 30px; background:#d32f2f; color:white; border:none; border-radius:10px;">تصفير</button>
+            </div>
+        </div>
     </div>
 
-    <!-- 2. إذاعة القرآن -->
-    <div class="card">
-        <h3>إذاعة القرآن الكريم</h3>
-        <audio controls>
-            <source src="https://n03.radiojar.com/8s5u5tpdtf0vv" type="audio/mpeg">
-            متصفحك لا يدعم مشغل الصوت.
-        </audio>
-    </div>
+    <nav class="bottom-nav">
+        <div class="nav-item active" id="btnRadio" onclick="switchPage('radio')">📻<br>الراديو</div>
+        <div class="nav-item" id="btnTasbeeh" onclick="switchPage('tasbeeh')">📿<br>السبحة</div>
+    </nav>
 
-    <!-- 3. الأذكار -->
-    <div class="card">
-        <h3>ذكر اليوم</h3>
-        <p id="dhikr" style="font-size: 18px; min-height: 50px;">سبحان الله وبحمده</p>
-        <button onclick="changeDhikr()">تغيير الذكر</button>
-    </div>
+    <script>
+        function playRadio() {
+            const player = document.getElementById('radioPlayer');
+            player.src = document.getElementById('radioSelect').value;
+            player.play();
+        }
 
-    <!-- 4. القبلة -->
-    <div class="card">
-        <h3>اتجاه القبلة</h3>
-        <div id="compass">⬆</div>
-        <p style="font-size: 12px;">حرك هاتفك لاختبار اتجاه الحساس</p>
-    </div>
-</div>
-
-<script>
-    // التسبيح
-    let count = 0;
-    function increment() { count++; document.getElementById("counter").innerText = count; }
-    function reset() { count = 0; document.getElementById("counter").innerText = count; }
-
-    // الأذكار
-    const dhikrs = ["سبحان الله وبحمده", "استغفر الله العظيم", "لا إله إلا الله", "اللهم صل على محمد", "لاحول ولا قوة إلا بالله"];
-    function changeDhikr() {
-        const randomIndex = Math.floor(Math.random() * dhikrs.length);
-        document.getElementById("dhikr").innerText = dhikrs[randomIndex];
-    }
-
-    // القبلة (البوصلة)
-    window.addEventListener("deviceorientation", (event) => {
-        const compass = event.webkitCompassHeading || event.alpha;
-        document.getElementById("compass").style.transform = `rotate(${-compass}deg)`;
-    });
-</script>
-
+        function switchPage(pageName) {
+            document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
+            if(pageName === 'radio') {
+                document.getElementById('radioPage').classList.add('active');
+            } else {
+                document.getElementById('radioPage').classList.remove('active');
+                document.getElementById('tasbeehPage').classList.add('active');
+            }
+        }
+        
+        let count = 0;
+    </script>
 </body>
 </html>
