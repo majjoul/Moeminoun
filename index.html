@@ -6,73 +6,64 @@
     <title>تطبيق مؤمنون</title>
     <style>
         :root { --primary-green: #1b4d3e; --light-green: #e8f5e9; --accent-gold: #d4af37; }
-        body { font-family: sans-serif; background-color: var(--light-green); margin: 0; padding: 0; }
-        .app-page { display: none; }
+        body { font-family: sans-serif; background-color: var(--light-green); margin: 0; padding-bottom: 70px; }
+        .app-page { display: none; padding: 20px; }
         .app-page.active { display: block; }
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; color: white; z-index: 1000; }
-        .nav-item { cursor: pointer; text-align: center; font-size: 12px; }
-        .nav-item.active { font-weight: bold; color: var(--bright-gold); }
-        .quran-view { display: none; padding: 20px; background: white; }
-        .hzb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 20px; }
-        .hzb-card { background: white; padding: 15px; border: 1px solid var(--primary-green); text-align: center; cursor: pointer; }
+        .nav-item { cursor: pointer; text-align: center; font-size: 14px; }
+        .hzb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .hzb-card { background: white; padding: 15px; border: 2px solid var(--primary-green); border-radius: 10px; text-align: center; cursor: pointer; color: var(--primary-green); font-weight: bold; }
+        .back-btn { background: var(--primary-green); color: white; padding: 10px; border-radius: 5px; width: 100%; border: none; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div id="quranPage" class="app-page active">
-    <div id="mainListView">
-        <div class="hzb-grid" id="hzbGrid"></div>
-    </div>
-    <div id="quranReaderView" class="quran-view">
-        <button onclick="closeHusb()">العودة</button>
-        <h2 id="currentHusbTitle"></h2>
-        <button onclick="showQR()">مشاركة الحزب عبر QR 📱</button>
-        <div id="qrModal" style="display:none;"><div id="qrcode"></div><button onclick="document.getElementById('qrModal').style.display='none'">إغلاق</button></div>
-        <audio id="audioPlayer" controls></audio>
+    <div id="mainListView"><div class="hzb-grid" id="hzbGrid"></div></div>
+    <div id="quranReaderView" style="display:none;">
+        <button class="back-btn" onclick="closeHusb()">← العودة</button>
+        <h2 id="currentHusbTitle" style="text-align:center;"></h2>
+        <button class="back-btn" style="background:var(--accent-gold);" onclick="showQR()">مشاركة الحزب عبر QR 📱</button>
+        <div id="qrModal" style="display:none; text-align:center;"><div id="qrcode" style="display:inline-block;"></div><br><button onclick="document.getElementById('qrModal').style.display='none'">إغلاق</button></div>
+        <audio id="audioPlayer" controls style="width:100%;"></audio>
     </div>
 </div>
 
+<div id="azkarPage" class="app-page"><h2>الأذكار</h2><p>محتوى الأذكار...</p></div>
+<div id="tasbeehPage" class="app-page"><h2>السبحة</h2><p>محتوى السبحة...</p></div>
+<div id="prayerPage" class="app-page"><h2>المواقيت</h2><p>محتوى المواقيت...</p></div>
+<div id="radioPage" class="app-page"><h2>الإذاعة</h2><p>محتوى الإذاعة...</p></div>
+
 <nav class="bottom-nav">
-    <div class="nav-item active" onclick="switchPage('quran', this)">📖 القرآن</div>
-    <div class="nav-item" onclick="switchPage('azkar', this)">🌙 الأذكار</div>
-    <div class="nav-item" onclick="switchPage('tasbeeh', this)">📿 السبحة</div>
-    <div class="nav-item" onclick="switchPage('prayer', this)">🕋 المواقيت</div>
-    <div class="nav-item" onclick="switchPage('radio', this)">📻 الإذاعة</div>
+    <div class="nav-item" onclick="switchPage('quran')">📖 القرآن</div>
+    <div class="nav-item" onclick="switchPage('azkar')">🌙 الأذكار</div>
+    <div class="nav-item" onclick="switchPage('tasbeeh')">📿 السبحة</div>
+    <div class="nav-item" onclick="switchPage('prayer')">🕋 المواقيت</div>
+    <div class="nav-item" onclick="switchPage('radio')">📻 الإذاعة</div>
 </nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-    let currentHusbNumber = 1;
-
-    function switchPage(page, el) {
-        document.querySelectorAll('.app-page').forEach(p => p.style.display = 'none');
-        document.getElementById(page + 'Page')?.style.display = 'block';
-        if(page === 'quran') document.getElementById('quranPage').style.display = 'block';
-        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
+    function switchPage(p) {
+        document.querySelectorAll('.app-page').forEach(el => el.classList.remove('active'));
+        document.getElementById(p + 'Page').classList.add('active');
     }
-
     function openHusb(n) {
-        currentHusbNumber = n;
         document.getElementById('mainListView').style.display = 'none';
         document.getElementById('quranReaderView').style.display = 'block';
         document.getElementById('currentHusbTitle').innerText = "الحزب " + n;
-        // إصلاح الصوت: الربط المباشر بملف mp3
         document.getElementById('audioPlayer').src = "https://server12.mp3quran.net/maher/" + n.toString().padStart(3, '0') + ".mp3";
     }
-
     function closeHusb() {
         document.getElementById('quranReaderView').style.display = 'none';
         document.getElementById('mainListView').style.display = 'block';
         document.getElementById('audioPlayer').pause();
     }
-
     function showQR() {
         document.getElementById('qrModal').style.display = 'block';
         document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById("qrcode"), window.location.href + "?hzb=" + currentHusbNumber);
+        new QRCode(document.getElementById("qrcode"), window.location.href);
     }
-
     const grid = document.getElementById('hzbGrid');
     for (let i = 1; i <= 60; i++) {
         const div = document.createElement('div'); div.className = 'hzb-card';
