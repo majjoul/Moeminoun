@@ -4,62 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تطبيق مؤمنون</title>
-    <!-- مكتبة توليد كود QR -->
+    <link rel="icon" type="image/png" href="icon.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         :root { --primary-green: #1b4d3e; --light-green: #e8f5e9; --accent-gold: #d4af37; --bright-gold: #ffd700; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light-green); margin: 0; padding: 0; color: #333; -webkit-tap-highlight-color: transparent; }
         header { background-color: var(--primary-green); color: white; text-align: center; padding: 15px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        header h1 { margin: 0; font-size: 24px; }
         .container { padding: 20px; max-width: 500px; margin: 0 auto; margin-bottom: 90px; }
         .app-page { display: none; } .app-page.active { display: block; }
         .title-section { text-align: center; margin-bottom: 20px; color: var(--primary-green); font-weight: bold; font-size: 20px; }
         .hzb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .hzb-card { background-color: white; border: 2px solid var(--primary-green); border-radius: 12px; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; color: var(--primary-green); cursor: pointer; }
         .quran-view { display: none; background-color: #fdfbf7; border-radius: 12px; padding: 20px; border: 1px solid #e0dcd3; }
-        .audio-section { background-color: #f0f7f4; border: 1px solid #c8e6c9; border-radius: 8px; padding: 12px; margin-bottom: 20px; text-align: center; }
+        .back-btn { background-color: var(--primary-green); color: white; border: none; padding: 10px 20px; border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer; }
         .share-btn { background-color: var(--accent-gold); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer; font-weight: bold; }
-        /* باقي التنسيقات (الأذكار، السبحة، المواقيت، الإذاعة) كما هي في كودك */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        /* التنسيقات الأخرى كما كانت في كودك الأصلي... */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
         .nav-item { color: #a3c2b8; text-decoration: none; font-size: 13px; text-align: center; flex: 1; cursor: pointer; }
         .nav-item.active { color: white; font-weight: bold; }
         .radio-pulse { width: 20px; height: 20px; background-color: #d32f2f; border-radius: 50%; margin: 0 auto 15px auto; display: none; animation: pulse 1.5s infinite; }
         .radio-pulse.playing { display: block; }
         @keyframes pulse { 0% { transform: scale(0.8); } 50% { transform: scale(1.2); } 100% { transform: scale(0.8); } }
+        /* البوصلة */
+        .compass { width: 180px; height: 180px; border: 5px solid var(--primary-green); border-radius: 50%; position: relative; background-color: white; margin: 20px auto; transition: transform 0.2s; }
     </style>
 </head>
 <body>
-
     <header><h1>مؤمنون</h1></header>
-
     <div class="container">
-        <!-- قسم القرآن -->
         <div id="quranPage" class="app-page active">
             <div id="mainListView">
                 <div class="title-section">القرآن الكريم</div>
                 <div class="hzb-grid" id="hzbGrid"></div>
             </div>
-
             <div id="quranReaderView" class="quran-view">
+                <button class="back-btn" onclick="closeHusb()">← العودة</button>
                 <button class="share-btn" onclick="generateQR()">مشاركة الحزب عبر QR 📱</button>
-                <div id="qrContainer" style="display:none; text-align:center; padding:10px; border:1px solid #ddd; margin-bottom:10px;">
+                <div id="qrContainer" style="display:none; text-align:center; padding:10px; background:white; border:1px solid #ddd; margin-bottom:10px;">
                     <div id="qrcode"></div>
                     <button onclick="document.getElementById('qrContainer').style.display='none'">إغلاق</button>
                 </div>
-                <!-- بقية محتوى القرآن -->
                 <div id="currentHusbTitle" class="title-section"></div>
-                <audio id="audioPlayer" controls></audio>
+                <audio id="audioPlayer" controls style="width:100%"></audio>
             </div>
         </div>
-        
-        <!-- (يتم وضع باقي الصفحات: الأذكار، السبحة، المواقيت، الإذاعة هنا) -->
-    </div>
+        </div>
 
     <script>
         let currentHusbNumber = 1;
 
-        // --- دالة توليد كود QR ---
+        // توليد الـ QR
         function generateQR() {
             const container = document.getElementById('qrContainer');
             container.style.display = 'block';
@@ -70,24 +65,56 @@
             });
         }
 
-        // --- إصلاح البوصلة ---
+        // إنشاء شبكة الأحزاب بعد تحميل الصفحة
+        window.onload = function() {
+            const grid = document.getElementById('hzbGrid');
+            for (let i = 1; i <= 60; i++) {
+                const card = document.createElement('div');
+                card.className = 'hzb-card';
+                card.innerText = `الحزب ${i}`;
+                card.onclick = function() { openHusb(i); };
+                grid.appendChild(card);
+            }
+        };
+
+        // إصلاح البوصلة
+        function initCompass() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(res => {
+                    if (res === 'granted') window.addEventListener('deviceorientation', handleOrientation);
+                });
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        }
+
         function handleOrientation(event) {
             let heading = event.webkitCompassHeading || Math.abs(event.alpha - 360);
             let rotateAngle = heading - 255;
             const compass = document.getElementById('compassDisk');
+            if (!compass) return;
             compass.style.transform = `rotate(${-rotateAngle}deg)`;
-            if (Math.abs(rotateAngle) < 5) compass.style.borderColor = "var(--bright-gold)";
-            else compass.style.borderColor = "var(--primary-green)";
+            compass.style.borderColor = (Math.abs(rotateAngle) < 5) ? "var(--bright-gold)" : "var(--primary-green)";
         }
 
-        // --- إصلاح الإذاعة ---
+        // إصلاح الإذاعة
         function toggleRadio() {
             const radio = document.getElementById('liveRadioPlayer');
-            if (!radio.src) radio.src = "https://n0a.radiojar.com/8s9u5t6w7uzzv";
-            radio.paused ? radio.play() : radio.pause();
+            const btn = document.getElementById('radioPlayBtn');
+            const pulse = document.getElementById('radioPulse');
+            radio.src = "https://n0a.radiojar.com/8s9u5t6w7uzzv";
+            if (radio.paused) {
+                radio.play();
+                btn.innerText = "⏸ إيقاف مؤقت";
+                pulse.classList.add('playing');
+            } else {
+                radio.pause();
+                btn.innerText = "▶ تشغيل الإذاعة";
+                pulse.classList.remove('playing');
+            }
         }
-
-        // (أضف بقية دوالك هنا...)
+        
+        // (أضف دوالك الأخرى هنا...)
     </script>
 </body>
 </html>
