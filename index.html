@@ -4,72 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تطبيق مؤمنون</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <style>
-        :root { --primary-green: #1b4d3e; --light-green: #e8f5e9; --accent-gold: #d4af37; }
-        body { font-family: sans-serif; background-color: var(--light-green); margin: 0; padding-bottom: 70px; }
-        .app-page { display: none; padding: 20px; }
-        .app-page.active { display: block; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; color: white; z-index: 1000; }
-        .nav-item { cursor: pointer; text-align: center; font-size: 14px; }
-        .hzb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .hzb-card { background: white; padding: 15px; border: 2px solid var(--primary-green); border-radius: 10px; text-align: center; cursor: pointer; color: var(--primary-green); font-weight: bold; }
-        .back-btn { background: var(--primary-green); color: white; padding: 10px; border-radius: 5px; width: 100%; border: none; margin-bottom: 10px; }
+        :root { --primary-green: #1b4d3e; --light-green: #e8f5e9; --accent-gold: #d4af37; --bright-gold: #ffd700; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light-green); margin: 0; padding: 0; color: #333; -webkit-tap-highlight-color: transparent; }
+        header { background-color: var(--primary-green); color: white; text-align: center; padding: 15px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        header h1 { margin: 0; font-size: 24px; }
+        .container { padding: 20px; max-width: 500px; margin: 0 auto; margin-bottom: 90px; }
+        .app-page { display: none; } .app-page.active { display: block; }
+        .title-section { text-align: center; margin-bottom: 20px; color: var(--primary-green); font-weight: bold; font-size: 20px; }
+        .hzb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .hzb-card { background-color: white; border: 2px solid var(--primary-green); border-radius: 12px; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; color: var(--primary-green); cursor: pointer; }
+        .quran-view { display: none; background-color: #fdfbf7; border-radius: 12px; padding: 20px; border: 1px solid #e0dcd3; }
+        .back-btn { background-color: var(--primary-green); color: white; border: none; padding: 10px 20px; border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .nav-item { color: #a3c2b8; text-decoration: none; font-size: 13px; text-align: center; flex: 1; cursor: pointer; line-height: 1.4; }
+        .nav-item.active { color: white; font-weight: bold; }
+        .nav-icon { font-size: 18px; margin-bottom: 2px; }
+        /* أضفت تنسيق زر المشاركة */
+        .share-btn { background-color: var(--accent-gold); color: white; border: none; padding: 10px; border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="quranPage" class="app-page active">
-    <div id="mainListView"><div class="hzb-grid" id="hzbGrid"></div></div>
-    <div id="quranReaderView" style="display:none;">
-        <button class="back-btn" onclick="closeHusb()">← العودة</button>
-        <h2 id="currentHusbTitle" style="text-align:center;"></h2>
-        <button class="back-btn" style="background:var(--accent-gold);" onclick="showQR()">مشاركة الحزب عبر QR 📱</button>
-        <div id="qrModal" style="display:none; text-align:center;"><div id="qrcode" style="display:inline-block;"></div><br><button onclick="document.getElementById('qrModal').style.display='none'">إغلاق</button></div>
-        <audio id="audioPlayer" controls style="width:100%;"></audio>
-    </div>
-</div>
+    <header><h1>مؤمنون</h1></header>
 
-<div id="azkarPage" class="app-page"><h2>الأذكار</h2><p>محتوى الأذكار...</p></div>
-<div id="tasbeehPage" class="app-page"><h2>السبحة</h2><p>محتوى السبحة...</p></div>
-<div id="prayerPage" class="app-page"><h2>المواقيت</h2><p>محتوى المواقيت...</p></div>
-<div id="radioPage" class="app-page"><h2>الإذاعة</h2><p>محتوى الإذاعة...</p></div>
+    <div class="container">
+        <div id="quranPage" class="app-page active">
+            <div id="mainListView">
+                <div class="title-section">القرآن الكريم - الستين حزباً</div>
+                <div class="hzb-grid" id="hzbGrid"></div>
+            </div>
 
-<nav class="bottom-nav">
-    <div class="nav-item" onclick="switchPage('quran')">📖 القرآن</div>
-    <div class="nav-item" onclick="switchPage('azkar')">🌙 الأذكار</div>
-    <div class="nav-item" onclick="switchPage('tasbeeh')">📿 السبحة</div>
-    <div class="nav-item" onclick="switchPage('prayer')">🕋 المواقيت</div>
-    <div class="nav-item" onclick="switchPage('radio')">📻 الإذاعة</div>
-</nav>
+            <div id="quranReaderView" class="quran-view">
+                <button class="back-btn" onclick="closeHusb()">← العودة لقائمة الأحزاب</button>
+                <div class="title-section" id="currentHusbTitle">اسم الحزب</div>
+                
+                <button class="share-btn" onclick="showQR()">مشاركة الحزب عبر QR 📱</button>
+                <div id="qrModal" style="display:none; text-align:center; padding:10px; background:white; border: 1px solid var(--accent-gold); border-radius:10px; margin-bottom:15px;">
+                    <div id="qrcode" style="display:inline-block;"></div>
+                    <p style="font-size:12px; margin:5px;">امسح الكود لفتح هذا الحزب</p>
+                    <button class="back-btn" onclick="document.getElementById('qrModal').style.display='none'">إغلاق</button>
+                </div>
+                
+                <div id="quranTextContent"></div>
+            </div>
+        </div>
+        
+        </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-    function switchPage(p) {
-        document.querySelectorAll('.app-page').forEach(el => el.classList.remove('active'));
-        document.getElementById(p + 'Page').classList.add('active');
-    }
-    function openHusb(n) {
-        document.getElementById('mainListView').style.display = 'none';
-        document.getElementById('quranReaderView').style.display = 'block';
-        document.getElementById('currentHusbTitle').innerText = "الحزب " + n;
-        document.getElementById('audioPlayer').src = "https://server12.mp3quran.net/maher/" + n.toString().padStart(3, '0') + ".mp3";
-    }
-    function closeHusb() {
-        document.getElementById('quranReaderView').style.display = 'none';
-        document.getElementById('mainListView').style.display = 'block';
-        document.getElementById('audioPlayer').pause();
-    }
-    function showQR() {
-        document.getElementById('qrModal').style.display = 'block';
-        document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById("qrcode"), window.location.href);
-    }
-    const grid = document.getElementById('hzbGrid');
-    for (let i = 1; i <= 60; i++) {
-        const div = document.createElement('div'); div.className = 'hzb-card';
-        div.innerText = "الحزب " + i; div.onclick = () => openHusb(i);
-        grid.appendChild(div);
-    }
-</script>
+    <nav class="bottom-nav">
+        <div class="nav-item active" id="btnQuran" onclick="switchPage('quran')"><div class="nav-icon">📖</div>القرآن</div>
+        <div class="nav-item" id="btnAzkar" onclick="switchPage('azkar')"><div class="nav-icon">🌙</div>الأذكار</div>
+        <div class="nav-item" id="btnTasbeeh" onclick="switchPage('tasbeeh')"><div class="nav-icon">📿</div>السبحة</div>
+        <div class="nav-item" id="btnPrayer" onclick="switchPage('prayer')"><div class="nav-icon">🕋</div>المواقيت</div>
+        <div class="nav-item" id="btnRadio" onclick="switchPage('radio')"><div class="nav-icon">📻</div>الإذاعة</div>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        // دالة الـ QR الجديدة
+        function showQR() {
+            const modal = document.getElementById('qrModal');
+            const qrcodeDiv = document.getElementById('qrcode');
+            modal.style.display = 'block';
+            qrcodeDiv.innerHTML = "";
+            new QRCode(qrcodeDiv, {
+                text: window.location.href + "?hzb=" + currentHusbNumber,
+                width: 150, height: 150
+            });
+        }
+        
+        // (ضع هنا باقي كودك الأصلي الخاص بالسكربت)
+    </script>
 </body>
 </html>
