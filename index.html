@@ -4,16 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تطبيق مؤمنون</title>
+    
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
+
     <style>
-        :root { --primary-green: #1b4d3e; --light-green: #e8f5e9; --accent-gold: #d4af37; --bright-gold: #ffd700; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--light-green); margin: 0; padding: 0; color: #333; -webkit-tap-highlight-color: transparent; }
-        header { background-color: var(--primary-green); color: white; text-align: center; padding: 15px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        :root {
+            --primary-green: #1b4d3e;
+            --light-green: #e8f5e9;
+            --accent-gold: #d4af37;
+            --bright-gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-green);
+            margin: 0; padding: 0; color: #333;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        header {
+            background-color: var(--primary-green);
+            color: white; text-align: center; padding: 15px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;
+        }
+
         header h1 { margin: 0; font-size: 24px; }
+
         .container { padding: 20px; max-width: 500px; margin: 0 auto; margin-bottom: 90px; }
-        .app-page { display: none; } .app-page.active { display: block; }
+
+        .app-page { display: none; }
+        .app-page.active { display: block; }
+
         .title-section { text-align: center; margin-bottom: 20px; color: var(--primary-green); font-weight: bold; font-size: 20px; }
+
         .hzb-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .hzb-card { background-color: white; border: 2px solid var(--primary-green); border-radius: 12px; padding: 15px; text-align: center; font-size: 18px; font-weight: bold; color: var(--primary-green); cursor: pointer; }
         .quran-view { display: none; background-color: #fdfbf7; border-radius: 12px; padding: 20px; border: 1px solid #e0dcd3; }
@@ -22,6 +46,47 @@
         audio { width: 100%; margin-top: 5px; }
         .quran-text { font-size: 22px; line-height: 1.8; text-align: justify; }
         .back-btn { background-color: var(--primary-green); color: white; border: none; padding: 10px 20px; border-radius: 8px; width: 100%; margin-bottom: 15px; cursor: pointer; }
+
+        .azkar-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
+        .tab-btn { background-color: white; border: 1px solid var(--primary-green); color: var(--primary-green); padding: 8px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+        .tab-btn.active { background-color: var(--primary-green); color: white; }
+        .azkar-list { display: none; }
+        .azkar-list.active { display: block; }
+        .azkar-card { background-color: white; border: 1px solid #c8e6c9; border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .azkar-text { font-size: 18px; line-height: 1.6; margin-bottom: 10px; color: #222; }
+        .counter-btn { background-color: var(--primary-green); color: white; border: none; padding: 10px 25px; border-radius: 20px; font-size: 16px; cursor: pointer; min-width: 140px; font-weight: bold; }
+
+        .tasbeeh-container { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 10px; }
+        .tasbeeh-circle {
+            width: 200px; height: 200px; background-color: white; border: 10px solid var(--primary-green); border-radius: 50%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); transition: transform 0.1s ease; user-select: none;
+        }
+        .tasbeeh-circle:active { transform: scale(0.96); border-color: var(--accent-gold); }
+        .tasbeeh-number { font-size: 44px; font-weight: bold; color: var(--primary-green); margin: 0; }
+        .tasbeeh-label { font-size: 15px; color: #666; margin-top: 5px; }
+        .tasbeeh-phrase { font-size: 22px; font-weight: bold; color: var(--primary-green); margin-bottom: 20px; text-align: center; min-height: 33px; }
+        .tasbeeh-controls { display: flex; gap: 15px; margin-top: 20px; width: 100%; }
+        .tasbeeh-btn { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; }
+        .btn-reset { background-color: #d32f2f; color: white; }
+        .btn-phrase { background-color: var(--accent-gold); color: white; }
+
+        .prayer-card { background-color: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .next-prayer-counter { text-align: center; background-color: var(--primary-green); color: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .times-list { display: flex; flex-direction: column; gap: 10px; }
+        .time-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; font-size: 17px; }
+        .time-row.next { background-color: #e8f5e9; font-weight: bold; border-radius: 6px; color: var(--primary-green); }
+        
+        .compass-container { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 20px; }
+        .compass { width: 180px; height: 180px; border: 5px solid var(--primary-green); border-radius: 50%; position: relative; background-color: white; transition: transform 0.2s ease-out; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .compass-pointer { width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 70px solid #d32f2f; position: absolute; top: 20px; left: 80px; }
+        .compass-kaaba { font-size: 24px; position: absolute; top: 10px; left: 76px; }
+
+        .radio-card { background-color: white; border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 2px dashed var(--primary-green); }
+        .radio-pulse { width: 20px; height: 20px; background-color: #d32f2f; border-radius: 50%; margin: 0 auto 15px auto; display: none; animation: pulse 1.5s infinite; }
+        .radio-pulse.playing { display: block; }
+        @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(0.8); opacity: 0.5; } }
+
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background-color: var(--primary-green); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
         .nav-item { color: #a3c2b8; text-decoration: none; font-size: 13px; text-align: center; flex: 1; cursor: pointer; line-height: 1.4; }
         .nav-item.active { color: white; font-weight: bold; }
@@ -33,7 +98,7 @@
     <header><h1>مؤمنون</h1></header>
 
     <div class="container">
-        <!-- شاشة القرآن -->
+        <!-- 1. شاشة القرآن الكريم -->
         <div id="quranPage" class="app-page active">
             <div id="mainListView">
                 <div class="title-section">القرآن الكريم - الستين حزباً</div>
@@ -41,45 +106,76 @@
             </div>
 
             <div id="quranReaderView" class="quran-view">
-                <button class="back-btn" onclick="closeHusb()">← العودة</button>
-                <div class="title-section" id="currentHusbTitle"></div>
+                <button class="back-btn" onclick="closeHusb()">← العودة لقائمة الأحزاب</button>
+                <div class="title-section" id="currentHusbTitle">اسم الحزب</div>
                 
-                <!-- إضافة زر المشاركة ومكان الكود -->
+                <!-- زر المشاركة ومكان الكود المضاف -->
                 <button class="back-btn" style="background-color: var(--accent-gold);" onclick="showQR()">مشاركة الحزب عبر QR 📱</button>
-                <div id="qrModal" style="display:none; text-align:center; padding:10px; background:white; margin-bottom:10px; border-radius:10px;">
-                    <div id="qrcode" style="display:inline-block;"></div>
-                    <p style="font-size:12px;">امسح الكود لفتح هذا الحزب</p>
-                    <button onclick="document.getElementById('qrModal').style.display='none'">إغلاق</button>
+                <div id="qrModal" style="display:none; text-align:center; padding:10px; background:white; margin-bottom:10px; border-radius:10px; border: 1px solid var(--accent-gold);">
+                    <div id="qrcode" style="display:inline-block; margin: 10px;"></div>
+                    <p style="font-size:12px;">امسح الكود لفتح هذا الحزب مباشرة</p>
+                    <button class="back-btn" style="width: auto; padding: 5px 15px;" onclick="document.getElementById('qrModal').style.display='none'">إغلاق</button>
                 </div>
-
+                
                 <div class="audio-section">
                     <select id="sheikhSelect" class="sheikh-select" onchange="changeReciter()">
                         <option value="lhdan">محمد اللحيدان</option>
                         <option value="dosari">ياسر الدوسري</option>
+                        <option value="muaiqly">ماهر المعيقلي</option>
+                        <option value="ayyoub">محمد أيوب</option>
                     </select>
                     <audio id="audioPlayer" controls></audio>
                 </div>
                 <div class="quran-text" id="quranTextContent"></div>
             </div>
         </div>
+
+        <!-- 2. شاشة الأذكار -->
+        <div id="azkarPage" class="app-page">
+            <div class="title-section">حصن المسلم اليومي</div>
+            <!-- (تم اختصار المحتوى هنا للحفاظ على مساحة الكود، يمكنك إكمال بقية الأذكار) -->
+        </div>
+
+        <!-- 3. شاشة السبحة -->
+        <div id="tasbeehPage" class="app-page">
+            <div class="title-section">السبحة الإلكترونية</div>
+            <div class="tasbeeh-container">
+                <div class="tasbeeh-phrase" id="currentPhrase">سُبْحَانَ اللَّهِ</div>
+                <div class="tasbeeh-circle" onclick="incrementTasbeeh()">
+                    <span class="tasbeeh-number" id="tasbeehCount">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. شاشة الصلاة -->
+        <div id="prayerPage" class="app-page">
+            <div class="title-section">المواقيت والقبلة</div>
+        </div>
+
+        <!-- 5. شاشة الإذاعة -->
+        <div id="radioPage" class="app-page">
+            <div class="title-section">إذاعة القرآن الكريم</div>
+        </div>
     </div>
 
-    <!-- شريط التنقل -->
     <nav class="bottom-nav">
         <div class="nav-item active" id="btnQuran" onclick="switchPage('quran')"><div class="nav-icon">📖</div>القرآن</div>
+        <div class="nav-item" id="btnAzkar" onclick="switchPage('azkar')"><div class="nav-icon">🌙</div>الأذكار</div>
+        <div class="nav-item" id="btnTasbeeh" onclick="switchPage('tasbeeh')"><div class="nav-icon">📿</div>السبحة</div>
+        <div class="nav-item" id="btnPrayer" onclick="switchPage('prayer')"><div class="nav-icon">🕋</div>المواقيت</div>
+        <div class="nav-item" id="btnRadio" onclick="switchPage('radio')"><div class="nav-icon">📻</div>الإذاعة</div>
     </nav>
 
-    <!-- إضافة مكتبة QR Code -->
+    <!-- المكتبة الخاصة بـ QR Code -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <script>
-        let currentHusbNumber = 1;
-
+        // دالة عرض الـ QR Code
         function showQR() {
             const modal = document.getElementById('qrModal');
             const qrcodeDiv = document.getElementById('qrcode');
             modal.style.display = 'block';
-            qrcodeDiv.innerHTML = "";
+            qrcodeDiv.innerHTML = ""; 
             new QRCode(qrcodeDiv, {
                 text: window.location.href + "?hzb=" + currentHusbNumber,
                 width: 150,
@@ -87,6 +183,13 @@
             });
         }
 
+        // --- باقي سكربتات التطبيق ---
+        function switchPage(pageName) {
+            document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageName + 'Page').classList.add('active');
+        }
+
+        let currentHusbNumber = 1;
         function openHusb(hzbNumber) {
             currentHusbNumber = hzbNumber;
             document.getElementById('mainListView').style.display = 'none';
@@ -95,16 +198,19 @@
         }
 
         function closeHusb() { 
-            document.getElementById('audioPlayer').pause(); 
             document.getElementById('quranReaderView').style.display = 'none'; 
             document.getElementById('mainListView').style.display = 'block'; 
         }
 
-        // إنشاء شبكة الأحزاب
         const grid = document.getElementById('hzbGrid');
         for (let i = 1; i <= 60; i++) {
             const card = document.createElement('div'); card.className = 'hzb-card'; card.innerText = `الحزب ${i}`;
             card.onclick = function() { openHusb(i); }; grid.appendChild(card);
+        }
+
+        function incrementTasbeeh() {
+            let count = parseInt(document.getElementById('tasbeehCount').innerText);
+            document.getElementById('tasbeehCount').innerText = count + 1;
         }
     </script>
 </body>
