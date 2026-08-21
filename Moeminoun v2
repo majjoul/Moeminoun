@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlRoot">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,49 +14,47 @@
             --accent-hover: #0284c7;
         }
 
-        * { box-sizing: border-box; transition: background 0.3s, color 0.3s; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; padding-bottom: 100px; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; padding-bottom: 110px; }
         
-        .box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 25px; border-radius: 18px; max-width: 550px; margin: 20px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-        h1, h2 { text-align: center; color: var(--accent-color); }
-        .subtitle { text-align: center; margin-bottom: 20px; font-size: 14px; color: #94a3b8; }
+        .box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; max-width: 500px; margin: 15px auto; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+        h2 { text-align: center; color: var(--accent-color); margin-top: 0; }
+        .subtitle { text-align: center; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
         
-        label { display: block; margin-top: 12px; font-size: 14px; font-weight: bold; color: #cbd5e1; }
-        input, select, button { width: 100%; padding: 14px; margin-top: 8px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 16px; outline: none; }
-        button { background: var(--accent-color); color: #0f172a; border: none; font-weight: bold; cursor: pointer; margin-top: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        label { display: block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #cbd5e1; }
+        input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 15px; outline: none; }
+        button { background: var(--accent-color); color: #0f172a; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; }
         button:hover { background: var(--accent-hover); color: #ffffff; }
 
         .section { display: none; }
         .section.active { display: block; }
 
         /* شريط التنقل السفلي */
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: none; justify-content: space-around; padding: 12px 0; border-top: 1px solid var(--border-color); z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.4); }
-        .nav button { background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; width: auto; margin: 0; font-weight: normal; display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: none; }
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: none; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border-color); z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
+        .nav button { background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; width: auto; margin: 0; font-weight: normal; display: flex; flex-direction: column; align-items: center; gap: 3px; box-shadow: none; padding: 0; }
         .nav button.active { color: var(--accent-color); font-weight: bold; }
 
-        /* تڤاصيل إضافية */
-        .prayer-row { display: flex; justify-content: space-between; padding: 12px 15px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 10px; margin-top: 10px; font-size: 16px; }
-        .counter-display { font-size: 65px; font-weight: bold; text-align: center; color: var(--accent-color); margin: 20px 0; }
+        .prayer-row { display: flex; justify-content: space-between; padding: 10px 12px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; margin-top: 8px; font-size: 15px; }
+        .counter-display { font-size: 60px; font-weight: bold; text-align: center; color: var(--accent-color); margin: 15px 0; }
         
-        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; margin-top: 15px; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--border-color); }
+        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; margin-top: 15px; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--border-color); }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
-        /* شبكة السور (كل سور القرآن 114) */
-        .surah-container { max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; margin-top: 10px; background: var(--bg-color); }
-        .surah-item { padding: 10px; margin: 5px 0; background: var(--card-bg); border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); }
+        .surah-container { max-height: 220px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; margin-top: 8px; background: var(--bg-color); }
+        .surah-item { padding: 8px 12px; margin: 4px 0; background: var(--card-bg); border-radius: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-color); font-size: 14px; }
         .surah-item:hover { background: var(--accent-color); color: #0f172a; }
 
-        audio { width: 100%; margin-top: 15px; border-radius: 8px; }
+        audio { width: 100%; margin-top: 12px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-    <div class="subtitle" style="font-size: 26px; font-weight: bold; margin-top: 10px; text-align: center; color: var(--accent-color);">تطبيق المؤمنون ☪️</div>
+    <div style="font-size: 24px; font-weight: bold; margin: 10px 0 5px 0; text-align: center; color: var(--accent-color);">تطبيق المؤمنون ☪️</div>
 
     <!-- 1. شاشة تسجيل الدخول الإجبارية (بدون شريط تنقل) -->
     <div id="loginSec" class="section active box">
         <h2>تسجيل دخول النظام</h2>
-        <p class="subtitle">مرحباً بك يا سيدي يوسف، يرجى إدخال بيانات الدخول:</p>
+        <p class="subtitle">مرحباً بك يا سيدي يوسف، أدخل البيانات للمتابعة:</p>
         
         <label>اسم المستخدم:</label>
         <input type="text" id="usernameInput" placeholder="أدخل اسمك هنا...">
@@ -84,9 +82,9 @@
         <button onclick="fetchPrayerTimes()" style="background: #059669; color:#fff;">🔄 تحديث المواقيت</button>
     </div>
 
-    <!-- 3. القرآن الكريم كاملاً (114 سورة مع كبار الشيوخ) -->
+    <!-- 3. القرآن الكريم كاملًا (114 سورة) -->
     <div id="quranSec" class="section box">
-        <h2>القرآن الكريم كاملًا (114 سورة)</h2>
+        <h2>القرآن الكريم (114 سورة)</h2>
         
         <label>اختر القارئ:</label>
         <select id="sheikhSelect">
@@ -96,16 +94,14 @@
             <option value="maher">ماهر المعيقلي</option>
         </select>
 
-        <p style="font-size: 13px; text-align: center; margin-top: 15px; color: #94a3b8;" id="nowPlayingText">اختر سورة للاستماع:</p>
+        <p style="font-size: 13px; text-align: center; margin-top: 10px; color: #94a3b8;" id="nowPlayingText">اختر سورة للاستماع:</p>
         <audio id="audioPlayer" controls style="display:none;"></audio>
 
-        <label style="margin-top: 15px;">قائمة السور:</label>
-        <div class="surah-container" id="surahListContainer">
-            <!-- سيتم توليد الـ 114 سورة هنا تلقائياً بالبرمجة -->
-        </div>
+        <label style="margin-top: 10px;">قائمة السور:</label>
+        <div class="surah-container" id="surahListContainer"></div>
     </div>
 
-    <!-- 4. البث المباشر الحقيقي للحرم -->
+    <!-- 4. البث المباشر الحقيقي -->
     <div id="liveSec" class="section box">
         <h2>بث مباشر من الحرم المكي</h2>
         <p class="subtitle">بث حي ومستقر لقناة القرآن الكريم</p>
@@ -115,21 +111,36 @@
         </div>
     </div>
 
-    <!-- 5. عداد التسبيح والأذكار -->
+    <!-- 5. عداد التسبيح وجميع الأذكار الشاملة -->
     <div id="tasbihSec" class="section box">
-        <h2>عداد التسبيح الرقمي</h2>
-        <div id="tasbihText" class="subtitle" style="font-size: 18px; font-weight: bold; color: var(--text-color);">سُبْحَانَ اللَّهِ</div>
+        <h2>الأذكار وعداد التسبيح</h2>
+        
+        <label>اختر الذكر المطلوب:</label>
+        <select id="dhikrSelect" onchange="changeDhikr(this.value)">
+            <option value="سُبْحَانَ اللَّهِ">سُبْحَانَ اللَّهِ</option>
+            <option value="الْحَمْدُ لِلَّهِ">الْحَمْدُ لِلَّهِ</option>
+            <option value="لَا إِلَهَ إِلَّا اللَّهُ">لَا إِلَهَ إِلَّا اللَّهُ</option>
+            <option value="اللَّهُ أَكْبَرُ">اللَّهُ أَكْبَرُ</option>
+            <option value="سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ</option>
+            <option value="لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ">لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ</option>
+            <option value="أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ">أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ</option>
+            <option value="اللهم صل وسلم على نبينا محمد">اللهم صل وسلم على نبينا محمد</option>
+            <option value="رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ">رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ</option>
+            <option value="لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ">لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ</option>
+        </select>
+
+        <div id="tasbihText" class="subtitle" style="font-size: 15px; font-weight: bold; color: var(--accent-color); margin-top: 10px;">سُبْحَانَ اللَّهِ</div>
         
         <div id="counterVal" class="counter-display">0</div>
 
-        <button onclick="incrementTasbih()" style="padding: 18px; font-size: 18px;">اضغط للتسبيح 👆</button>
-        <button onclick="resetTasbih()" style="background: #dc2626; color: #fff; margin-top: 10px;">إعادة للصفر 🔄</button>
+        <button onclick="incrementTasbih()" style="padding: 15px; font-size: 16px;">اضغط للتسبيح 👆</button>
+        <button onclick="resetTasbih()" style="background: #dc2626; color: #fff;">إعادة للصفر 🔄</button>
     </div>
 
     <!-- 6. صفحة معلومات الحساب -->
     <div id="accountSec" class="section box">
         <h2>معلومات الحساب</h2>
-        <div style="background: var(--bg-color); padding: 15px; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 15px;">
+        <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; font-size: 14px;">
             <p><strong>اسم المستخدم:</strong> <span id="accName">--</span></p>
             <p><strong>حالة الحساب:</strong> <span style="color: #10b981;">نشط وموثق ✅</span></p>
             <p><strong>نوع العضوية:</strong> مطور رئيسي (سيدي يوسف)</p>
@@ -137,7 +148,7 @@
         <button onclick="logout()" style="background: #dc2626; color: #fff;">تسجيل الخروج 🚪</button>
     </div>
 
-    <!-- 7. لوحة الإعدادات وتغيير ألوان العالم واللغات -->
+    <!-- 7. لوحة الإعدادات وتغيير ألوان العالم -->
     <div id="settingsSec" class="section box">
         <h2>إعدادات التطبيق</h2>
         
@@ -147,24 +158,23 @@
             <option value="en">الإنجليزية (English)</option>
         </select>
 
-        <label>اختر لون التطبيق (جميع ألوان العالم):</label>
-        <input type="color" id="colorPicker" value="#38bdf8" onchange="changeThemeColor(this.value)" style="height: 50px; cursor: pointer;">
+        <label>اختر لون التطبيق (ألوان العالم):</label>
+        <input type="color" id="colorPicker" value="#38bdf8" onchange="changeThemeColor(this.value)" style="height: 45px; cursor: pointer;">
 
-        <button onclick="alert('تم حفظ الإعدادات بنجاح!')" style="margin-top: 20px;">حفظ التعديلات</button>
+        <button onclick="alert('تم حفظ الإعدادات بنجاح!')" style="margin-top: 15px;">حفظ التعديلات</button>
     </div>
 
-    <!-- الشريط السفلي للتنقل (يظهر فقط بعد تسجيل الدخول) -->
+    <!-- الشريط السفلي للتنقل (مخفي أثناء تسجيل الدخول) -->
     <div id="navBar" class="nav">
         <button id="navP" class="active" onclick="switchTab('prayerSec', 'navP')"><span>🕌</span><span>الصلاة</span></button>
         <button id="navQ" onclick="switchTab('quranSec', 'navQ')"><span>📖</span><span>القرآن</span></button>
         <button id="navL" onclick="switchTab('liveSec', 'navL')"><span>🕋</span><span>البث</span></button>
-        <button id="navT" onclick="switchTab('tasbihSec', 'navT')"><span>📿</span><span>التسبيح</span></button>
+        <button id="navT" onclick="switchTab('tasbihSec', 'navT')"><span>📿</span><span>الأذكار</span></button>
         <button id="navAcc" onclick="switchTab('accountSec', 'navAcc')"><span>👤</span><span>حسابي</span></button>
         <button id="navSet" onclick="switchTab('settingsSec', 'navSet')"><span>⚙️</span><span>الإعدادات</span></button>
     </div>
 
     <script>
-        // أسماء سور القرآن الكريم الـ 114 الحقيقية
         const surahs = [
             "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
             "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
@@ -181,10 +191,7 @@
         ];
 
         let tasbihCount = 0;
-        const tasbihPhrases = ["سُبْحَانَ اللَّهِ", "الْحَمْدُ لِلَّهِ", "لَا إِلَهَ إِلَّا اللَّهُ", "اللَّهُ أَكْبَرُ"];
-        let phraseIndex = 0;
 
-        // تهيئة السور عند التحميل
         window.onload = function() {
             buildSurahList();
             const loggedUser = localStorage.getItem('loggedUser');
@@ -206,7 +213,6 @@
             });
         }
 
-        // عملية تسجيل الدخول الصارمة
         function handleLogin() {
             const user = document.getElementById("usernameInput").value.trim();
             const pass = document.getElementById("passwordInput").value.trim();
@@ -216,7 +222,6 @@
                 return;
             }
 
-            // كلمة المرور الافتراضية المقترحة من النظام أو أي كلمة يكتبها
             localStorage.setItem('loggedUser', user);
             appLoginSuccess(user);
         }
@@ -224,7 +229,7 @@
         function appLoginSuccess(username) {
             document.getElementById("loginSec").classList.remove("active");
             document.getElementById("prayerSec").classList.add("active");
-            document.getElementById("navBar").style.display = "flex"; // إظهار شريط التنقل حصرياً بعد الدخول
+            document.getElementById("navBar").style.display = "flex";
             document.getElementById("accName").textContent = username;
             fetchPrayerTimes();
         }
@@ -242,7 +247,6 @@
             document.getElementById(btnId).classList.add('active');
         }
 
-        // جلب المواقيت الحقيقية
         function fetchPrayerTimes() {
             fetch(`https://api.aladhan.com/v1/timingsByCity?city=Makkah&country=Saudi Arabia&method=4`)
             .then(res => res.json())
@@ -259,7 +263,6 @@
             });
         }
 
-        // مشغل القرآن الحقيقي لكل السور
         function playSurah(num, name) {
             const sheikh = document.getElementById("sheikhSelect").value;
             const player = document.getElementById("audioPlayer");
@@ -278,30 +281,29 @@
             now.textContent = `جاري الاستماع إلى: ${name}`;
         }
 
+        function changeDhikr(val) {
+            document.getElementById("tasbihText").textContent = val;
+            tasbihCount = 0;
+            document.getElementById("counterVal").textContent = tasbihCount;
+        }
+
         function incrementTasbih() {
             tasbihCount++;
             document.getElementById("counterVal").textContent = tasbihCount;
-            if (tasbihCount % 33 === 0) {
-                phraseIndex = (phraseIndex + 1) % tasbihPhrases.length;
-                document.getElementById("tasbihText").textContent = tasbihPhrases[phraseIndex];
-            }
         }
 
         function resetTasbih() {
             tasbihCount = 0;
-            phraseIndex = 0;
             document.getElementById("counterVal").textContent = tasbihCount;
-            document.getElementById("tasbihText").textContent = tasbihPhrases[0];
         }
 
-        // تغيير ألوان العالم (تغيير لون الثيم بالكامل)
         function changeThemeColor(color) {
             document.documentElement.style.setProperty('--accent-color', color);
         }
 
         function changeLanguage(lang) {
             if(lang === 'en') {
-                alert("Language switched to English (Interface framework updated).");
+                alert("Language switched to English.");
             } else {
                 alert("تم التبديل إلى اللغة العربية.");
             }
