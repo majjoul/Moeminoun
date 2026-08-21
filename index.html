@@ -85,18 +85,28 @@
         <button onclick="handleLogin()">تسجيل الدخول</button>
     </div>
 
-    <!-- 2. مواقيت الصلاة (مع دعم الـ GPS أو البحث اليدوي للمدينة) -->
+    <!-- 2. مواقيت الصلاة (مع دعم الـ GPS أو البحث اليدوي للمدينة وطريقة الحساب) -->
     <div id="prayerSec" class="section box">
         <h2>مواقيت الصلاة اليوم</h2>
         <p id="locationDisplay" class="subtitle">حدد موقعك التلقائي أو اكتب اسم مدينتك:</p>
         
         <!-- حقل إدخال اسم المدينة للبحث اليدوي -->
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-            <input type="text" id="cityNameInput" placeholder="اكتب اسم المدينة (مثال: Cairo, Makkah)..." style="margin-top:0;">
+            <input type="text" id="cityNameInput" placeholder="اكتب اسم المدينة (مثال: Cairo, Riyadh)..." style="margin-top:0;">
             <button onclick="searchByCityInput()" style="margin-top:0; width: 110px; background: var(--accent-color);">بحث 🔍</button>
         </div>
 
-        <div id="prayerListContainer">
+        <!-- خيار طريقة الحساب لضبط الدقة 100% -->
+        <label style="font-size: 13px; margin-top: 5px;">طريقة حساب المواقيت:</label>
+        <select id="methodSelect" onchange="onMethodChange()" style="padding: 8px; font-size: 13px; margin-top: 3px;">
+            <option value="4">مكة المكرمة (Umm al-Qura)</option>
+            <option value="2">رابطة العالم الإسلامي (Muslim World League)</option>
+            <option value="5">الهيئة المصرية العامة للمساحة</option>
+            <option value="1">جامعة العلوم الإسلامية بكراتشي</option>
+            <option value="3">جامعة أم القرى (تقويم مكة القديم)</option>
+        </select>
+
+        <div id="prayerListContainer" style="margin-top: 10px;">
             <div class="prayer-row"><span>الفجر</span><strong id="pFajr">--:--</strong></div>
             <div class="prayer-row"><span>الشروق</span><strong id="pSunrise">--:--</strong></div>
             <div class="prayer-row"><span>الظهر</span><strong id="pDhuhr">--:--</strong></div>
@@ -209,6 +219,8 @@
         ];
 
         let tasbihCount = 0;
+        let lastCoords = null; // لتخزين إحداثيات الـ GPS الأخيرة
+        let lastCityName = ""; // لتخزين آخر مدينة تم البحث عنها
 
         window.onload = function() {
             populateSurahDropdown();
@@ -313,12 +325,14 @@
                     (position) => {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
+                        lastCoords = { lat, lon };
+                        lastCityName = "";
                         locDisplay.textContent = `تم تحديد موقعك بدقة عبر الـ GPS 📍`;
                         fetchPrayerTimesByCoords(lat, lon);
                     },
                     (error) => {
-                        locDisplay.textContent = "⚠️ تعذر جلب الـ GPS. يرجى كتابة اسم مدينتك في الحقل بالأعلى والضغط على بحث.";
-                        fetchPrayerTimesByCity("Makkah", "Saudi Arabia");
+                        locDisplay.textContent = "⚠️ تعذر جلب الـ GPS. يرجى كتابة اسم مدينتك يدوياً.";
+                        searchByCityInput();
                     },
                     { timeout: 8000 }
                 );
@@ -327,37 +341,54 @@
             }
         }
 
-        // دالة البحث اليدوي عن طريق اسم المدينة المدخل
         function searchByCityInput() {
             const cityName = document.getElementById("cityNameInput").value.trim();
-            if (!cityName) {
-                alert("الرجاء إدخال اسم المدينة أولاً!");
+            if (!cityName && !lastCityName && !lastCoords) {
+                // افتراضي إذا لم يُدخل شيء
+                fetchPrayerTimesByCity("Riyadh");
                 return;
             }
-            const locDisplay = document.getElementById("locationDisplay");
-            locDisplay.textContent = `جاري جلب مواقيت الصلاة لمدينتي: ${cityName}...`;
+            if (cityName) {
+                lastCityName = cityName;
+                lastCoords = null;
+            }
             
-            fetchPrayerTimesByCity(cityName, "");
+            const targetCity = lastCityName || "Riyadh";
+            const locDisplay = document.getElementById("locationDisplay");
+            locDisplay.textContent = `جاري جلب مواقيت الصلاة لمدينة: ${targetCity}...`;
+            
+            fetchPrayerTimesByCity(targetCity);
+        }
+
+        function onMethodChange() {
+            // عند تغيير طريقة الحساب من القائمة، نعيد جلب الأوقات مباشرة بناءً على آخر موقع أو مدينة
+            if (lastCoords) {
+                fetchPrayerTimesByCoords(lastCoords.lat, lastCoords.lon);
+            } else {
+                searchByCityInput();
+            }
         }
 
         function fetchPrayerTimesByCoords(lat, lon) {
-            fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=4`)
+            const method = document.getElementById("methodSelect").value;
+            fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=${method}`)
             .then(res => res.json())
             .then(data => updatePrayerUI(data))
             .catch(() => {
-                document.getElementById("locationDisplay").textContent = "تعذر جلب الأوقات بالإحداثيات، يرجى إدخال اسم المدينة يدوياً.";
+                document.getElementById("locationDisplay").textContent = "تعذر جلب الأوقات بالإحداثيات.";
             });
         }
 
-        function fetchPrayerTimesByCity(city, country) {
-            fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=4`)
+        function fetchPrayerTimesByCity(city) {
+            const method = document.getElementById("methodSelect").value;
+            fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&method=${method}`)
             .then(res => res.json())
             .then(data => {
                 if (data.code === 200) {
                     updatePrayerUI(data);
                     document.getElementById("locationDisplay").textContent = `تم جلب المواقيت لمدينة: ${city} بنجاح ✅`;
                 } else {
-                    alert("عذراً، لم يتم العثور على هذه المدينة. تأكد من كتابتها بالإنجليزي (مثال: Cairo)");
+                    alert("عذراً، لم يتم العثور على هذه المدينة. تأكد من كتابتها بالإنجليزي (مثال: Cairo, Riyadh)");
                 }
             })
             .catch(() => {
