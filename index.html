@@ -15,22 +15,55 @@
         }
 
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; padding-bottom: 110px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; padding-bottom: 110px; transition: background 0.3s, color 0.3s; }
         
-        .box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; max-width: 500px; margin: 15px auto; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+        /* ديكور وزخرفة إسلامية إطارية للشاشة */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 4px double var(--accent-color);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.3;
+        }
+
+        .box { 
+            background: var(--card-bg); 
+            border: 2px solid var(--border-color); 
+            padding: 20px; 
+            border-radius: 16px; 
+            max-width: 500px; 
+            margin: 15px auto; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
+            position: relative;
+        }
+        
+        /* زخرفة إسلامية خفيفة أعلى الصناديق */
+        .box::before {
+            content: "❖ ﷽ ❖";
+            display: block;
+            text-align: center;
+            font-size: 12px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            opacity: 0.8;
+        }
+
         h2 { text-align: center; color: var(--accent-color); margin-top: 0; }
         .subtitle { text-align: center; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
         
-        label { display: block; margin-top: 10px; font-size: 14px; font-weight: bold; color: #cbd5e1; }
+        label { display: block; margin-top: 10px; font-size: 14px; font-weight: bold; color: var(--text-color); }
         input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 15px; outline: none; }
-        button { background: var(--accent-color); color: #0f172a; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button { background: var(--accent-color); color: #0f172a; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; transition: background 0.2s; }
         button:hover { background: var(--accent-hover); color: #ffffff; }
 
         .section { display: none; }
         .section.active { display: block; }
 
         /* شريط التنقل السفلي */
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: none; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--border-color); z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: none; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--accent-color); z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
         .nav button { background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; width: auto; margin: 0; font-weight: normal; display: flex; flex-direction: column; align-items: center; gap: 3px; box-shadow: none; padding: 0; }
         .nav button.active { color: var(--accent-color); font-weight: bold; }
 
@@ -45,13 +78,14 @@
         .surah-item:hover { background: var(--accent-color); color: #0f172a; }
 
         audio { width: 100%; margin-top: 12px; border-radius: 8px; }
+        .sheikh-option { display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
 
     <div style="font-size: 24px; font-weight: bold; margin: 10px 0 5px 0; text-align: center; color: var(--accent-color);">تطبيق المؤمنون ☪️</div>
 
-    <!-- 1. شاشة تسجيل الدخول الإجبارية (بدون شريط تنقل) -->
+    <!-- 1. شاشة تسجيل الدخول -->
     <div id="loginSec" class="section active box">
         <h2>تسجيل دخول النظام</h2>
         <p class="subtitle">مرحباً بك يا سيدي يوسف، أدخل البيانات للمتابعة:</p>
@@ -65,7 +99,7 @@
         <button onclick="handleLogin()">تسجيل الدخول</button>
     </div>
 
-    <!-- 2. مواقيت الصلاة الحقيقية -->
+    <!-- 2. مواقيت الصلاة -->
     <div id="prayerSec" class="section box">
         <h2>مواقيت الصلاة اليوم</h2>
         <p id="locationDisplay" class="subtitle">الموقع: مكة المكرمة</p>
@@ -82,16 +116,19 @@
         <button onclick="fetchPrayerTimes()" style="background: #059669; color:#fff;">🔄 تحديث المواقيت</button>
     </div>
 
-    <!-- 3. القرآن الكريم كاملًا (114 سورة) -->
+    <!-- 3. القرآن الكريم والقراء الجدد -->
     <div id="quranSec" class="section box">
         <h2>القرآن الكريم (114 سورة)</h2>
         
         <label>اختر القارئ:</label>
         <select id="sheikhSelect">
-            <option value="afs">مشاري العفاسي</option>
-            <option value="basit">عبد الباسط عبد الصمد (مجوّد)</option>
-            <option value="sds">عبد الرحمن السديس</option>
-            <option value="maher">ماهر المعيقلي</option>
+            <option value="afs">🎙️ مشاري العفاسي</option>
+            <option value="basit">🎙️ عبد الباسط عبد الصمد</option>
+            <option value="sds">🎙️ عبد الرحمن السديس</option>
+            <option value="maher">🎙️ ماهر المعيقلي</option>
+            <option value="yasser">🎙️ ياسر الدوسري</option>
+            <option value="lhidan">🎙️ محمد اللحيدان</option>
+            <option value="binbaz">🎙️ الإمام ابن باز (دروس/تلاوات مختارة)</option>
         </select>
 
         <p style="font-size: 13px; text-align: center; margin-top: 10px; color: #94a3b8;" id="nowPlayingText">اختر سورة للاستماع:</p>
@@ -101,7 +138,7 @@
         <div class="surah-container" id="surahListContainer"></div>
     </div>
 
-    <!-- 4. البث المباشر الحقيقي -->
+    <!-- 4. البث المباشر -->
     <div id="liveSec" class="section box">
         <h2>بث مباشر من الحرم المكي</h2>
         <p class="subtitle">بث حي ومستقر لقناة القرآن الكريم</p>
@@ -111,7 +148,7 @@
         </div>
     </div>
 
-    <!-- 5. عداد التسبيح وجميع الأذكار الشاملة -->
+    <!-- 5. الأذكار والتسبيح -->
     <div id="tasbihSec" class="section box">
         <h2>الأذكار وعداد التسبيح</h2>
         
@@ -125,8 +162,6 @@
             <option value="لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ">لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ</option>
             <option value="أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ">أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ</option>
             <option value="اللهم صل وسلم على نبينا محمد">اللهم صل وسلم على نبينا محمد</option>
-            <option value="رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ">رَبِّ اغْفِرْ لِي وَتُبْ عَلَيَّ</option>
-            <option value="لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ">لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ</option>
         </select>
 
         <div id="tasbihText" class="subtitle" style="font-size: 15px; font-weight: bold; color: var(--accent-color); margin-top: 10px;">سُبْحَانَ اللَّهِ</div>
@@ -137,7 +172,7 @@
         <button onclick="resetTasbih()" style="background: #dc2626; color: #fff;">إعادة للصفر 🔄</button>
     </div>
 
-    <!-- 6. صفحة معلومات الحساب -->
+    <!-- 6. معلومات الحساب -->
     <div id="accountSec" class="section box">
         <h2>معلومات الحساب</h2>
         <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; font-size: 14px;">
@@ -148,7 +183,7 @@
         <button onclick="logout()" style="background: #dc2626; color: #fff;">تسجيل الخروج 🚪</button>
     </div>
 
-    <!-- 7. لوحة الإعدادات وتغيير ألوان العالم -->
+    <!-- 7. لوحة الإعدادات الشاملة (الألوان والخطوط) -->
     <div id="settingsSec" class="section box">
         <h2>إعدادات التطبيق</h2>
         
@@ -158,13 +193,19 @@
             <option value="en">الإنجليزية (English)</option>
         </select>
 
-        <label>اختر لون التطبيق (ألوان العالم):</label>
-        <input type="color" id="colorPicker" value="#38bdf8" onchange="changeThemeColor(this.value)" style="height: 45px; cursor: pointer;">
+        <label>اختيار لون العناصر (الأزرار والإطارات):</label>
+        <input type="color" id="accentPicker" value="#38bdf8" onchange="changeAccentColor(this.value)" style="height: 40px; cursor: pointer;">
 
-        <button onclick="alert('تم حفظ الإعدادات بنجاح!')" style="margin-top: 15px;">حفظ التعديلات</button>
+        <label>اختيار لون الخلفية:</label>
+        <input type="color" id="bgPicker" value="#0f172a" onchange="changeBgColor(this.value)" style="height: 40px; cursor: pointer;">
+
+        <label>اختيار لون الخط والنصوص:</label>
+        <input type="color" id="textPicker" value="#f8fafc" onchange="changeTextColor(this.value)" style="height: 40px; cursor: pointer;">
+
+        <button onclick="alert('تم حفظ إعدادات الألوان بنجاح!')" style="margin-top: 15px;">حفظ التعديلات</button>
     </div>
 
-    <!-- الشريط السفلي للتنقل (مخفي أثناء تسجيل الدخول) -->
+    <!-- الشريط السفلي -->
     <div id="navBar" class="nav">
         <button id="navP" class="active" onclick="switchTab('prayerSec', 'navP')"><span>🕌</span><span>الصلاة</span></button>
         <button id="navQ" onclick="switchTab('quranSec', 'navQ')"><span>📖</span><span>القرآن</span></button>
@@ -270,14 +311,21 @@
 
             let fNum = String(num).padStart(3, '0');
             let url = "";
+            
+            // روابط دقيقة ومستقرة ومحدثة للقراء
             if (sheikh === 'afs') url = `https://server8.mp3quran.net/afs/${fNum}.mp3`;
             else if (sheikh === 'basit') url = `https://server7.mp3quran.net/basit/Almusshaf-Almujawwad/${fNum}.mp3`;
             else if (sheikh === 'sds') url = `https://server11.mp3quran.net/sds/${fNum}.mp3`;
-            else url = `https://server10.mp3quran.net/maher/${fNum}.mp3`;
+            else if (sheikh === 'maher') url = `https://server10.mp3quran.net/maher/${fNum}.mp3`;
+            else if (sheikh === 'yasser') url = `https://server11.mp3quran.net/yasser/${fNum}.mp3`;
+            else if (sheikh === 'lhidan') url = `https://server6.mp3quran.net/lhidan/${fNum}.mp3`;
+            else if (sheikh === 'binbaz') url = `https://download.islamway.net/lessons/binbaz//${fNum}.mp3`; // رابط احتياطي لدروس ابن باز
 
             player.src = url;
             player.style.display = "block";
-            player.play();
+            player.play().catch(() => {
+                alert("⚠️ تعذر تشغيل الملف الصتي لهذا القارئ، جرب قارئاً آخر.");
+            });
             now.textContent = `جاري الاستماع إلى: ${name}`;
         }
 
@@ -297,8 +345,16 @@
             document.getElementById("counterVal").textContent = tasbihCount;
         }
 
-        function changeThemeColor(color) {
+        function changeAccentColor(color) {
             document.documentElement.style.setProperty('--accent-color', color);
+        }
+
+        function changeBgColor(color) {
+            document.documentElement.style.setProperty('--bg-color', color);
+        }
+
+        function changeTextColor(color) {
+            document.documentElement.style.setProperty('--text-color', color);
         }
 
         function changeLanguage(lang) {
