@@ -4,453 +4,285 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
-    <title>تطبيق المؤمنون - سيدي يوسف</title>
+    <title>تطبيق المؤمنون</title>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+        :root { 
+            --bg-color: #0f172a; 
+            --card-bg: #1e293b; 
+            --text-color: #f8fafc; 
+            --accent-color: #eab308; 
             --border-color: #334155;
-            --text-color: #f8fafc;
-            --accent-color: #eab308;
-            --accent-hover: #ca8a04;
         }
-
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; padding-bottom: 110px; transition: background 0.3s, color 0.3s; }
-        
-        .corner-ornament { position: fixed; width: 70px; height: 70px; border: 4px solid var(--accent-color); pointer-events: none; z-index: 9999; opacity: 0.5; }
-        .top-right { top: 10px; right: 10px; border-bottom: none; border-left: none; }
-        .top-left { top: 10px; left: 10px; border-bottom: none; border-right: none; }
-        .bottom-right { bottom: 85px; right: 10px; border-top: none; border-left: none; }
-        .bottom-left { bottom: 85px; left: 10px; border-top: none; border-right: none; }
-
-        .box { background: var(--card-bg); border: 2px solid var(--accent-color); padding: 20px; border-radius: 16px; max-width: 500px; margin: 15px auto; box-shadow: 0 8px 20px rgba(0,0,0,0.5); position: relative; }
-        
-        .box::before {
-            content: "❖ ﷽ ❖";
-            display: block;
+        body { 
+            font-family: sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            margin: 0; 
+            padding: 15px; 
+        }
+        .header {
             text-align: center;
-            font-size: 12px;
-            color: var(--accent-color);
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 2px solid var(--accent-color);
+            margin-bottom: 20px;
         }
-
-        h2 { text-align: center; color: var(--accent-color); margin-top: 0; }
-        .subtitle { text-align: center; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
-        
-        label { display: block; margin-top: 10px; font-size: 14px; font-weight: bold; color: var(--text-color); }
-        input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 15px; outline: none; }
-        button { background: var(--accent-color); color: #000; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; transition: background 0.2s; }
-        button:hover { background: var(--accent-hover); }
-
-        .section { display: none; }
-        .section.active { display: block; }
-
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: none; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--accent-color); z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
-        .nav button { background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; width: auto; margin: 0; font-weight: normal; display: flex; flex-direction: column; align-items: center; gap: 3px; box-shadow: none; padding: 0; }
-        .nav button.active { color: var(--accent-color); font-weight: bold; }
-
-        .prayer-row { display: flex; justify-content: space-between; padding: 10px 12px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; margin-top: 8px; font-size: 15px; }
-        .counter-display { font-size: 60px; font-weight: bold; text-align: center; color: var(--accent-color); margin: 15px 0; }
-        
-        .video-container { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-top: 15px; border: 1px solid var(--border-color); }
-        
-        .mushaf-view { line-height: 2.3; font-size: 23px; text-align: justify; padding: 18px; max-height: 260px; overflow-y: auto; background: #ffffff; color: #000000; border-radius: 8px; border: 2px solid var(--accent-color); margin-top: 10px; font-family: 'Amiri', serif; }
-        .ayah { padding: 3px; }
-        
-        audio { width: 100%; margin-top: 12px; border-radius: 8px; }
+        .header h1 {
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 24px;
+        }
+        .box { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: 16px; 
+            border: 2px solid var(--accent-color); 
+            margin: 15px auto; 
+            max-width: 500px; 
+        }
+        h2 { 
+            text-align: center; 
+            color: var(--accent-color); 
+            font-size: 20px;
+        }
+        input, select, button { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 10px; 
+            border-radius: 8px; 
+            border: none; 
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input, select {
+            background: #0f172a;
+            color: #fff;
+            border: 1px solid var(--border-color);
+        }
+        button { 
+            background: var(--accent-color); 
+            color: #000;
+            font-weight: bold; 
+            cursor: pointer; 
+        }
+        .prayer-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 10px; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+        .status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .section-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+        }
+        .section-tabs button {
+            background: #334155;
+            color: #fff;
+            font-size: 14px;
+            padding: 8px;
+        }
+        .section-tabs button.active {
+            background: var(--accent-color);
+            color: #000;
+        }
+        .app-section {
+            display: none;
+        }
+        .app-section.active {
+            display: block;
+        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
 
-    <div class="corner-ornament top-right"></div>
-    <div class="corner-ornament top-left"></div>
-    <div class="corner-ornament bottom-right"></div>
-    <div class="corner-ornament bottom-left"></div>
-
-    <div style="font-size: 24px; font-weight: bold; margin: 10px 0 5px 0; text-align: center; color: var(--accent-color);">تطبيق المؤمنون ☪️</div>
-
-    <!-- 1. شاشة تسجيل الدخول -->
-    <div id="loginSec" class="section active box">
-        <h2>تسجيل دخول النظام</h2>
-        <p class="subtitle">مرحباً بك يا سيدي يوسف، أدخل البيانات للمتابعة:</p>
-        
-        <label>اسم المستخدم:</label>
-        <input type="text" id="usernameInput" placeholder="أدخل اسمك هنا...">
-        
-        <label>كلمة المرور:</label>
-        <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور...">
-
-        <button onclick="handleLogin()">تسجيل الدخول</button>
+    <div class="header">
+        <h1>🌙 تطبيق المؤمنون</h1>
+        <p style="margin: 5px 0 0; color: #94a3b8; font-size: 14px;">رفيقك الإسلامي اليومي</p>
     </div>
 
-    <!-- 2. مواقيت الصلاة -->
-    <div id="prayerSec" class="section box">
-        <h2>مواقيت الصلاة اليوم</h2>
-        <p id="locationDisplay" class="subtitle">حدد موقعك التلقائي أو اكتب اسم مدينتك:</p>
+    <!-- أزرار التنقل بين الأقسام -->
+    <div class="section-tabs">
+        <button class="active" onclick="switchSection('prayer', this)">مواقيت الصلاة</button>
+        <button onclick="switchSection('quran', this)">القرآن الكريم</button>
+        <button onclick="switchSection('adhkar', this)">الأذكار</button>
+        <button onclick="switchSection('tasbih', this)">التسبيح</button>
+        <button onclick="switchSection('live', this)">البث المباشر</button>
+        <button onclick="switchSection('account', this)">حسابي والإعدادات</button>
+    </div>
+
+    <!-- 1. قسم مواقيت الصلاة والبحث والـ GPS -->
+    <div id="prayer" class="box app-section active">
+        <h2>مواقيت الصلاة</h2>
         
-        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-            <input type="text" id="cityNameInput" placeholder="اكتب اسم المدينة (مثال: Nice, Cairo, Riyadh)..." style="margin-top:0;">
-            <button onclick="searchByCityInput()" style="margin-top:0; width: 110px; background: var(--accent-color);">بحث 🔍</button>
+        <label for="cityInput" style="font-size: 14px; color: #cbd5e1;">اكتب اسم المدينة بالإنجليزية (مثال: Nice أو Riyadh):</label>
+        <input type="text" id="cityInput" placeholder="أدخل اسم المدينة هنا...">
+        
+        <button onclick="searchCity()">بحث باسم المدينة</button>
+        <button onclick="getLocationPrayerTimes()" style="background: #38bdf8; color: #000; margin-top: 5px;">📍 تحديد الموقع عبر GPS</button>
+        
+        <div id="prayerList" style="margin-top: 20px;">
+            <div class="prayer-row"><span>الفجر</span><b id="fajr">--:--</b></div>
+            <div class="prayer-row"><span>الظهر</span><b id="dhuhr">--:--</b></div>
+            <div class="prayer-row"><span>العصر</span><b id="asr">--:--</b></div>
+            <div class="prayer-row"><span>المغرب</span><b id="maghrib">--:--</b></div>
+            <div class="prayer-row"><span>العشاء</span><b id="isha">--:--</b></div>
         </div>
-
-        <label style="font-size: 13px; margin-top: 5px;">طريقة حساب المواقيت:</label>
-        <select id="methodSelect" onchange="onMethodChange()" style="padding: 8px; font-size: 13px; margin-top: 3px;">
-            <option value="4">مكة المكرمة (Umm al-Qura)</option>
-            <option value="2">رابطة العالم الإسلامي (Muslim World League)</option>
-            <option value="5">الهيئة المصرية العامة للمساحة</option>
-            <option value="1">جامعة العلوم الإسلامية بكراتشي</option>
-            <option value="3">جامعة أم القرى (تقويم مكة القديم)</option>
-        </select>
-
-        <div id="prayerListContainer" style="margin-top: 10px;">
-            <div class="prayer-row"><span>الفجر</span><strong id="pFajr">--:--</strong></div>
-            <div class="prayer-row"><span>الشروق</span><strong id="pSunrise">--:--</strong></div>
-            <div class="prayer-row"><span>الظهر</span><strong id="pDhuhr">--:--</strong></div>
-            <div class="prayer-row"><span>العصر</span><strong id="pAsr">--:--</strong></div>
-            <div class="prayer-row"><span>المغرب</span><strong id="pMaghrib">--:--</strong></div>
-            <div class="prayer-row"><span>العشاء</span><strong id="pIsha">--:--</strong></div>
-        </div>
-
-        <button onclick="requestUserLocation()" style="background: #059669; color:#fff;">📍 تحديد الموقع تلقائياً (GPS)</button>
-        <button onclick="setupNotifications()" style="background: #2563eb; color:#fff;">🔔 تفعيل تنبيهات الإشعارات</button>
+        <p id="status" class="status"></p>
     </div>
 
-    <!-- 3. القرآن الكريم -->
-    <div id="quranSec" class="section box">
-        <h2>القرآن الكريم (صفحة المصحف)</h2>
-        
-        <label>اختر السورة:</label>
-        <select id="surahSelect" onchange="loadSurahContent()">
-            <option value="">اختر السورة للاستماع والقراءة...</option>
-        </select>
-
-        <div id="mushafContent" class="mushaf-view">
-            <span style="color: #444; display: block; text-align: center;">اختر سورة لعرض الآيات واستماع التلاوة...</span>
-        </div>
-
-        <audio id="audioPlayer" controls style="display:none;"></audio>
+    <!-- 2. قسم القرآن الكريم -->
+    <div id="quran" class="box app-section">
+        <h2>القرآن الكريم</h2>
+        <p style="text-align: center; color: #94a3b8;">قريباً: تصفح سور القرآن الكريم والاستماع للقراء.</p>
     </div>
 
-    <!-- 4. البث المباشر -->
-    <div id="liveSec" class="section box">
-        <h2>بث مباشر من الحرم المكي</h2>
-        <p class="subtitle">بث حي مباشر لقناة القرآن الكريم</p>
-        
-        <div class="video-container">
-            <video id="liveVideo" controls autoplay playsinline style="width: 100%; height: 100%; max-height: 280px; display: block;"></video>
-        </div>
-        
-        <button onclick="reloadStream()" style="background: #059669; color: #fff; margin-top: 10px;">إعادة محاولة الاتصال بالبث 🔄</button>
+    <!-- 3. قسم الأذكار -->
+    <div id="adhkar" class="box app-section">
+        <h2>أذكار الصباح والمساء</h2>
+        <p style="text-align: center; color: #94a3b8;">أذكار المسلم اليومية الحصينة.</p>
     </div>
 
-    <!-- 5. الأذكار والتسبيح -->
-    <div id="tasbihSec" class="section box">
-        <h2>الأذكار وعداد التسبيح</h2>
-        
-        <label>اختر الذكر المطلوب:</label>
-        <select id="dhikrSelect" onchange="changeDhikr(this.value)">
-            <option value="سُبْحَانَ اللَّهِ">سُبْحَانَ اللَّهِ</option>
-            <option value="الْحَمْدُ لِلَّهِ">الْحَمْدُ لِلَّهِ</option>
-            <option value="لَا إِلَهَ إِلَّا اللَّهُ">لَا إِلَهَ إِلَّا اللَّهُ</option>
-            <option value="اللَّهُ أَكْبَرُ">اللَّهُ أَكْبَرُ</option>
-            <option value="سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ</option>
-            <option value="أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ">أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ</option>
-        </select>
-
-        <div id="tasbihText" class="subtitle" style="font-size: 16px; font-weight: bold; color: var(--accent-color); margin-top: 10px;">سُبْحَانَ اللَّهِ</div>
-        
-        <div id="counterVal" class="counter-display">0</div>
-
-        <button onclick="incrementTasbih()" style="padding: 15px; font-size: 16px;">اضغط للتسبيح 👆</button>
-        <button onclick="resetTasbih()" style="background: #dc2626; color: #fff;">إعادة للصفر 🔄</button>
+    <!-- 4. قسم التسبيح -->
+    <div id="tasbih" class="box app-section" style="text-align: center;">
+        <h2>السبحة الإلكترونية</h2>
+        <h1 id="counter" style="font-size: 40px; color: var(--accent-color);">0</h1>
+        <button onclick="incrementTasbih()">سبحان الله</button>
+        <button onclick="resetTasbih()" style="background: #ef4444; color: #fff; margin-top: 5px;">إعادة الصفر</button>
     </div>
 
-    <!-- 6. معلومات الحساب -->
-    <div id="accountSec" class="section box">
-        <h2>معلومات الحساب</h2>
-        <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; font-size: 14px;">
-            <p><strong>اسم المستخدم:</strong> <span id="accName">--</span></p>
-            <p><strong>حالة الحساب:</strong> <span style="color: #10b981;">نشط وموثق ✅</span></p>
-            <p><strong>نوع العضوية:</strong> المطور والمصمم الرئيسي (سيدي يوسف)</p>
-        </div>
-        <button onclick="logout()" style="background: #dc2626; color: #fff;">تسجيل الخروج 🚪</button>
+    <!-- 5. قسم البث المباشر -->
+    <div id="live" class="box app-section">
+        <h2>بث مباشر (إذاعة الحرم المكي)</h2>
+        <p style="text-align: center; color: #94a3b8;">استمع إلى القرآن الكريم على مدار الساعة.</p>
     </div>
 
-    <!-- 7. لوحة الإعدادات -->
-    <div id="settingsSec" class="section box">
-        <h2>إعدادات التطبيق</h2>
+    <!-- 6. قسم الحساب والإعدادات -->
+    <div id="account" class="box app-section">
+        <h2>حسابي والإعدادات</h2>
+        <input type="text" placeholder="اسم المستخدم">
+        <input type="email" placeholder="البريد الإلكتروني">
+        <button>حفظ التغييرات</button>
         
-        <label>اختيار لون الإطارات والعناصر:</label>
-        <input type="color" id="accentPicker" value="#eab308" onchange="changeAccentColor(this.value)" style="height: 40px; cursor: pointer;">
-
-        <label>اختيار لون الخلفية:</label>
-        <input type="color" id="bgPicker" value="#0f172a" onchange="changeBgColor(this.value)" style="height: 40px; cursor: pointer;">
-
-        <button onclick="alert('تم حفظ إعدادات التطبيق بنجاح!')" style="margin-top: 15px;">حفظ الإعدادات</button>
-    </div>
-
-    <!-- الشريط السفلي -->
-    <div id="navBar" class="nav">
-        <button id="navP" class="active" onclick="switchTab('prayerSec', 'navP')"><span>🕌</span><span>الصلاة</span></button>
-        <button id="navQ" onclick="switchTab('quranSec', 'navQ')"><span>📖</span><span>القرآن</span></button>
-        <button id="navL" onclick="switchTab('liveSec', 'navL')"><span>🕋</span><span>البث</span></button>
-        <button id="navT" onclick="switchTab('tasbihSec', 'navT')"><span>📿</span><span>الأذكار</span></button>
-        <button id="navAcc" onclick="switchTab('accountSec', 'navAcc')"><span>👤</span><span>حسابي</span></button>
-        <button id="navSet" onclick="switchTab('settingsSec', 'navSet')"><span>⚙️</span><span>الإعدادات</span></button>
+        <h3 style="color: var(--accent-color); margin-top: 20px; font-size: 16px;">الإشعارات</h3>
+        <button onclick="requestNotifications()">🔔 تفعيل تنبيهات الإشعارات</button>
     </div>
 
     <script>
-        const surahsList = [
-            "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
-            "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
-            "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم",
-            "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
-            "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق",
-            "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
-            "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج",
-            "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس",
-            "التكوير", "الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد",
-            "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات",
-            "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر",
-            "المسد", "الإخلاص", "الفلق", "الناس"
-        ];
-
-        let tasbihCount = 0;
-        let lastCoords = null;
-        let lastCityName = "";
-
-        window.onload = function() {
-            populateSurahDropdown();
-            initStream();
-            const loggedUser = localStorage.getItem('loggedUser');
-            if (loggedUser) {
-                appLoginSuccess(loggedUser);
-            }
-        };
-
-        // --- PWA Service Worker Registration ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker مسجل بنجاح!', reg))
-                    .catch(err => console.error('فشل التسجيل:', err));
-            });
+        // تنقل بين الأقسام
+        function switchSection(sectionId, btn) {
+            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.section-tabs button').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            btn.classList.add('active');
         }
 
-        // --- Notifications Permission Function ---
-        async function setupNotifications() {
-            if (!('Notification' in window)) {
-                alert("متصفحك لا يدعم الإشعارات.");
+        // دالة تحديث واجهة المواقيت
+        function updatePrayerUI(data, locationName) {
+            const t = data.data.timings;
+            document.getElementById('fajr').textContent = t.Fajr;
+            document.getElementById('dhuhr').textContent = t.Dhuhr;
+            document.getElementById('asr').textContent = t.Asr;
+            document.getElementById('maghrib').textContent = t.Maghrib;
+            document.getElementById('isha').textContent = t.Isha;
+            document.getElementById('status').textContent = `تم جلب المواقيت لـ: ${locationName} ✅`;
+        }
+
+        // 1. البحث اليدوي بالمدينة
+        function searchCity() {
+            const city = document.getElementById('cityInput').value.trim();
+            const status = document.getElementById('status');
+            
+            if(!city) {
+                alert('الرجاء كتابة اسم المدينة أولاً');
                 return;
             }
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-                new Notification("تطبيق المؤمنون", { body: "تم تفعيل التنبيهات بنجاح!" });
-            } else {
-                alert("تم رفض إذن الإشعارات.");
-            }
-        }
-
-        function populateSurahDropdown() {
-            const select = document.getElementById("surahSelect");
-            surahsList.forEach((name, index) => {
-                let opt = document.createElement("option");
-                opt.value = index + 1;
-                opt.textContent = `${index + 1}. سورة ${name}`;
-                select.appendChild(opt);
-            });
-        }
-
-        async function loadSurahContent() {
-            const id = document.getElementById("surahSelect").value;
-            if (!id) return;
-
-            const contentDiv = document.getElementById("mushafContent");
-            contentDiv.innerHTML = "جاري تحميل الآيات...";
-
-            try {
-                const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}`);
-                const data = await res.json();
-                let html = "";
-                data.data.ayahs.forEach(a => {
-                    html += `<span class="ayah">${a.text} ﴿${a.numberInSurah}﴾</span> `;
-                });
-                contentDiv.innerHTML = html;
-
-                const audio = document.getElementById("audioPlayer");
-                audio.src = `https://server8.mp3quran.net/afs/${String(id).padStart(3, '0')}.mp3`;
-                audio.style.display = "block";
-                audio.play();
-            } catch (e) {
-                contentDiv.innerHTML = "تعذر تحميل الآيات، تحقق من الاتصال بالإنترنت.";
-            }
-        }
-
-        function initStream() {
-            const videoSrc = "https://cdn-globecast.akamaized.net/live/eds/saudi_quran/hls_roku/index.m3u8";
-            const video = document.getElementById('liveVideo');
             
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(videoSrc);
-                hls.attachMedia(video);
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = videoSrc;
-            }
-        }
-
-        function reloadStream() {
-            initStream();
-            const video = document.getElementById('liveVideo');
-            video.play();
-        }
-
-        function handleLogin() {
-            const user = document.getElementById("usernameInput").value.trim();
-            const pass = document.getElementById("passwordInput").value.trim();
-            if (!user || !pass) {
-                alert("⚠️ يرجى إدخال البيانات المطلوبة!");
-                return;
-            }
-            localStorage.setItem('loggedUser', user);
-            appLoginSuccess(user);
-        }
-
-        function appLoginSuccess(username) {
-            document.getElementById("loginSec").classList.remove("active");
-            document.getElementById("prayerSec").classList.add("active");
-            document.getElementById("navBar").style.display = "flex";
-            document.getElementById("accName").textContent = username;
+            status.textContent = 'جاري البحث عن المواقيت...';
+            const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=&method=4`;
             
-            requestUserLocation();
-        }
-
-        function logout() {
-            localStorage.removeItem('loggedUser');
-            location.reload();
-        }
-
-        function switchTab(secId, btnId) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById(secId).classList.add('active');
-            document.getElementById(btnId).classList.add('active');
-        }
-
-        function requestUserLocation() {
-            const locDisplay = document.getElementById("locationDisplay");
-            if (navigator.geolocation) {
-                locDisplay.textContent = "جاري طلب إذن الوصول للموقع الجغرافي (GPS)...";
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lon = position.coords.longitude;
-                        lastCoords = { lat, lon };
-                        lastCityName = "";
-                        locDisplay.textContent = `تم تحديد موقعك بدقة عبر الـ GPS 📍`;
-                        fetchPrayerTimesByCoords(lat, lon);
-                    },
-                    (error) => {
-                        locDisplay.textContent = "⚠️ تعذر جلب الـ GPS. يرجى كتابة اسم مدينتك يدوياً.";
-                        searchByCityInput();
-                    },
-                    { timeout: 8000 }
-                );
-            } else {
-                locDisplay.textContent = "متصفحك لا يدعم الـ GPS. اكتب اسم مدينتك يدوياً.";
-            }
-        }
-
-        function searchByCityInput() {
-            const cityName = document.getElementById("cityNameInput").value.trim();
-            if (!cityName && !lastCityName && !lastCoords) {
-                fetchPrayerTimesByCity("Nice");
-                return;
-            }
-            if (cityName) {
-                lastCityName = cityName;
-                lastCoords = null;
-            }
-            
-            const targetCity = lastCityName || "Nice";
-            const locDisplay = document.getElementById("locationDisplay");
-            locDisplay.textContent = `جاري جلب مواقيت الصلاة لمدينة: ${targetCity}...`;
-            
-            fetchPrayerTimesByCity(targetCity);
-        }
-
-        function onMethodChange() {
-            if (lastCoords) {
-                fetchPrayerTimesByCoords(lastCoords.lat, lastCoords.lon);
-            } else {
-                searchByCityInput();
-            }
-        }
-
-        function fetchPrayerTimesByCoords(lat, lon) {
-            const method = document.getElementById("methodSelect").value;
-            fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=${method}`)
-            .then(res => res.json())
-            .then(data => updatePrayerUI(data))
-            .catch(() => {
-                document.getElementById("locationDisplay").textContent = "تعذر جلب الأوقات بالإحداثيات.";
-            });
-        }
-
-        function fetchPrayerTimesByCity(city) {
-            const method = document.getElementById("methodSelect").value;
-            fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&method=${method}`)
+            fetch(url)
             .then(res => res.json())
             .then(data => {
-                if (data.code === 200) {
-                    updatePrayerUI(data);
-                    document.getElementById("locationDisplay").textContent = `تم جلب المواقيت لمدينة: ${city} بنجاح ✅`;
+                if(data.code === 200) {
+                    updatePrayerUI(data, city);
                 } else {
-                    alert("عذراً، لم يتم العثور على هذه المدينة. تأكد من كتابتها بالإنجليزي (مثال: Nice, Cairo, Riyadh)");
+                    status.textContent = 'لم يتم العثور على المدينة، تأكد من كتابتها صحيحة بالإنجليزية ❌';
                 }
             })
-            .catch(() => {
-                alert("حدث خطأ في الاتصال بالخادم.");
+            .catch(() => status.textContent = 'خطأ في الاتصال بالخادم 🌐');
+        }
+
+        // 2. جلب المواقيت تلقائياً عبر الـ GPS
+        function getLocationPrayerTimes() {
+            const status = document.getElementById('status');
+            if (!navigator.geolocation) {
+                alert('المتصفح لا يدعم تحديد الموقع الجغرافي');
+                return;
+            }
+
+            status.textContent = 'جاري تحديد موقعك عبر الـ GPS...';
+            navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                const url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=4`;
+                
+                fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.code === 200) {
+                        updatePrayerUI(data, 'موقعك الحالي');
+                    } else {
+                        status.textContent = 'فشل في جلب المواقيت للإحداثيات الحالية ❌';
+                    }
+                })
+                .catch(() => status.textContent = 'خطأ في الاتصال بالخادم 🌐');
+            }, () => {
+                status.textContent = 'تم رفض إذن الوصول للموقع أو حدث خطأ ❌';
+                alert('يرجى السماح للمتصفح بالوصول إلى موقعك الجغرافي (GPS)');
             });
         }
 
-        function updatePrayerUI(data) {
-            if (data.code === 200) {
-                const t = data.data.timings;
-                document.getElementById("pFajr").textContent = t.Fajr;
-                document.getElementById("pSunrise").textContent = t.Sunrise;
-                document.getElementById("pDhuhr").textContent = t.Dhuhr;
-                document.getElementById("pAsr").textContent = t.Asr;
-                document.getElementById("pMaghrib").textContent = t.Maghrib;
-                document.getElementById("pIsha").textContent = t.Isha;
-            }
-        }
-
-        function changeDhikr(val) {
-            document.getElementById("tasbihText").textContent = val;
-            tasbihCount = 0;
-            document.getElementById("counterVal").textContent = tasbihCount;
-        }
-
+        // سبحة إلكترونية بسيطة
+        let count = 0;
         function incrementTasbih() {
-            tasbihCount++;
-            document.getElementById("counterVal").textContent = tasbihCount;
+            count++;
+            document.getElementById('counter').textContent = count;
         }
-
         function resetTasbih() {
-            tasbihCount = 0;
-            document.getElementById("counterVal").textContent = tasbihCount;
+            count = 0;
+            document.getElementById('counter').textContent = count;
         }
 
-        function changeAccentColor(color) {
-            document.documentElement.style.setProperty('--accent-color', color);
+        // طلب الإشعارات
+        function requestNotifications() {
+            if (!("Notification" in window)) {
+                alert("متصفحك لا يدعم الإشعارات");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    alert("تم تفعيل الإشعارات بنجاح! 🔔");
+                    new Notification("تطبيق المؤمنون", { body: "تم تفعيل التنبيهات الدينية بنجاح." });
+                } else {
+                    alert("تم رفض إذن الإشعارات من المتصفح.");
+                }
+            });
         }
 
-        function changeBgColor(color) {
-            document.documentElement.style.setProperty('--bg-color', color);
+        // تسجيل Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('Service Worker Registered'));
         }
     </script>
 </body>
