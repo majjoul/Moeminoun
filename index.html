@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
     <title>تطبيق المؤمنون - سيدي يوسف</title>
     <style>
         :root {
@@ -85,18 +86,16 @@
         <button onclick="handleLogin()">تسجيل الدخول</button>
     </div>
 
-    <!-- 2. مواقيت الصلاة (مع دعم الـ GPS أو البحث اليدوي للمدينة وطريقة الحساب) -->
+    <!-- 2. مواقيت الصلاة -->
     <div id="prayerSec" class="section box">
         <h2>مواقيت الصلاة اليوم</h2>
         <p id="locationDisplay" class="subtitle">حدد موقعك التلقائي أو اكتب اسم مدينتك:</p>
         
-        <!-- حقل إدخال اسم المدينة للبحث اليدوي -->
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-            <input type="text" id="cityNameInput" placeholder="اكتب اسم المدينة (مثال: Cairo, Riyadh)..." style="margin-top:0;">
+            <input type="text" id="cityNameInput" placeholder="اكتب اسم المدينة (مثال: Nice, Cairo, Riyadh)..." style="margin-top:0;">
             <button onclick="searchByCityInput()" style="margin-top:0; width: 110px; background: var(--accent-color);">بحث 🔍</button>
         </div>
 
-        <!-- خيار طريقة الحساب لضبط الدقة 100% -->
         <label style="font-size: 13px; margin-top: 5px;">طريقة حساب المواقيت:</label>
         <select id="methodSelect" onchange="onMethodChange()" style="padding: 8px; font-size: 13px; margin-top: 3px;">
             <option value="4">مكة المكرمة (Umm al-Qura)</option>
@@ -116,9 +115,10 @@
         </div>
 
         <button onclick="requestUserLocation()" style="background: #059669; color:#fff;">📍 تحديد الموقع تلقائياً (GPS)</button>
+        <button onclick="setupNotifications()" style="background: #2563eb; color:#fff;">🔔 تفعيل تنبيهات الإشعارات</button>
     </div>
 
-    <!-- 3. القرآن الكريم وتصفح السور -->
+    <!-- 3. القرآن الكريم -->
     <div id="quranSec" class="section box">
         <h2>القرآن الكريم (صفحة المصحف)</h2>
         
@@ -219,8 +219,8 @@
         ];
 
         let tasbihCount = 0;
-        let lastCoords = null; // لتخزين إحداثيات الـ GPS الأخيرة
-        let lastCityName = ""; // لتخزين آخر مدينة تم البحث عنها
+        let lastCoords = null;
+        let lastCityName = "";
 
         window.onload = function() {
             populateSurahDropdown();
@@ -230,6 +230,29 @@
                 appLoginSuccess(loggedUser);
             }
         };
+
+        // --- PWA Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker مسجل بنجاح!', reg))
+                    .catch(err => console.error('فشل التسجيل:', err));
+            });
+        }
+
+        // --- Notifications Permission Function ---
+        async function setupNotifications() {
+            if (!('Notification' in window)) {
+                alert("متصفحك لا يدعم الإشعارات.");
+                return;
+            }
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                new Notification("تطبيق المؤمنون", { body: "تم تفعيل التنبيهات بنجاح!" });
+            } else {
+                alert("تم رفض إذن الإشعارات.");
+            }
+        }
 
         function populateSurahDropdown() {
             const select = document.getElementById("surahSelect");
@@ -344,8 +367,7 @@
         function searchByCityInput() {
             const cityName = document.getElementById("cityNameInput").value.trim();
             if (!cityName && !lastCityName && !lastCoords) {
-                // افتراضي إذا لم يُدخل شيء
-                fetchPrayerTimesByCity("Riyadh");
+                fetchPrayerTimesByCity("Nice");
                 return;
             }
             if (cityName) {
@@ -353,7 +375,7 @@
                 lastCoords = null;
             }
             
-            const targetCity = lastCityName || "Riyadh";
+            const targetCity = lastCityName || "Nice";
             const locDisplay = document.getElementById("locationDisplay");
             locDisplay.textContent = `جاري جلب مواقيت الصلاة لمدينة: ${targetCity}...`;
             
@@ -361,7 +383,6 @@
         }
 
         function onMethodChange() {
-            // عند تغيير طريقة الحساب من القائمة، نعيد جلب الأوقات مباشرة بناءً على آخر موقع أو مدينة
             if (lastCoords) {
                 fetchPrayerTimesByCoords(lastCoords.lat, lastCoords.lon);
             } else {
@@ -388,7 +409,7 @@
                     updatePrayerUI(data);
                     document.getElementById("locationDisplay").textContent = `تم جلب المواقيت لمدينة: ${city} بنجاح ✅`;
                 } else {
-                    alert("عذراً، لم يتم العثور على هذه المدينة. تأكد من كتابتها بالإنجليزي (مثال: Cairo, Riyadh)");
+                    alert("عذراً، لم يتم العثور على هذه المدينة. تأكد من كتابتها بالإنجليزي (مثال: Nice, Cairo, Riyadh)");
                 }
             })
             .catch(() => {
