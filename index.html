@@ -78,7 +78,6 @@
         .surah-item:hover { background: var(--accent-color); color: #0f172a; }
 
         audio { width: 100%; margin-top: 12px; border-radius: 8px; }
-        .sheikh-option { display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
@@ -116,19 +115,18 @@
         <button onclick="fetchPrayerTimes()" style="background: #059669; color:#fff;">🔄 تحديث المواقيت</button>
     </div>
 
-    <!-- 3. القرآن الكريم والقراء الجدد -->
+    <!-- 3. القرآن الكريم والقراء -->
     <div id="quranSec" class="section box">
         <h2>القرآن الكريم (114 سورة)</h2>
         
         <label>اختر القارئ:</label>
-        <select id="sheikhSelect">
+        <select id="sheikhSelect" onchange="onSheikhChange()">
             <option value="afs">🎙️ مشاري العفاسي</option>
-            <option value="basit">🎙️ عبد الباسط عبد الصمد</option>
+            <option value="basit">🎙️ عبد الباسط عبد الصمد (المجود)</option>
             <option value="sds">🎙️ عبد الرحمن السديس</option>
             <option value="maher">🎙️ ماهر المعيقلي</option>
             <option value="yasser">🎙️ ياسر الدوسري</option>
             <option value="lhidan">🎙️ محمد اللحيدان</option>
-            <option value="binbaz">🎙️ الإمام ابن باز (دروس/تلاوات مختارة)</option>
         </select>
 
         <p style="font-size: 13px; text-align: center; margin-top: 10px; color: #94a3b8;" id="nowPlayingText">اختر سورة للاستماع:</p>
@@ -144,7 +142,7 @@
         <p class="subtitle">بث حي ومستقر لقناة القرآن الكريم</p>
         
         <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/live_stream?channel=UC5e2qXn6Xw20x1" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/01G82C0E57I?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
 
@@ -254,6 +252,12 @@
             });
         }
 
+        function onSheikhChange() {
+            document.getElementById("audioPlayer").pause();
+            document.getElementById("audioPlayer").style.display = "none";
+            document.getElementById("nowPlayingText").textContent = "اختر سورة للاستماع:";
+        }
+
         function handleLogin() {
             const user = document.getElementById("usernameInput").value.trim();
             const pass = document.getElementById("passwordInput").value.trim();
@@ -289,7 +293,7 @@
         }
 
         function fetchPrayerTimes() {
-            fetch(`https://api.aladhan.com/v1/timingsByCity?city=Makkah&country=Saudi Arabia&method=4`)
+            fetch(`https://api.aladhan.com/v1/timingsByCity?city=Makkah&country=Saudi%20Arabia&method=4`)
             .then(res => res.json())
             .then(data => {
                 if (data.code === 200) {
@@ -312,19 +316,17 @@
             let fNum = String(num).padStart(3, '0');
             let url = "";
             
-            // روابط دقيقة ومستقرة ومحدثة للقراء
             if (sheikh === 'afs') url = `https://server8.mp3quran.net/afs/${fNum}.mp3`;
             else if (sheikh === 'basit') url = `https://server7.mp3quran.net/basit/Almusshaf-Almujawwad/${fNum}.mp3`;
             else if (sheikh === 'sds') url = `https://server11.mp3quran.net/sds/${fNum}.mp3`;
-            else if (sheikh === 'maher') url = `https://server10.mp3quran.net/maher/${fNum}.mp3`;
+            else if (sheikh === 'maher') url = `https://server12.mp3quran.net/maher/${fNum}.mp3`;
             else if (sheikh === 'yasser') url = `https://server11.mp3quran.net/yasser/${fNum}.mp3`;
             else if (sheikh === 'lhidan') url = `https://server6.mp3quran.net/lhidan/${fNum}.mp3`;
-            else if (sheikh === 'binbaz') url = `https://download.islamway.net/lessons/binbaz//${fNum}.mp3`; // رابط احتياطي لدروس ابن باز
 
             player.src = url;
             player.style.display = "block";
             player.play().catch(() => {
-                alert("⚠️ تعذر تشغيل الملف الصتي لهذا القارئ، جرب قارئاً آخر.");
+                alert("⚠️ تعذر تشغيل الملف الصوتي، تأكد من اتصال الإنترنت.");
             });
             now.textContent = `جاري الاستماع إلى: ${name}`;
         }
