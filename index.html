@@ -24,7 +24,7 @@
         .bottom-right { bottom: 80px; right: 10px; border-top: none; border-left: none; }
         .bottom-left { bottom: 80px; left: 10px; border-top: none; border-right: none; }
 
-        /* تعديل الصناديق لتأخذ شاشة كاملة ومريحة للموبايل */
+        /* تصميم الصناديق بملء الشاشة */
         .box { background: var(--card-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 12px; width: 100%; max-width: 100%; margin: 5px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; }
         
         .box::before {
@@ -48,8 +48,8 @@
         .section { display: none; }
         .section.active { display: block; }
 
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: none; justify-content: space-around; padding: 10px 0; border-top: 2px solid var(--accent-color); z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
-        .nav button { background: none; border: none; color: #94a3b8; font-size: 11px; cursor: pointer; width: auto; margin: 0; font-weight: normal; display: flex; flex-direction: column; align-items: center; gap: 3px; box-shadow: none; padding: 0; }
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: none; justify-content: space-around; padding: 8px 0; border-top: 2px solid var(--accent-color); z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.5); overflow-x: auto; }
+        .nav button { background: none; border: none; color: #94a3b8; font-size: 10px; cursor: pointer; width: auto; margin: 0; font-weight: normal; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: none; padding: 0; min-width: 45px; }
         .nav button.active { color: var(--accent-color); font-weight: bold; }
 
         .prayer-row { display: flex; justify-content: space-between; padding: 10px 12px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; margin-top: 8px; font-size: 15px; }
@@ -57,7 +57,7 @@
         
         .video-container { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border-color); }
         
-        /* عرض القرآن بشاشة كاملة وتمرير يدوي حر */
+        /* شاشة القرآن المكتوب بشاشة كاملة وتمرير يدوي حر */
         .mushaf-full-view { 
             line-height: 2.8; 
             font-size: 22px; 
@@ -132,33 +132,45 @@
         <button onclick="setupNotifications()" style="background: #2563eb; color:#fff;">🔔 تفعيل تنبيهات الإشعارات</button>
     </div>
 
-    <!-- 3. القرآن الكريم (شاشة كاملة وتمرير يدوي حر) -->
-    <div id="quranSec" class="section box">
-        <h2>القرآن الكريم (القراءة الكاملة)</h2>
-        <p class="subtitle">اختر السورة للاستماع والقراءة بتمرير يدوي مريح</p>
+    <!-- 3. صفحة القرآن المكتوب -->
+    <div id="quranReadSec" class="section box">
+        <h2>القرآن الكريم (قراءة مكتوبة)</h2>
+        <p class="subtitle">تصفح وقرأ السور بملء الشاشة وبتمرير يدوي حر</p>
 
-        <select id="surahSelect" onchange="loadFullSurah()" style="margin-top:0; padding: 10px; font-size: 14px;">
-            <option value="">اختر السورة للقراءة والاستماع...</option>
+        <select id="surahReadSelect" onchange="loadFullSurah()" style="margin-top:0; padding: 10px; font-size: 14px;">
+            <option value="">اختر السورة للقراءة...</option>
         </select>
 
-        <!-- صندوق العرض بملء الشاشة مع التمرير اليدوي السلس -->
         <div id="mushafFullContainer" class="mushaf-full-view">
-            <span style="color: #666; display: block; text-align: center; padding: 40px;">اختر سورة من القائمة أعلاه لعرض الآيات بكامل الشاشة...</span>
-        </div>
-
-        <div style="margin-top: 12px; background: var(--bg-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
-            <label style="margin-top: 0; font-size: 13px;">اختر القارئ:</label>
-            <select id="reciterSelect" onchange="updateAudioSource()" style="padding: 8px; font-size: 13px; margin-top: 4px;">
-                <option value="https://server8.mp3quran.net/afs/">مشاري العفاسي</option>
-                <option value="https://server11.mp3quran.net/sds/">عبد الرحمن السديس</option>
-                <option value="https://server7.mp3quran.net/basit/">عبد الباسط عبد الصمد</option>
-                <option value="https://server9.mp3quran.net/shuraim/">سعود الشريم</option>
-            </select>
-            <audio id="audioPlayer" controls style="display:block; margin-top: 8px;"></audio>
+            <span style="color: #666; display: block; text-align: center; padding: 40px;">اختر سورة من القائمة لعرض الآيات بكامل الشاشة...</span>
         </div>
     </div>
 
-    <!-- 4. البث المباشر -->
+    <!-- 4. صفحة القرآن المسموع -->
+    <div id="quranAudioSec" class="section box">
+        <h2>القرآن الكريم (الاستماع والصوت)</h2>
+        <p class="subtitle">استمع لتلاوة القرآن الكريم بأصوات نخبة من القراء</p>
+
+        <label>اختر السورة للاستماع:</label>
+        <select id="surahAudioSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
+            <option value="">اختر السورة للاستماع...</option>
+        </select>
+
+        <label style="margin-top: 15px;">اختر القارئ:</label>
+        <select id="reciterSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
+            <option value="https://server8.mp3quran.net/afs/">مشاري العفاسي</option>
+            <option value="https://server11.mp3quran.net/sds/">عبد الرحمن السديس</option>
+            <option value="https://server7.mp3quran.net/basit/">عبد الباسط عبد الصمد</option>
+            <option value="https://server9.mp3quran.net/shuraim/">سعود الشريم</option>
+        </select>
+
+        <div style="margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+            <p style="margin: 0 0 10px 0; font-weight: bold; color: var(--accent-color);">مشغل الصوت المباشر 🎧</p>
+            <audio id="audioPlayer" controls style="width: 100%;"></audio>
+        </div>
+    </div>
+
+    <!-- 5. البث المباشر -->
     <div id="liveSec" class="section box">
         <h2>بث مباشر من الحرم المكي</h2>
         <p class="subtitle">بث حي مباشر لقناة القرآن الكريم</p>
@@ -170,7 +182,7 @@
         <button onclick="reloadStream()" style="background: #059669; color: #fff; margin-top: 10px;">إعادة محاولة الاتصال بالبث 🔄</button>
     </div>
 
-    <!-- 5. الأذكار والتسبيح -->
+    <!-- 6. الأذكار والتسبيح -->
     <div id="tasbihSec" class="section box">
         <h2>الأذكار وعداد التسبيح</h2>
         
@@ -192,7 +204,7 @@
         <button onclick="resetTasbih()" style="background: #dc2626; color: #fff;">إعادة للصفر 🔄</button>
     </div>
 
-    <!-- 6. معلومات الحساب -->
+    <!-- 7. معلومات الحساب -->
     <div id="accountSec" class="section box">
         <h2>معلومات الحساب</h2>
         <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; font-size: 14px;">
@@ -203,7 +215,7 @@
         <button onclick="logout()" style="background: #dc2626; color: #fff;">تسجيل الخروج 🚪</button>
     </div>
 
-    <!-- 7. لوحة الإعدادات -->
+    <!-- 8. لوحة الإعدادات -->
     <div id="settingsSec" class="section box">
         <h2>إعدادات التطبيق</h2>
         
@@ -216,10 +228,11 @@
         <button onclick="alert('تم حفظ إعدادات التطبيق بنجاح!')" style="margin-top: 15px;">حفظ الإعدادات</button>
     </div>
 
-    <!-- الشريط السفلي -->
+    <!-- الشريط السفلي المحدث ليشمل الصفحتين -->
     <div id="navBar" class="nav">
         <button id="navP" class="active" onclick="switchTab('prayerSec', 'navP')"><span>🕌</span><span>الصلاة</span></button>
-        <button id="navQ" onclick="switchTab('quranSec', 'navQ')"><span>📖</span><span>القرآن</span></button>
+        <button id="navQR" onclick="switchTab('quranReadSec', 'navQR')"><span>📖</span><span>مكتوب</span></button>
+        <button id="navQA" onclick="switchTab('quranAudioSec', 'navQA')"><span>🎧</span><span>مسموع</span></button>
         <button id="navL" onclick="switchTab('liveSec', 'navL')"><span>🕋</span><span>البث</span></button>
         <button id="navT" onclick="switchTab('tasbihSec', 'navT')"><span>📿</span><span>الأذكار</span></button>
         <button id="navAcc" onclick="switchTab('accountSec', 'navAcc')"><span>👤</span><span>حسابي</span></button>
@@ -242,13 +255,12 @@
             "المسد", "الإخلاص", "الفلق", "الناس"
         ];
 
-        let currentSelectedSurahNum = 1;
         let tasbihCount = 0;
         let lastCoords = null;
         let lastCityName = "";
 
         window.onload = function() {
-            populateSurahDropdown();
+            populateDropdowns();
             initStream();
             const loggedUser = localStorage.getItem('loggedUser');
             if (loggedUser) {
@@ -275,20 +287,26 @@
             }
         }
 
-        function populateSurahDropdown() {
-            const select = document.getElementById("surahSelect");
+        function populateDropdowns() {
+            const readSelect = document.getElementById("surahReadSelect");
+            const audioSelect = document.getElementById("surahAudioSelect");
+
             surahsList.forEach((name, index) => {
-                let opt = document.createElement("option");
-                opt.value = index + 1;
-                opt.textContent = `${index + 1}. سورة ${name}`;
-                select.appendChild(opt);
+                let optRead = document.createElement("option");
+                optRead.value = index + 1;
+                optRead.textContent = `${index + 1}. سورة ${name}`;
+                readSelect.appendChild(optRead);
+
+                let optAudio = document.createElement("option");
+                optAudio.value = index + 1;
+                optAudio.textContent = `${index + 1}. سورة ${name}`;
+                audioSelect.appendChild(optAudio);
             });
         }
 
         async function loadFullSurah() {
-            const id = document.getElementById("surahSelect").value;
+            const id = document.getElementById("surahReadSelect").value;
             if (!id) return;
-            currentSelectedSurahNum = id;
 
             const container = document.getElementById("mushafFullContainer");
             container.innerHTML = "<span style='color: #666; display: block; text-align: center; padding: 40px;'>جاري تحميل السورة كاملة للقراءة...</span>";
@@ -305,17 +323,18 @@
                     });
                     
                     container.innerHTML = html;
-                    updateAudioSource();
                 }
             } catch (e) {
                 container.innerHTML = "<span style='color: red; display: block; text-align: center; padding: 40px;'>تعذر التحميل، تحقق من اتصال الإنترنت.</span>";
             }
         }
 
-        function updateAudioSource() {
+        function updateAudioSourceOnly() {
+            const id = document.getElementById("surahAudioSelect").value;
+            if (!id) return;
             const audio = document.getElementById("audioPlayer");
             const reciterBaseUrl = document.getElementById("reciterSelect").value;
-            audio.src = `${reciterBaseUrl}${String(currentSelectedSurahNum).padStart(3, '0')}.mp3`;
+            audio.src = `${reciterBaseUrl}${String(id).padStart(3, '0')}.mp3`;
         }
 
         function initStream() {
