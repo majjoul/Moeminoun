@@ -254,20 +254,31 @@
     <!-- 7. بوصلة القبلة -->
     <div id="qiblaSec" class="section box">
         <h2>بوصلة القبلة</h2>
-        <p class="subtitle">وجه هاتفك لمعرفة اتجاه الكعبة المشرفة بدقة</p>
+        <p class="subtitle" id="qiblaSubInfo">وجه هاتفك أفقياً نحو القبلة في نيس (Nice)</p>
         
         <div style="text-align: center; margin: 20px 0;">
-            <div id="compassRing" style="position: relative; width: 200px; height: 200px; margin: 0 auto; border: 4px solid var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-color); box-shadow: 0 0 20px rgba(0,0,0,0.5); transition: border-color 0.3s ease;">
+            <!-- البوصلة المزخرفة -->
+            <div id="compassRing" style="position: relative; width: 200px; height: 200px; margin: 0 auto; border: 6px double var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-color); box-shadow: 0 0 25px rgba(0,0,0,0.6), inset 0 0 15px rgba(234, 179, 8, 0.2); transition: all 0.3s ease;">
+                
+                <!-- عناصر الزخرفة الإسلامية داخل الإطار -->
+                <div style="position: absolute; width: 184px; height: 184px; border: 1px dashed var(--accent-color); border-radius: 50%; pointer-events: none; opacity: 0.6;"></div>
+                <div style="position: absolute; top: 5px; font-size: 11px; color: var(--accent-color); font-weight: bold;" id="labelN">شمال</div>
+                <div style="position: absolute; bottom: 5px; font-size: 11px; color: var(--accent-color);" id="labelS">جنوب</div>
+                <div style="position: absolute; right: 8px; font-size: 11px; color: var(--accent-color);" id="labelE">شرق</div>
+                <div style="position: absolute; left: 8px; font-size: 11px; color: var(--accent-color);" id="labelW">غرب</div>
+
+                <!-- سهم الاتجاه المزخرف -->
                 <div id="qiblaArrow" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.1s ease-out;">
-                    <span id="qiblaIcon" style="font-size: 45px; margin-top: -100px; display: block; transition: color 0.3s ease;">🕋</span>
+                    <div id="qiblaIcon" style="font-size: 42px; margin-top: -95px; display: block; transition: all 0.3s ease; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">▲</div>
                 </div>
-                <div style="font-size: 13px; color: var(--accent-color); font-weight: bold; z-index: 2;" id="compassCenterText">القبلة</div>
+                
+                <div style="font-size: 12px; color: var(--accent-color); font-weight: bold; z-index: 2; background: rgba(15,23,42,0.8); padding: 2px 6px; border-radius: 4px;" id="compassCenterText">القبلة</div>
             </div>
         </div>
 
-        <p id="qiblaStatusText" style="text-align: center; font-size: 13px; color: #94a3b8;">اضغط الزر أدناه لتفعيل بوصلة القبلة...</p>
+        <p id="qiblaStatusText" style="text-align: center; font-size: 13px; color: #94a3b8;">اضغط الزر لتفعيل بوصلة القبلة المغناطيسية...</p>
         <button onclick="initQiblaSensor()" style="background: #2563eb; color: #fff; margin-top: 5px;">تفعيل بوصلة القبلة 🧭</button>
-        <button onclick="requestUserLocation()" style="background: #059669; color: #fff; margin-top: 5px;">تحديث موقع الـ GPS يدوياً 📍</button>
+        <button onclick="recalibrateNorth()" style="background: #059669; color: #fff; margin-top: 5px;">إعادة معايرة الشمال يدوياً 🔄</button>
     </div>
 
     <!-- 8. معلومات الحساب -->
@@ -342,9 +353,9 @@
         ];
 
         let tasbihCount = 0;
-        let lastCoords = { lat: 43.7102, lon: 7.2620 }; // افتراض إحداثيات مدينة Nice لتجنب الأخطاء
-        let lastCityName = "Nice";
-        let qiblaAngle = 0;
+        let lastCoords = { lat: 43.7102, lon: 7.2620 }; // إحداثيات نيس الدقيقة
+        let qiblaBearing = 0;
+        let manualOffset = 0;
 
         window.onload = function() {
             loadSavedSettings();
@@ -352,11 +363,13 @@
             initStream();
             loadSavedAvatar();
             
-            // محاولة جلب الـ GPS تلقائياً في الخلفية
+            calculateQibla(lastCoords.lat, lastCoords.lon);
+
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         lastCoords = { lat: position.coords.latitude, lon: position.coords.longitude };
+                        calculateQibla(lastCoords.lat, lastCoords.lon);
                     },
                     () => {},
                     { timeout: 5000 }
@@ -537,43 +550,32 @@
         function requestUserLocation() {
             const locDisplay = document.getElementById("locationDisplay");
             if (navigator.geolocation) {
-                locDisplay.textContent = "جاري طلب إذن الوصول للموقع الجغرافي (GPS)...";
+                locDisplay.textContent = "جاري تحديث الموقع الجغرافي (GPS)...";
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
                         lastCoords = { lat, lon };
-                        lastCityName = "";
-                        locDisplay.textContent = `تم تحديد موقعك بدقة عبر الـ GPS 📍`;
+                        locDisplay.textContent = `تم تحديث الموقع بدقة عبر الـ GPS 📍`;
+                        calculateQibla(lat, lon);
                         fetchPrayerTimesByCoords(lat, lon);
                     },
                     () => {
-                        locDisplay.textContent = "⚠️ تعذر جلب الـ GPS التلقائي. يتم استخدام مدينة Nice افتراضياً.";
-                        searchByCityInput();
+                        locDisplay.textContent = "⚠️ تعذر جلب الـ GPS. يتم الاعتماد على إحداثيات نيس (Nice).";
                     },
                     { timeout: 8000 }
                 );
-            } else {
-                fetchPrayerTimesByCity("Nice");
             }
         }
 
         function searchByCityInput() {
             const cityName = document.getElementById("cityNameInput").value.trim();
-            if (cityName) {
-                lastCityName = cityName;
-            }
-            const targetCity = lastCityName || "Nice";
-            document.getElementById("locationDisplay").textContent = `جاري جلب مواقيت الصلاة لمدينة: ${targetCity}...`;
-            fetchPrayerTimesByCity(targetCity);
+            if (!cityName) return;
+            fetchPrayerTimesByCity(cityName);
         }
 
         function onMethodChange() {
-            if (lastCoords) {
-                fetchPrayerTimesByCoords(lastCoords.lat, lastCoords.lon);
-            } else {
-                searchByCityInput();
-            }
+            fetchPrayerTimesByCoords(lastCoords.lat, lastCoords.lon);
         }
 
         function fetchPrayerTimesByCoords(lat, lon) {
@@ -591,14 +593,14 @@
             .then(data => {
                 if (data.code === 200) {
                     updatePrayerUI(data);
-                    // حفظ الإحداثيات التقريبية بناءً على المدينة المدخلة لضمان دقة القبلة
                     if(data.data.meta && data.data.meta.latitude) {
                         lastCoords = { lat: data.data.meta.latitude, lon: data.data.meta.longitude };
+                        calculateQibla(lastCoords.lat, lastCoords.lon);
                     }
                     document.getElementById("locationDisplay").textContent = `تم جلب المواقيت لمدينة: ${city} بنجاح ✅`;
                 }
             })
-            .catch(() => {});
+            .catch(() => alert("تعذر العثور على المدينة."));
         }
 
         function updatePrayerUI(data) {
@@ -625,64 +627,91 @@
             const x = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
             
             let theta = Math.atan2(y, x);
-            qiblaAngle = (theta * 180 / Math.PI + 360) % 360;
+            qiblaBearing = (theta * 180 / Math.PI + 360) % 360;
             
-            document.getElementById("qiblaStatusText").textContent = `تم حساب اتجاه القبلة بدقة. وجّه هاتفك أفقياً الآن.`;
+            document.getElementById("qiblaSubInfo").textContent = `الزاوية المحسوبة من موقعك لقبلة مكة: ${qiblaBearing.toFixed(1)}°`;
         }
 
         function initQiblaSensor() {
-            if (!lastCoords) {
-                lastCoords = { lat: 43.7102, lon: 7.2620 }; // Nice افتراضياً
-            }
-
-            calculateQibla(lastCoords.lat, lastCoords.lon);
-
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 DeviceOrientationEvent.requestPermission()
                     .then(response => {
                         if (response === 'granted') {
                             window.addEventListener('deviceorientation', handleOrientation, true);
-                            alert("تم تفعيل المستشعر بنجاح.");
+                            alert("تم تفعيل بوصلة الأيفون بنجاح.");
                         } else {
-                            alert("تم رفض إذن استخدام المستشعرات.");
+                            alert("تم رفض إذن المستشعرات.");
                         }
                     }).catch(console.error);
             } else if (window.addEventListener) {
                 window.addEventListener('deviceorientationabsolute', handleOrientation, true);
                 window.addEventListener('deviceorientation', handleOrientation, true);
-                alert("تم تفعيل المستشعر بنجاح، حرّك هاتفك أفقياً.");
+                alert("تم تفعيل بوصلة الأندرويد بنجاح. حرّك هاتفك بشكل رقم 8 لمعايرته.");
             } else {
                 alert("متصفحك لا يدعم مستشعر الاتجاه.");
             }
         }
 
+        function recalibrateNorth() {
+            manualOffset += 90;
+            if (manualOffset >= 360) manualOffset = 0;
+            alert(`تم تعديل المعايرة بمقدار +90 درجة. (القيمة الحالية: ${manualOffset})`);
+        }
+
         function handleOrientation(event) {
-            let alpha = event.alpha;
-            if (alpha !== null) {
-                let compass = 360 - alpha;
-                let finalRotation = (compass + qiblaAngle) % 360;
+            let heading = null;
+
+            if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
+                heading = event.webkitCompassHeading;
+            } 
+            else if (event.alpha !== null) {
+                heading = 360 - event.alpha;
+            }
+
+            if (heading !== null) {
+                let finalRotation = (qiblaBearing - heading + manualOffset + 360) % 360;
                 
                 const arrow = document.getElementById("qiblaArrow");
                 const compassRing = document.getElementById("compassRing");
                 const qiblaIcon = document.getElementById("qiblaIcon");
                 const statusText = document.getElementById("qiblaStatusText");
+                const labelN = document.getElementById("labelN");
+                const labelS = document.getElementById("labelS");
+                const labelE = document.getElementById("labelE");
+                const labelW = document.getElementById("labelW");
+                const centerText = document.getElementById("compassCenterText");
 
                 if (arrow) {
                     arrow.style.transform = `rotate(${finalRotation}deg)`;
                 }
 
-                // حساب مدى مطابقة الاتجاه الصحيح (إذا كان الفرق أقل من 3 درجات يتحول للأخضر الساطع)
-                // بما أن السهم يشير للقبلة عندما تصبح rotation قريبة من 0 أو 360
                 let deviation = Math.min(finalRotation, 360 - finalRotation);
                 
-                if (deviation <= 3) {
-                    compassRing.style.borderColor = "#22c55e"; // أخضر ساطع
-                    qiblaIcon.style.color = "#22c55e";
-                    statusText.innerHTML = "<span style='color: #22c55e; font-weight: bold;'>✨ أنت تواجه اتجاه القبلة الصحيح الآن! ✨</span>";
+                // مطابقة الاتجاه تماماً (ضمن نطاق 4 درجات يتحول للون الأبيض الساطع الناصع)
+                if (deviation <= 4) {
+                    const brightWhite = "#ffffff";
+                    compassRing.style.borderColor = brightWhite;
+                    compassRing.style.boxShadow = "0 0 30px rgba(255, 255, 255, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.4)";
+                    qiblaIcon.style.color = brightWhite;
+                    qiblaIcon.style.textShadow = "0 0 10px #ffffff, 0 0 20px #ffffff";
+                    labelN.style.color = brightWhite;
+                    labelS.style.color = brightWhite;
+                    labelE.style.color = brightWhite;
+                    labelW.style.color = brightWhite;
+                    centerText.style.color = brightWhite;
+                    statusText.innerHTML = "<span style='color: #ffffff; font-weight: bold; text-shadow: 0 0 8px rgba(255,255,255,0.6);'>✨ ممتاز! أنت تواجه اتجاه القبلة الصحيح تماماً ✨</span>";
                 } else {
-                    compassRing.style.borderColor = "var(--accent-color)";
-                    qiblaIcon.style.color = "var(--text-color)";
-                    statusText.textContent = `وجه هاتفك ببطء حتى يتحول المؤشر للأخضر.`;
+                    const defaultAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || "#eab308";
+                    compassRing.style.borderColor = defaultAccent;
+                    compassRing.style.boxShadow = "0 0 25px rgba(0,0,0,0.6), inset 0 0 15px rgba(234, 179, 8, 0.2)";
+                    qiblaIcon.style.color = defaultAccent;
+                    qiblaIcon.style.textShadow = "none";
+                    labelN.style.color = defaultAccent;
+                    labelS.style.color = defaultAccent;
+                    labelE.style.color = defaultAccent;
+                    labelW.style.color = defaultAccent;
+                    centerText.style.color = defaultAccent;
+                    statusText.textContent = `وجّه هاتفك ببطء حتى يتوهج باللون الأبيض الساطع (الانحراف: ${deviation.toFixed(0)}°)`;
                 }
             }
         }
