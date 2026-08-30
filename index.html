@@ -24,7 +24,7 @@
         .bottom-right { bottom: 85px; right: 10px; border-top: none; border-left: none; }
         .bottom-left { bottom: 85px; left: 10px; border-top: none; border-right: none; }
 
-        .box { background: var(--card-bg); border: 2px solid var(--accent-color); padding: 20px; border-radius: 16px; max-width: 500px; margin: 15px auto; box-shadow: 0 8px 20px rgba(0,0,0,0.5); position: relative; }
+        .box { background: var(--card-bg); border: 2px solid var(--accent-color); padding: 20px; border-radius: 16px; max-width: 550px; margin: 15px auto; box-shadow: 0 8px 20px rgba(0,0,0,0.5); position: relative; }
         
         .box::before {
             content: "❖ ﷽ ❖";
@@ -56,10 +56,10 @@
         
         .video-container { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-top: 15px; border: 1px solid var(--border-color); }
         
-        .mushaf-view { line-height: 2.3; font-size: 23px; text-align: justify; padding: 18px; max-height: 260px; overflow-y: auto; background: #ffffff; color: #000000; border-radius: 8px; border: 2px solid var(--accent-color); margin-top: 10px; font-family: 'Amiri', serif; }
-        .ayah { padding: 3px; }
+        .mushaf-view { line-height: 2.6; font-size: 21px; text-align: justify; padding: 18px; max-height: 380px; overflow-y: auto; background: #fbfbfa; color: #111111; border-radius: 8px; border: 2px solid var(--accent-color); margin-top: 10px; font-family: 'Amiri', serif; }
+        .ayah { padding: 2px; }
         
-        audio { width: 100%; margin-top: 12px; border-radius: 8px; }
+        audio { width: 100%; margin-top: 8px; border-radius: 8px; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -118,20 +118,31 @@
         <button onclick="setupNotifications()" style="background: #2563eb; color:#fff;">🔔 تفعيل تنبيهات الإشعارات</button>
     </div>
 
-    <!-- 3. القرآن الكريم -->
+    <!-- 3. القرآن الكريم (صفحة المصحف الكاملة) -->
     <div id="quranSec" class="section box">
         <h2>القرآن الكريم (صفحة المصحف)</h2>
-        
-        <label>اختر السورة:</label>
-        <select id="surahSelect" onchange="loadSurahContent()">
-            <option value="">اختر السورة للاستماع والقراءة...</option>
-        </select>
+        <p class="subtitle">تصفح المصحف صفحة بصفحة مع خيار الاستماع للتلاوة</p>
 
-        <div id="mushafContent" class="mushaf-view">
-            <span style="color: #444; display: block; text-align: center;">اختر سورة لعرض الآيات واستماع التلاوة...</span>
+        <div style="display: flex; gap: 6px; margin-bottom: 10px; align-items: center;">
+            <button onclick="prevPage()" style="margin-top:0; width: auto; padding: 8px 10px; background: #334155; color: #fff; font-size: 13px;">◀ صفحة سابقة</button>
+            <span id="pageNumDisplay" style="font-weight: bold; color: var(--accent-color); flex: 1; text-align: center; font-size: 14px;">صفحة 1 من 604</span>
+            <button onclick="nextPage()" style="margin-top:0; width: auto; padding: 8px 10px; background: #334155; color: #fff; font-size: 13px;">صفحة تالية ▶</button>
         </div>
 
-        <audio id="audioPlayer" controls style="display:none;"></audio>
+        <div id="mushafPageContainer" class="mushaf-view">
+            <span style="color: #666; display: block; text-align: center; margin-top: 120px;">جاري تحميل صفحة المصحف...</span>
+        </div>
+
+        <div style="margin-top: 10px; background: var(--bg-color); padding: 8px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <label style="margin-top: 0; font-size: 12px;">اختر القارئ للاستماع:</label>
+            <select id="reciterSelect" onchange="updateCurrentReciterAudio()" style="padding: 6px; font-size: 12px; margin-top: 2px;">
+                <option value="https://server8.mp3quran.net/afs/">مشاري العفاسي</option>
+                <option value="https://server11.mp3quran.net/sds/">عبد الرحمن السديس</option>
+                <option value="https://server7.mp3quran.net/basit/">عبد الباسط عبد الصمد</option>
+                <option value="https://server9.mp3quran.net/shuraim/">سعود الشريم</option>
+            </select>
+            <audio id="audioPlayer" controls style="display:block;"></audio>
+        </div>
     </div>
 
     <!-- 4. البث المباشر -->
@@ -203,27 +214,15 @@
     </div>
 
     <script>
-        const surahsList = [
-            "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
-            "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
-            "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم",
-            "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
-            "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق",
-            "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
-            "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج",
-            "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس",
-            "التكوير", "الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد",
-            "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات",
-            "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر",
-            "المسد", "الإخلاص", "الفلق", "الناس"
-        ];
-
+        let currentPageNum = 1;
+        const totalQuranPages = 604;
+        let currentLoadedSurahNum = 1;
         let tasbihCount = 0;
         let lastCoords = null;
         let lastCityName = "";
 
         window.onload = function() {
-            populateSurahDropdown();
+            initQuranPage(currentPageNum);
             initStream();
             const loggedUser = localStorage.getItem('loggedUser');
             if (loggedUser) {
@@ -231,16 +230,14 @@
             }
         };
 
-        // --- PWA Service Worker Registration ---
+        // --- PWA Service Worker ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker مسجل بنجاح!', reg))
-                    .catch(err => console.error('فشل التسجيل:', err));
+                navigator.serviceWorker.register('./sw.js').catch(err => console.error(err));
             });
         }
 
-        // --- Notifications Permission Function ---
+        // --- Notifications ---
         async function setupNotifications() {
             if (!('Notification' in window)) {
                 alert("متصفحك لا يدعم الإشعارات.");
@@ -254,41 +251,60 @@
             }
         }
 
-        function populateSurahDropdown() {
-            const select = document.getElementById("surahSelect");
-            surahsList.forEach((name, index) => {
-                let opt = document.createElement("option");
-                opt.value = index + 1;
-                opt.textContent = `${index + 1}. سورة ${name}`;
-                select.appendChild(opt);
-            });
-        }
-
-        async function loadSurahContent() {
-            const id = document.getElementById("surahSelect").value;
-            if (!id) return;
-
-            const contentDiv = document.getElementById("mushafContent");
-            contentDiv.innerHTML = "جاري تحميل الآيات...";
+        // --- Quran Pages Logic ---
+        async function initQuranPage(pageNum) {
+            const contentDiv = document.getElementById("mushafPageContainer");
+            document.getElementById("pageNumDisplay").textContent = `صفحة ${pageNum} من 604`;
+            contentDiv.innerHTML = `<span style="color: #666; display: block; text-align: center; margin-top: 120px;">جاري تحميل الصفحة ${pageNum}...</span>`;
 
             try {
-                const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}`);
+                const res = await fetch(`https://api.alquran.cloud/v1/page/${pageNum}/quran-uthmani`);
                 const data = await res.json();
-                let html = "";
-                data.data.ayahs.forEach(a => {
-                    html += `<span class="ayah">${a.text} ﴿${a.numberInSurah}﴾</span> `;
-                });
-                contentDiv.innerHTML = html;
-
-                const audio = document.getElementById("audioPlayer");
-                audio.src = `https://server8.mp3quran.net/afs/${String(id).padStart(3, '0')}.mp3`;
-                audio.style.display = "block";
-                audio.play();
+                
+                if(data.code === 200) {
+                    let pageHtml = "";
+                    let currentSurahName = "";
+                    
+                    data.data.ayahs.forEach(ayah => {
+                        if (currentSurahName !== ayah.surah.name) {
+                            currentSurahName = ayah.surah.name;
+                            pageHtml += `<div style="text-align: center; color: #b45309; font-weight: bold; margin: 12px 0 8px 0; font-size: 16px; border-top: 1px dashed #d1d5db; border-bottom: 1px dashed #d1d5db; padding: 4px;">*** سورة ${currentSurahName} ***</div>`;
+                        }
+                        pageHtml += `<span class="ayah">${ayah.text} ﴿${ayah.numberInSurah}﴾ </span>`;
+                    });
+                    
+                    contentDiv.innerHTML = pageHtml;
+                    contentDiv.scrollTop = 0; // إعادة التمرير لأعلى الصفحة الجديدة
+                    
+                    currentLoadedSurahNum = data.data.ayahs[0].surah.number;
+                    updateCurrentReciterAudio();
+                }
             } catch (e) {
-                contentDiv.innerHTML = "تعذر تحميل الآيات، تحقق من الاتصال بالإنترنت.";
+                contentDiv.innerHTML = "<span style='color: red; display: block; text-align: center; margin-top: 120px;'>تعذر تحميل الصفحة، تحقق من الإنترنت.</span>";
             }
         }
 
+        function nextPage() {
+            if (currentPageNum < totalQuranPages) {
+                currentPageNum++;
+                initQuranPage(currentPageNum);
+            }
+        }
+
+        function prevPage() {
+            if (currentPageNum > 1) {
+                currentPageNum--;
+                initQuranPage(currentPageNum);
+            }
+        }
+
+        function updateCurrentReciterAudio() {
+            const audio = document.getElementById("audioPlayer");
+            const reciterBaseUrl = document.getElementById("reciterSelect").value;
+            audio.src = `${reciterBaseUrl}${String(currentLoadedSurahNum).padStart(3, '0')}.mp3`;
+        }
+
+        // --- Live Stream Logic ---
         function initStream() {
             const videoSrc = "https://cdn-globecast.akamaized.net/live/eds/saudi_quran/hls_roku/index.m3u8";
             const video = document.getElementById('liveVideo');
@@ -308,6 +324,7 @@
             video.play();
         }
 
+        // --- Login & Navigation ---
         function handleLogin() {
             const user = document.getElementById("usernameInput").value.trim();
             const pass = document.getElementById("passwordInput").value.trim();
@@ -324,7 +341,6 @@
             document.getElementById("prayerSec").classList.add("active");
             document.getElementById("navBar").style.display = "flex";
             document.getElementById("accName").textContent = username;
-            
             requestUserLocation();
         }
 
@@ -340,6 +356,7 @@
             document.getElementById(btnId).classList.add('active');
         }
 
+        // --- Prayer Times & Location ---
         function requestUserLocation() {
             const locDisplay = document.getElementById("locationDisplay");
             if (navigator.geolocation) {
@@ -353,7 +370,7 @@
                         locDisplay.textContent = `تم تحديد موقعك بدقة عبر الـ GPS 📍`;
                         fetchPrayerTimesByCoords(lat, lon);
                     },
-                    (error) => {
+                    () => {
                         locDisplay.textContent = "⚠️ تعذر جلب الـ GPS. يرجى كتابة اسم مدينتك يدوياً.";
                         searchByCityInput();
                     },
@@ -376,9 +393,7 @@
             }
             
             const targetCity = lastCityName || "Nice";
-            const locDisplay = document.getElementById("locationDisplay");
-            locDisplay.textContent = `جاري جلب مواقيت الصلاة لمدينة: ${targetCity}...`;
-            
+            document.getElementById("locationDisplay").textContent = `جاري جلب مواقيت الصلاة لمدينة: ${targetCity}...`;
             fetchPrayerTimesByCity(targetCity);
         }
 
@@ -409,12 +424,10 @@
                     updatePrayerUI(data);
                     document.getElementById("locationDisplay").textContent = `تم جلب المواقيت لمدينة: ${city} بنجاح ✅`;
                 } else {
-                    alert("عذراً، لم يتم العثور على هذه المدينة. تأكد من كتابتها بالإنجليزي (مثال: Nice, Cairo, Riyadh)");
+                    alert("عذراً، لم يتم العثور على هذه المدينة باللغة الإنجليزية (مثال: Nice, Paris, Cairo)");
                 }
             })
-            .catch(() => {
-                alert("حدث خطأ في الاتصال بالخادم.");
-            });
+            .catch(() => alert("حدث خطأ في الاتصال بالخادم."));
         }
 
         function updatePrayerUI(data) {
@@ -423,12 +436,13 @@
                 document.getElementById("pFajr").textContent = t.Fajr;
                 document.getElementById("pSunrise").textContent = t.Sunrise;
                 document.getElementById("pDhuhr").textContent = t.Dhuhr;
-                document.getElementById("pAsr").textContent = t.Asr;
+                document.getElementById("pAsr").textContent, document.getElementById("pAsr").textContent = t.Asr;
                 document.getElementById("pMaghrib").textContent = t.Maghrib;
                 document.getElementById("pIsha").textContent = t.Isha;
             }
         }
 
+        // --- Tasbih Logic ---
         function changeDhikr(val) {
             document.getElementById("tasbihText").textContent = val;
             tasbihCount = 0;
@@ -445,6 +459,7 @@
             document.getElementById("counterVal").textContent = tasbihCount;
         }
 
+        // --- Theme Settings ---
         function changeAccentColor(color) {
             document.documentElement.style.setProperty('--accent-color', color);
         }
