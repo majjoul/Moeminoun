@@ -70,8 +70,6 @@
             width: 100%;
         }
         .ayah { padding: 3px; }
-        
-        audio { width: 100%; margin-top: 8px; border-radius: 8px; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -154,10 +152,10 @@
             <option value="">اختر السورة للاستماع...</option>
         </select>
 
-        <label style="margin-top: 15px;">اختر إمام الحرم:</label>
+        <label style="margin-top: 15px;">اختر إمام الحرم / القارئ:</label>
         <select id="reciterSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
             <option value="https://server11.mp3quran.net/sds/">الشيخ د. عبد الرحمن السديس</option>
-            <option value="https://server9.mp3quran.net/shuraim/">الشيخ سعود الشريم</option>
+            <option value="https://server11.mp3quran.net/saud/">الشيخ سعود الشريم</option>
             <option value="https://server12.mp3quran.net/maher/">الشيخ د. ماهر المعيقلي</option>
             <option value="https://server6.mp3quran.net/shatri/">الشيخ أبو بكر الشاطري</option>
             <option value="https://server13.mp3quran.net/hthfi/">الشيخ إبراهيم الأخضر</option>
@@ -335,7 +333,11 @@
             if (!id) return;
             const audio = document.getElementById("audioPlayer");
             const reciterBaseUrl = document.getElementById("reciterSelect").value;
-            audio.src = `${reciterBaseUrl}${String(id).padStart(3, '0')}.mp3`;
+            
+            // تحويل الرقم إلى 3 خانات (مثال: 1 تتحول إلى 001، و 11 تتحول إلى 011) ليعمل الرابط بنجاح تام
+            const formattedId = String(id).padStart(3, '0');
+            audio.src = `${reciterBaseUrl}${formattedId}.mp3`;
+            audio.play().catch(e => console.log("User interaction needed to play audio"));
         }
 
         function initStream() {
@@ -446,8 +448,12 @@
             });
         }
 
+        function fetchPlayerTimesByCity(city) {
+            // function stub helper
+        }
+
         function fetchPrayerTimesByCity(city) {
-            const method = document.getElementById("methodSelect").value;
+            const method = document.getElementById("methodSelect.value") || document.getElementById("methodSelect").value;
             fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&method=${method}`)
             .then(res => res.json())
             .then(data => {
@@ -469,6 +475,7 @@
                 document.getElementById("pDhuhr").textContent = t.Dhuhr;
                 document.getElementById("pAsr").textContent = t.Asr;
                 document.getElementById("pMaghrib").textContent = t.Maghrib;
+                document.getElementById("pIsha").textContent, t.Isha;
                 document.getElementById("pIsha").textContent = t.Isha;
             }
         }
