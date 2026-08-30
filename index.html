@@ -268,7 +268,7 @@
                 <div style="position: absolute; left: 8px; font-size: 11px; color: var(--accent-color);" id="labelW">غرب</div>
 
                 <!-- سهم الاتجاه المزخرف -->
-                <div id="qiblaArrow" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.1s ease-out;">
+                <div id="qiblaArrow" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
                     <div id="qiblaIcon" style="font-size: 42px; margin-top: -95px; display: block; transition: all 0.3s ease; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">▲</div>
                 </div>
                 
@@ -356,6 +356,9 @@
         let lastCoords = { lat: 43.7102, lon: 7.2620 }; // إحداثيات نيس الدقيقة
         let qiblaBearing = 0;
         let manualOffset = 0;
+        
+        // متغيرات لتنعيم حركة البوصلة ومنع الاهتزاز (Low-Pass Filter)
+        let smoothedHeading = null;
 
         window.onload = function() {
             loadSavedSettings();
@@ -669,7 +672,20 @@
             }
 
             if (heading !== null) {
-                let finalRotation = (qiblaBearing - heading + manualOffset + 360) % 360;
+                // خوارزمية تنعيم الحركة (Low-Pass Filter) لمنع الارتعاش والاهتزاز
+                if (smoothedHeading === null) {
+                    smoothedHeading = heading;
+                } else {
+                    let diff = heading - smoothedHeading;
+                    // معالجة مشكلة عبور زاوية 360 درجة
+                    if (diff > 180) diff -= 360;
+                    if (diff < -180) diff += 360;
+                    smoothedHeading += diff * 0.15; // عامل التنعيم (كلما قل الرقم، زادت النعومة واستقرار السهم)
+                    if (smoothedHeading < 0) smoothedHeading += 360;
+                    if (smoothedHeading >= 360) smoothedHeading -= 360;
+                }
+
+                let finalRotation = (qiblaBearing - smoothedHeading + manualOffset + 360) % 360;
                 
                 const arrow = document.getElementById("qiblaArrow");
                 const compassRing = document.getElementById("compassRing");
