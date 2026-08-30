@@ -70,6 +70,57 @@
             width: 100%;
         }
         .ayah { padding: 3px; }
+
+        /* تصميم قسم الحساب المطابق للصورة التوضيحية */
+        .profile-card-layout {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+        .profile-avatar-container {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-color);
+            overflow: hidden;
+            background: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .profile-avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-avatar-container span {
+            font-size: 11px;
+            color: #cbd5e1;
+            text-align: center;
+            padding: 5px;
+        }
+        .profile-info-lines {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .profile-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 4px;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -201,15 +252,36 @@
         <button onclick="resetTasbih()" style="background: #dc2626; color: #fff;">إعادة للصفر 🔄</button>
     </div>
 
-    <!-- 7. معلومات الحساب -->
+    <!-- 7. معلومات الحساب (الديكور المطابق للصورة) -->
     <div id="accountSec" class="section box">
         <h2>معلومات الحساب</h2>
-        <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; font-size: 14px;">
-            <p><strong>اسم المستخدم:</strong> <span id="accName">--</span></p>
-            <p><strong>حالة الحساب:</strong> <span id="accStatus">نشط</span></p>
-            <p><strong>نوع العضوية:</strong> يوسف</p>
+        
+        <div class="profile-card-layout">
+            <!-- الدائرة المخصصة للصورة (اضغط عليها لرفع صورة) -->
+            <div class="profile-avatar-container" onclick="document.getElementById('avatarInput').click()" title="اضغط لتغيير الصورة الشخصية">
+                <img id="profileImg" src="" alt="" style="display: none;">
+                <span id="avatarPlaceholder">اضغط لإضافة صورة 📷</span>
+            </div>
+            <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="loadAvatar(event)">
+
+            <!-- الخطوط الثلاثة (الاسم، حالة الحساب، العضوية) -->
+            <div class="profile-info-lines">
+                <div class="profile-line">
+                    <span><strong>الاسم:</strong></span>
+                    <span id="accName">--</span>
+                </div>
+                <div class="profile-line">
+                    <span><strong>الحالة:</strong></span>
+                    <span id="accStatus">نشط</span>
+                </div>
+                <div class="profile-line">
+                    <span><strong>العضوية:</strong></span>
+                    <span id="accRole">--</span>
+                </div>
+            </div>
         </div>
-        <button onclick="logout()" style="background: #dc2626; color: #fff;">تسجيل الخروج 🚪</button>
+
+        <button onclick="logout()" style="background: #dc2626; color: #fff; margin-top: 15px;">تسجيل الخروج 🚪</button>
     </div>
 
     <!-- 8. لوحة الإعدادات -->
@@ -260,6 +332,7 @@
             loadSavedSettings();
             populateDropdowns();
             initStream();
+            loadSavedAvatar();
             const loggedUser = localStorage.getItem('loggedUser');
             if (loggedUser) {
                 appLoginSuccess(loggedUser);
@@ -374,12 +447,17 @@
             document.getElementById("navBar").style.display = "flex";
             document.getElementById("accName").textContent = username;
             
-            // تخصيص علامة التوثيق لتظهر لك وحدك إذا كان اسم المستخدم يطابق اسمك
             const statusElem = document.getElementById("accStatus");
-            if (username.toLowerCase() === "يوسف") {
+            const roleElem = document.getElementById("accRole");
+            const lowerUser = username.toLowerCase();
+            
+            // تخصيص علامة التوثيق وكلمة "المنشئ" لك وحدك، وباقي المستخدمين يظهر لهم "ضيف"
+            if (lowerUser === "يوسف" || lowerUser.includes("youssef") || lowerUser.includes("يوسف")) {
                 statusElem.innerHTML = 'نشط وموثق <span style="color: #10b981;">✅</span>';
+                roleElem.innerHTML = 'المنشئ <span style="color: #10b981;">⭐</span>';
             } else {
                 statusElem.innerHTML = 'نشط';
+                roleElem.innerHTML = 'ضيف';
             }
 
             requestUserLocation();
@@ -395,6 +473,36 @@
             document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
             document.getElementById(secId).classList.add('active');
             document.getElementById(btnId).classList.add('active');
+        }
+
+        function loadAvatar(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgUrl = e.target.result;
+                    const imgElem = document.getElementById('profileImg');
+                    const placeholder = document.getElementById('avatarPlaceholder');
+                    
+                    imgElem.src = imgUrl;
+                    imgElem.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    
+                    localStorage.setItem('userAvatar', imgUrl);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function loadSavedAvatar() {
+            const savedAvatar = localStorage.getItem('userAvatar');
+            if (savedAvatar) {
+                const imgElem = document.getElementById('profileImg');
+                const placeholder = document.getElementById('avatarPlaceholder');
+                imgElem.src = savedAvatar;
+                imgElem.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
         }
 
         function requestUserLocation() {
