@@ -24,7 +24,6 @@
         .bottom-right { bottom: 80px; right: 10px; border-top: none; border-left: none; }
         .bottom-left { bottom: 80px; left: 10px; border-top: none; border-right: none; }
 
-        /* تصميم الصناديق بملء الشاشة */
         .box { background: var(--card-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 12px; width: 100%; max-width: 100%; margin: 5px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; }
         
         .box::before {
@@ -57,7 +56,6 @@
         
         .video-container { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border-color); }
         
-        /* شاشة القرآن المكتوب بشاشة كاملة وتمرير يدوي حر */
         .mushaf-full-view { 
             line-height: 2.8; 
             font-size: 22px; 
@@ -146,22 +144,25 @@
         </div>
     </div>
 
-    <!-- 4. صفحة القرآن المسموع -->
+    <!-- 4. صفحة القرآن المسموع (أئمة الحرم المكي الشريف) -->
     <div id="quranAudioSec" class="section box">
-        <h2>القرآن الكريم (الاستماع والصوت)</h2>
-        <p class="subtitle">استمع لتلاوة القرآن الكريم بأصوات نخبة من القراء</p>
+        <h2>القرآن الكريم (أئمة الحرم المكي)</h2>
+        <p class="subtitle">استمع لتلاوات أئمة المسجد الحرام</p>
 
         <label>اختر السورة للاستماع:</label>
         <select id="surahAudioSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
             <option value="">اختر السورة للاستماع...</option>
         </select>
 
-        <label style="margin-top: 15px;">اختر القارئ:</label>
+        <label style="margin-top: 15px;">اختر إمام الحرم:</label>
         <select id="reciterSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
-            <option value="https://server8.mp3quran.net/afs/">مشاري العفاسي</option>
-            <option value="https://server11.mp3quran.net/sds/">عبد الرحمن السديس</option>
-            <option value="https://server7.mp3quran.net/basit/">عبد الباسط عبد الصمد</option>
-            <option value="https://server9.mp3quran.net/shuraim/">سعود الشريم</option>
+            <option value="https://server11.mp3quran.net/sds/">الشيخ د. عبد الرحمن السديس</option>
+            <option value="https://server9.mp3quran.net/shuraim/">الشيخ سعود الشريم</option>
+            <option value="https://server12.mp3quran.net/maher/">الشيخ د. ماهر المعيقلي</option>
+            <option value="https://server6.mp3quran.net/shatri/">الشيخ أبو بكر الشاطري</option>
+            <option value="https://server13.mp3quran.net/hthfi/">الشيخ إبراهيم الأخضر</option>
+            <option value="https://server8.mp3quran.net/afs/">الشيخ مشاري العفاسي</option>
+            <option value="https://server7.mp3quran.net/basit/">الشيخ عبد الباسط عبد الصمد (مجود)</option>
         </select>
 
         <div style="margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
@@ -228,7 +229,7 @@
         <button onclick="alert('تم حفظ إعدادات التطبيق بنجاح!')" style="margin-top: 15px;">حفظ الإعدادات</button>
     </div>
 
-    <!-- الشريط السفلي المحدث ليشمل الصفحتين -->
+    <!-- الشريط السفلي -->
     <div id="navBar" class="nav">
         <button id="navP" class="active" onclick="switchTab('prayerSec', 'navP')"><span>🕌</span><span>الصلاة</span></button>
         <button id="navQR" onclick="switchTab('quranReadSec', 'navQR')"><span>📖</span><span>مكتوب</span></button>
