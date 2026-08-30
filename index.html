@@ -16,15 +16,16 @@
         }
 
         * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; padding-bottom: 110px; transition: background 0.3s, color 0.3s; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 10px; padding-bottom: 100px; transition: background 0.3s, color 0.3s; }
         
-        .corner-ornament { position: fixed; width: 70px; height: 70px; border: 4px solid var(--accent-color); pointer-events: none; z-index: 9999; opacity: 0.5; }
+        .corner-ornament { position: fixed; width: 60px; height: 60px; border: 4px solid var(--accent-color); pointer-events: none; z-index: 9999; opacity: 0.5; }
         .top-right { top: 10px; right: 10px; border-bottom: none; border-left: none; }
         .top-left { top: 10px; left: 10px; border-bottom: none; border-right: none; }
-        .bottom-right { bottom: 85px; right: 10px; border-top: none; border-left: none; }
-        .bottom-left { bottom: 85px; left: 10px; border-top: none; border-right: none; }
+        .bottom-right { bottom: 80px; right: 10px; border-top: none; border-left: none; }
+        .bottom-left { bottom: 80px; left: 10px; border-top: none; border-right: none; }
 
-        .box { background: var(--card-bg); border: 2px solid var(--accent-color); padding: 20px; border-radius: 16px; max-width: 550px; margin: 15px auto; box-shadow: 0 8px 20px rgba(0,0,0,0.5); position: relative; }
+        /* تعديل الصناديق لتأخذ شاشة كاملة ومريحة للموبايل */
+        .box { background: var(--card-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 12px; width: 100%; max-width: 100%; margin: 5px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; }
         
         .box::before {
             content: "❖ ﷽ ❖";
@@ -32,16 +33,16 @@
             text-align: center;
             font-size: 12px;
             color: var(--accent-color);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             letter-spacing: 2px;
         }
 
-        h2 { text-align: center; color: var(--accent-color); margin-top: 0; }
-        .subtitle { text-align: center; margin-bottom: 15px; font-size: 13px; color: #94a3b8; }
+        h2 { text-align: center; color: var(--accent-color); margin-top: 0; font-size: 20px; }
+        .subtitle { text-align: center; margin-bottom: 12px; font-size: 13px; color: #94a3b8; }
         
         label { display: block; margin-top: 10px; font-size: 14px; font-weight: bold; color: var(--text-color); }
         input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 15px; outline: none; }
-        button { background: var(--accent-color); color: #000; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; transition: background 0.2s; }
+        button { background: var(--accent-color); color: #000; border: none; font-weight: bold; cursor: pointer; margin-top: 12px; transition: background 0.2s; }
         button:hover { background: var(--accent-hover); }
 
         .section { display: none; }
@@ -54,10 +55,23 @@
         .prayer-row { display: flex; justify-content: space-between; padding: 10px 12px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; margin-top: 8px; font-size: 15px; }
         .counter-display { font-size: 60px; font-weight: bold; text-align: center; color: var(--accent-color); margin: 15px 0; }
         
-        .video-container { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-top: 15px; border: 1px solid var(--border-color); }
+        .video-container { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border-color); }
         
-        .mushaf-view { line-height: 2.6; font-size: 21px; text-align: justify; padding: 18px; max-height: 380px; overflow-y: auto; background: #fbfbfa; color: #111111; border-radius: 8px; border: 2px solid var(--accent-color); margin-top: 10px; font-family: 'Amiri', serif; }
-        .ayah { padding: 2px; }
+        /* عرض القرآن بشاشة كاملة وتمرير يدوي حر */
+        .mushaf-full-view { 
+            line-height: 2.8; 
+            font-size: 22px; 
+            text-align: justify; 
+            padding: 15px; 
+            background: #fbfbfa; 
+            color: #111111; 
+            border-radius: 8px; 
+            border: 2px solid var(--accent-color); 
+            margin-top: 10px; 
+            font-family: 'Amiri', serif;
+            width: 100%;
+        }
+        .ayah { padding: 3px; }
         
         audio { width: 100%; margin-top: 8px; border-radius: 8px; }
     </style>
@@ -70,9 +84,9 @@
     <div class="corner-ornament bottom-right"></div>
     <div class="corner-ornament bottom-left"></div>
 
-    <div style="font-size: 24px; font-weight: bold; margin: 10px 0 5px 0; text-align: center; color: var(--accent-color);">تطبيق المؤمنون ☪️</div>
+    <div style="font-size: 22px; font-weight: bold; margin: 5px 0; text-align: center; color: var(--accent-color);">تطبيق المؤمنون ☪️</div>
 
-    <!-- 1. شاشة تسجيل الدخول -->
+    <!-- 1. تسجيل الدخول -->
     <div id="loginSec" class="section active box">
         <h2>تسجيل دخول النظام</h2>
         <p class="subtitle">مرحباً بك يا سيدي يوسف، أدخل البيانات للمتابعة:</p>
@@ -93,7 +107,7 @@
         
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
             <input type="text" id="cityNameInput" placeholder="اكتب اسم المدينة (مثال: Nice, Cairo, Riyadh)..." style="margin-top:0;">
-            <button onclick="searchByCityInput()" style="margin-top:0; width: 110px; background: var(--accent-color);">بحث 🔍</button>
+            <button onclick="searchByCityInput()" style="margin-top:0; width: 100px; background: var(--accent-color);">بحث 🔍</button>
         </div>
 
         <label style="font-size: 13px; margin-top: 5px;">طريقة حساب المواقيت:</label>
@@ -118,30 +132,29 @@
         <button onclick="setupNotifications()" style="background: #2563eb; color:#fff;">🔔 تفعيل تنبيهات الإشعارات</button>
     </div>
 
-    <!-- 3. القرآن الكريم (صفحة المصحف الكاملة) -->
+    <!-- 3. القرآن الكريم (شاشة كاملة وتمرير يدوي حر) -->
     <div id="quranSec" class="section box">
-        <h2>القرآن الكريم (صفحة المصحف)</h2>
-        <p class="subtitle">تصفح المصحف صفحة بصفحة مع خيار الاستماع للتلاوة</p>
+        <h2>القرآن الكريم (القراءة الكاملة)</h2>
+        <p class="subtitle">اختر السورة للاستماع والقراءة بتمرير يدوي مريح</p>
 
-        <div style="display: flex; gap: 6px; margin-bottom: 10px; align-items: center;">
-            <button onclick="prevPage()" style="margin-top:0; width: auto; padding: 8px 10px; background: #334155; color: #fff; font-size: 13px;">◀ صفحة سابقة</button>
-            <span id="pageNumDisplay" style="font-weight: bold; color: var(--accent-color); flex: 1; text-align: center; font-size: 14px;">صفحة 1 من 604</span>
-            <button onclick="nextPage()" style="margin-top:0; width: auto; padding: 8px 10px; background: #334155; color: #fff; font-size: 13px;">صفحة تالية ▶</button>
+        <select id="surahSelect" onchange="loadFullSurah()" style="margin-top:0; padding: 10px; font-size: 14px;">
+            <option value="">اختر السورة للقراءة والاستماع...</option>
+        </select>
+
+        <!-- صندوق العرض بملء الشاشة مع التمرير اليدوي السلس -->
+        <div id="mushafFullContainer" class="mushaf-full-view">
+            <span style="color: #666; display: block; text-align: center; padding: 40px;">اختر سورة من القائمة أعلاه لعرض الآيات بكامل الشاشة...</span>
         </div>
 
-        <div id="mushafPageContainer" class="mushaf-view">
-            <span style="color: #666; display: block; text-align: center; margin-top: 120px;">جاري تحميل صفحة المصحف...</span>
-        </div>
-
-        <div style="margin-top: 10px; background: var(--bg-color); padding: 8px; border-radius: 8px; border: 1px solid var(--border-color);">
-            <label style="margin-top: 0; font-size: 12px;">اختر القارئ للاستماع:</label>
-            <select id="reciterSelect" onchange="updateCurrentReciterAudio()" style="padding: 6px; font-size: 12px; margin-top: 2px;">
+        <div style="margin-top: 12px; background: var(--bg-color); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
+            <label style="margin-top: 0; font-size: 13px;">اختر القارئ:</label>
+            <select id="reciterSelect" onchange="updateAudioSource()" style="padding: 8px; font-size: 13px; margin-top: 4px;">
                 <option value="https://server8.mp3quran.net/afs/">مشاري العفاسي</option>
                 <option value="https://server11.mp3quran.net/sds/">عبد الرحمن السديس</option>
                 <option value="https://server7.mp3quran.net/basit/">عبد الباسط عبد الصمد</option>
                 <option value="https://server9.mp3quran.net/shuraim/">سعود الشريم</option>
             </select>
-            <audio id="audioPlayer" controls style="display:block;"></audio>
+            <audio id="audioPlayer" controls style="display:block; margin-top: 8px;"></audio>
         </div>
     </div>
 
@@ -151,7 +164,7 @@
         <p class="subtitle">بث حي مباشر لقناة القرآن الكريم</p>
         
         <div class="video-container">
-            <video id="liveVideo" controls autoplay playsinline style="width: 100%; height: 100%; max-height: 280px; display: block;"></video>
+            <video id="liveVideo" controls autoplay playsinline style="width: 100%; height: 100%; max-height: 320px; display: block;"></video>
         </div>
         
         <button onclick="reloadStream()" style="background: #059669; color: #fff; margin-top: 10px;">إعادة محاولة الاتصال بالبث 🔄</button>
@@ -214,15 +227,28 @@
     </div>
 
     <script>
-        let currentPageNum = 1;
-        const totalQuranPages = 604;
-        let currentLoadedSurahNum = 1;
+        const surahsList = [
+            "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
+            "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
+            "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم",
+            "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
+            "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق",
+            "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة",
+            "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج",
+            "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الإنسان", "المرسلات", "النبأ", "النازعات", "عبس",
+            "التكوير", "الانفطار", "المطففين", "الانشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد",
+            "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات",
+            "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر",
+            "المسد", "الإخلاص", "الفلق", "الناس"
+        ];
+
+        let currentSelectedSurahNum = 1;
         let tasbihCount = 0;
         let lastCoords = null;
         let lastCityName = "";
 
         window.onload = function() {
-            initQuranPage(currentPageNum);
+            populateSurahDropdown();
             initStream();
             const loggedUser = localStorage.getItem('loggedUser');
             if (loggedUser) {
@@ -230,14 +256,12 @@
             }
         };
 
-        // --- PWA Service Worker ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').catch(err => console.error(err));
             });
         }
 
-        // --- Notifications ---
         async function setupNotifications() {
             if (!('Notification' in window)) {
                 alert("متصفحك لا يدعم الإشعارات.");
@@ -251,60 +275,49 @@
             }
         }
 
-        // --- Quran Pages Logic ---
-        async function initQuranPage(pageNum) {
-            const contentDiv = document.getElementById("mushafPageContainer");
-            document.getElementById("pageNumDisplay").textContent = `صفحة ${pageNum} من 604`;
-            contentDiv.innerHTML = `<span style="color: #666; display: block; text-align: center; margin-top: 120px;">جاري تحميل الصفحة ${pageNum}...</span>`;
+        function populateSurahDropdown() {
+            const select = document.getElementById("surahSelect");
+            surahsList.forEach((name, index) => {
+                let opt = document.createElement("option");
+                opt.value = index + 1;
+                opt.textContent = `${index + 1}. سورة ${name}`;
+                select.appendChild(opt);
+            });
+        }
+
+        async function loadFullSurah() {
+            const id = document.getElementById("surahSelect").value;
+            if (!id) return;
+            currentSelectedSurahNum = id;
+
+            const container = document.getElementById("mushafFullContainer");
+            container.innerHTML = "<span style='color: #666; display: block; text-align: center; padding: 40px;'>جاري تحميل السورة كاملة للقراءة...</span>";
 
             try {
-                const res = await fetch(`https://api.alquran.cloud/v1/page/${pageNum}/quran-uthmani`);
+                const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}`);
                 const data = await res.json();
                 
                 if(data.code === 200) {
-                    let pageHtml = "";
-                    let currentSurahName = "";
+                    let html = `<div style="text-align: center; color: #b45309; font-weight: bold; margin-bottom: 15px; font-size: 20px;">سورة ${data.data.name}</div>`;
                     
                     data.data.ayahs.forEach(ayah => {
-                        if (currentSurahName !== ayah.surah.name) {
-                            currentSurahName = ayah.surah.name;
-                            pageHtml += `<div style="text-align: center; color: #b45309; font-weight: bold; margin: 12px 0 8px 0; font-size: 16px; border-top: 1px dashed #d1d5db; border-bottom: 1px dashed #d1d5db; padding: 4px;">*** سورة ${currentSurahName} ***</div>`;
-                        }
-                        pageHtml += `<span class="ayah">${ayah.text} ﴿${ayah.numberInSurah}﴾ </span>`;
+                        html += `<span class="ayah">${ayah.text} ﴿${ayah.numberInSurah}﴾ </span>`;
                     });
                     
-                    contentDiv.innerHTML = pageHtml;
-                    contentDiv.scrollTop = 0; // إعادة التمرير لأعلى الصفحة الجديدة
-                    
-                    currentLoadedSurahNum = data.data.ayahs[0].surah.number;
-                    updateCurrentReciterAudio();
+                    container.innerHTML = html;
+                    updateAudioSource();
                 }
             } catch (e) {
-                contentDiv.innerHTML = "<span style='color: red; display: block; text-align: center; margin-top: 120px;'>تعذر تحميل الصفحة، تحقق من الإنترنت.</span>";
+                container.innerHTML = "<span style='color: red; display: block; text-align: center; padding: 40px;'>تعذر التحميل، تحقق من اتصال الإنترنت.</span>";
             }
         }
 
-        function nextPage() {
-            if (currentPageNum < totalQuranPages) {
-                currentPageNum++;
-                initQuranPage(currentPageNum);
-            }
-        }
-
-        function prevPage() {
-            if (currentPageNum > 1) {
-                currentPageNum--;
-                initQuranPage(currentPageNum);
-            }
-        }
-
-        function updateCurrentReciterAudio() {
+        function updateAudioSource() {
             const audio = document.getElementById("audioPlayer");
             const reciterBaseUrl = document.getElementById("reciterSelect").value;
-            audio.src = `${reciterBaseUrl}${String(currentLoadedSurahNum).padStart(3, '0')}.mp3`;
+            audio.src = `${reciterBaseUrl}${String(currentSelectedSurahNum).padStart(3, '0')}.mp3`;
         }
 
-        // --- Live Stream Logic ---
         function initStream() {
             const videoSrc = "https://cdn-globecast.akamaized.net/live/eds/saudi_quran/hls_roku/index.m3u8";
             const video = document.getElementById('liveVideo');
@@ -324,7 +337,6 @@
             video.play();
         }
 
-        // --- Login & Navigation ---
         function handleLogin() {
             const user = document.getElementById("usernameInput").value.trim();
             const pass = document.getElementById("passwordInput").value.trim();
@@ -356,7 +368,6 @@
             document.getElementById(btnId).classList.add('active');
         }
 
-        // --- Prayer Times & Location ---
         function requestUserLocation() {
             const locDisplay = document.getElementById("locationDisplay");
             if (navigator.geolocation) {
@@ -436,13 +447,12 @@
                 document.getElementById("pFajr").textContent = t.Fajr;
                 document.getElementById("pSunrise").textContent = t.Sunrise;
                 document.getElementById("pDhuhr").textContent = t.Dhuhr;
-                document.getElementById("pAsr").textContent, document.getElementById("pAsr").textContent = t.Asr;
+                document.getElementById("pAsr").textContent = t.Asr;
                 document.getElementById("pMaghrib").textContent = t.Maghrib;
                 document.getElementById("pIsha").textContent = t.Isha;
             }
         }
 
-        // --- Tasbih Logic ---
         function changeDhikr(val) {
             document.getElementById("tasbihText").textContent = val;
             tasbihCount = 0;
@@ -459,7 +469,6 @@
             document.getElementById("counterVal").textContent = tasbihCount;
         }
 
-        // --- Theme Settings ---
         function changeAccentColor(color) {
             document.documentElement.style.setProperty('--accent-color', color);
         }
