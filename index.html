@@ -206,8 +206,8 @@
         <h2>معلومات الحساب</h2>
         <div style="background: var(--bg-color); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; font-size: 14px;">
             <p><strong>اسم المستخدم:</strong> <span id="accName">--</span></p>
-            <p><strong>حالة الحساب:</strong> <span style="color: #10b981;">نشط وموثق ✅</span></p>
-            <p><strong>نوع العضوية:</strong> المطور والمصمم الرئيسي (سيدي يوسف)</p>
+            <p><strong>حالة الحساب:</strong> <span id="accStatus">نشط</span></p>
+            <p><strong>نوع العضوية:</strong> يوسف</p>
         </div>
         <button onclick="logout()" style="background: #dc2626; color: #fff;">تسجيل الخروج 🚪</button>
     </div>
@@ -222,7 +222,7 @@
         <label>اختيار لون الخلفية:</label>
         <input type="color" id="bgPicker" value="#0f172a" onchange="changeBgColor(this.value)" style="height: 40px; cursor: pointer;">
 
-        <button onclick="alert('تم حفظ إعدادات التطبيق بنجاح!')" style="margin-top: 15px;">حفظ الإعدادات</button>
+        <button onclick="saveAppSettings()" style="margin-top: 15px;">حفظ الإعدادات</button>
     </div>
 
     <!-- الشريط السفلي -->
@@ -257,6 +257,7 @@
         let lastCityName = "";
 
         window.onload = function() {
+            loadSavedSettings();
             populateDropdowns();
             initStream();
             const loggedUser = localStorage.getItem('loggedUser');
@@ -372,6 +373,15 @@
             document.getElementById("prayerSec").classList.add("active");
             document.getElementById("navBar").style.display = "flex";
             document.getElementById("accName").textContent = username;
+            
+            // تخصيص علامة التوثيق لتظهر لك وحدك إذا كان اسم المستخدم يطابق اسمك
+            const statusElem = document.getElementById("accStatus");
+            if (username.toLowerCase() === "يوسف") {
+                statusElem.innerHTML = 'نشط وموثق <span style="color: #10b981;">✅</span>';
+            } else {
+                statusElem.innerHTML = 'نشط';
+            }
+
             requestUserLocation();
         }
 
@@ -494,6 +504,30 @@
 
         function changeBgColor(color) {
             document.documentElement.style.setProperty('--bg-color', color);
+        }
+
+        function saveAppSettings() {
+            const accent = document.getElementById("accentPicker").value;
+            const bg = document.getElementById("bgPicker").value;
+            
+            localStorage.setItem('appAccentColor', accent);
+            localStorage.setItem('appBgColor', bg);
+            
+            alert('تم حفظ إعدادات الألوان بنجاح وثباتها في التطبيق! ✅');
+        }
+
+        function loadSavedSettings() {
+            const savedAccent = localStorage.getItem('appAccentColor');
+            const savedBg = localStorage.getItem('appBgColor');
+            
+            if (savedAccent) {
+                document.documentElement.style.setProperty('--accent-color', savedAccent);
+                document.getElementById("accentPicker").value = savedAccent;
+            }
+            if (savedBg) {
+                document.documentElement.style.setProperty('--bg-color', savedBg);
+                document.getElementById("bgPicker").value = savedBg;
+            }
         }
     </script>
 </body>
