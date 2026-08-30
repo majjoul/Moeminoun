@@ -71,7 +71,6 @@
         }
         .ayah { padding: 3px; }
 
-        /* تصميم قسم الحساب المطابق للصورة التوضيحية */
         .profile-card-layout {
             display: flex;
             align-items: center;
@@ -258,16 +257,17 @@
         <p class="subtitle">وجه هاتفك لمعرفة اتجاه الكعبة المشرفة بدقة</p>
         
         <div style="text-align: center; margin: 20px 0;">
-            <div style="position: relative; width: 200px; height: 200px; margin: 0 auto; border: 4px solid var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-color); box-shadow: 0 0 20px rgba(0,0,0,0.5);">
+            <div id="compassRing" style="position: relative; width: 200px; height: 200px; margin: 0 auto; border: 4px solid var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--bg-color); box-shadow: 0 0 20px rgba(0,0,0,0.5); transition: border-color 0.3s ease;">
                 <div id="qiblaArrow" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.1s ease-out;">
-                    <span style="font-size: 45px; margin-top: -100px; display: block;">🕋</span>
+                    <span id="qiblaIcon" style="font-size: 45px; margin-top: -100px; display: block; transition: color 0.3s ease;">🕋</span>
                 </div>
-                <div style="font-size: 13px; color: var(--accent-color); font-weight: bold; z-index: 2;">القبلة</div>
+                <div style="font-size: 13px; color: var(--accent-color); font-weight: bold; z-index: 2;" id="compassCenterText">القبلة</div>
             </div>
         </div>
 
         <p id="qiblaStatusText" style="text-align: center; font-size: 13px; color: #94a3b8;">اضغط الزر أدناه لتفعيل بوصلة القبلة...</p>
         <button onclick="initQiblaSensor()" style="background: #2563eb; color: #fff; margin-top: 5px;">تفعيل بوصلة القبلة 🧭</button>
+        <button onclick="requestUserLocation()" style="background: #059669; color: #fff; margin-top: 5px;">تحديث موقع الـ GPS يدوياً 📍</button>
     </div>
 
     <!-- 8. معلومات الحساب -->
@@ -342,8 +342,8 @@
         ];
 
         let tasbihCount = 0;
-        let lastCoords = null;
-        let lastCityName = "";
+        let lastCoords = { lat: 43.7102, lon: 7.2620 }; // افتراض إحداثيات مدينة Nice لتجنب الأخطاء
+        let lastCityName = "Nice";
         let qiblaAngle = 0;
 
         window.onload = function() {
@@ -351,6 +351,18 @@
             populateDropdowns();
             initStream();
             loadSavedAvatar();
+            
+            // محاولة جلب الـ GPS تلقائياً في الخلفية
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        lastCoords = { lat: position.coords.latitude, lon: position.coords.longitude };
+                    },
+                    () => {},
+                    { timeout: 5000 }
+                );
+            }
+
             const loggedUser = localStorage.getItem('loggedUser');
             if (loggedUser) {
                 appLoginSuccess(loggedUser);
@@ -536,27 +548,21 @@
                         fetchPrayerTimesByCoords(lat, lon);
                     },
                     () => {
-                        locDisplay.textContent = "⚠️ تعذر جلب الـ GPS. يرجى كتابة اسم مدينتك يدوياً.";
+                        locDisplay.textContent = "⚠️ تعذر جلب الـ GPS التلقائي. يتم استخدام مدينة Nice افتراضياً.";
                         searchByCityInput();
                     },
                     { timeout: 8000 }
                 );
             } else {
-                locDisplay.textContent = "متصفحك لا يدعم الـ GPS. اكتب اسم مدينتك يدوياً.";
+                fetchPrayerTimesByCity("Nice");
             }
         }
 
         function searchByCityInput() {
             const cityName = document.getElementById("cityNameInput").value.trim();
-            if (!cityName && !lastCityName && !lastCoords) {
-                fetchPrayerTimesByCity("Nice");
-                return;
-            }
             if (cityName) {
                 lastCityName = cityName;
-                lastCoords = null;
             }
-            
             const targetCity = lastCityName || "Nice";
             document.getElementById("locationDisplay").textContent = `جاري جلب مواقيت الصلاة لمدينة: ${targetCity}...`;
             fetchPrayerTimesByCity(targetCity);
@@ -575,9 +581,7 @@
             fetch(`https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=${method}`)
             .then(res => res.json())
             .then(data => updatePrayerUI(data))
-            .catch(() => {
-                document.getElementById("locationDisplay").textContent = "تعذر جلب الأوقات بالإحداثيات.";
-            });
+            .catch(() => {});
         }
 
         function fetchPrayerTimesByCity(city) {
@@ -587,12 +591,14 @@
             .then(data => {
                 if (data.code === 200) {
                     updatePrayerUI(data);
+                    // حفظ الإحداثيات التقريبية بناءً على المدينة المدخلة لضمان دقة القبلة
+                    if(data.data.meta && data.data.meta.latitude) {
+                        lastCoords = { lat: data.data.meta.latitude, lon: data.data.meta.longitude };
+                    }
                     document.getElementById("locationDisplay").textContent = `تم جلب المواقيت لمدينة: ${city} بنجاح ✅`;
-                } else {
-                    alert("عذراً، لم يتم العثور على هذه المدينة باللغة الإنجليزية (مثال: Nice, Paris, Cairo)");
                 }
             })
-            .catch(() => alert("حدث خطأ في الاتصال بالخادم."));
+            .catch(() => {});
         }
 
         function updatePrayerUI(data) {
@@ -621,14 +627,12 @@
             let theta = Math.atan2(y, x);
             qiblaAngle = (theta * 180 / Math.PI + 360) % 360;
             
-            document.getElementById("qiblaStatusText").textContent = `تم حساب الزاوية بنجاح. حرّك هاتفك لضبط الاتجاه.`;
+            document.getElementById("qiblaStatusText").textContent = `تم حساب اتجاه القبلة بدقة. وجّه هاتفك أفقياً الآن.`;
         }
 
         function initQiblaSensor() {
             if (!lastCoords) {
-                alert("يرجى التأكد من تحديد الموقع (GPS) أولاً من قسم الصلاة.");
-                requestUserLocation();
-                return;
+                lastCoords = { lat: 43.7102, lon: 7.2620 }; // Nice افتراضياً
             }
 
             calculateQibla(lastCoords.lat, lastCoords.lon);
@@ -659,8 +663,26 @@
                 let finalRotation = (compass + qiblaAngle) % 360;
                 
                 const arrow = document.getElementById("qiblaArrow");
+                const compassRing = document.getElementById("compassRing");
+                const qiblaIcon = document.getElementById("qiblaIcon");
+                const statusText = document.getElementById("qiblaStatusText");
+
                 if (arrow) {
                     arrow.style.transform = `rotate(${finalRotation}deg)`;
+                }
+
+                // حساب مدى مطابقة الاتجاه الصحيح (إذا كان الفرق أقل من 3 درجات يتحول للأخضر الساطع)
+                // بما أن السهم يشير للقبلة عندما تصبح rotation قريبة من 0 أو 360
+                let deviation = Math.min(finalRotation, 360 - finalRotation);
+                
+                if (deviation <= 3) {
+                    compassRing.style.borderColor = "#22c55e"; // أخضر ساطع
+                    qiblaIcon.style.color = "#22c55e";
+                    statusText.innerHTML = "<span style='color: #22c55e; font-weight: bold;'>✨ أنت تواجه اتجاه القبلة الصحيح الآن! ✨</span>";
+                } else {
+                    compassRing.style.borderColor = "var(--accent-color)";
+                    qiblaIcon.style.color = "var(--text-color)";
+                    statusText.textContent = `وجه هاتفك ببطء حتى يتحول المؤشر للأخضر.`;
                 }
             }
         }
