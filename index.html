@@ -5,305 +5,357 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
     <title>تطبيق المؤمنون - سيدي يوسف</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --border-color: #334155;
-            --text-color: #f8fafc;
-            --accent-color: #eab308;
-            --accent-hover: #ca8a04;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --text-color: #1f2937;
+            --accent-color: #10b981;
+            --accent-hover: #059669;
+            --header-bg: linear-gradient(180deg, #1d5272 0%, #3e88a5 100%);
         }
 
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 10px; padding-bottom: 100px; transition: background 0.3s, color 0.3s; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+        body { background: #e5e7eb; color: var(--text-color); display: flex; justify-content: center; min-height: 100vh; }
         
-        .corner-ornament { position: fixed; width: 60px; height: 60px; border: 4px solid var(--accent-color); pointer-events: none; z-index: 9999; opacity: 0.5; }
-        .top-right { top: 10px; right: 10px; border-bottom: none; border-left: none; }
-        .top-left { top: 10px; left: 10px; border-bottom: none; border-right: none; }
-        .bottom-right { bottom: 80px; right: 10px; border-top: none; border-left: none; }
-        .bottom-left { bottom: 80px; left: 10px; border-top: none; border-right: none; }
-
-        .box { background: var(--card-bg); border: 2px solid var(--accent-color); padding: 15px; border-radius: 12px; width: 100%; max-width: 100%; margin: 5px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; }
-        
-        .box::before {
-            content: "❖ ﷽ ❖";
-            display: block;
-            text-align: center;
-            font-size: 12px;
-            color: var(--accent-color);
-            margin-bottom: 8px;
-            letter-spacing: 2px;
+        .app-wrapper {
+            width: 100%;
+            max-width: 430px;
+            background: var(--bg-color);
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 90px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
-        h2 { text-align: center; color: var(--accent-color); margin-top: 0; font-size: 20px; }
-        .subtitle { text-align: center; margin-bottom: 12px; font-size: 13px; color: #94a3b8; }
+        .box { background: var(--card-bg); padding: 16px; border-radius: 16px; width: 100%; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border-color); }
         
-        label { display: block; margin-top: 10px; font-size: 14px; font-weight: bold; color: var(--text-color); }
-        input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 15px; outline: none; }
-        button { background: var(--accent-color); color: #000; border: none; font-weight: bold; cursor: pointer; margin-top: 12px; transition: background 0.2s; }
+        h2 { text-align: center; color: #10b981; margin-bottom: 8px; font-size: 18px; font-weight: 700; }
+        .subtitle { text-align: center; margin-bottom: 12px; font-size: 13px; color: #6b7280; }
+        
+        label { display: block; margin-top: 10px; font-size: 13px; font-weight: bold; color: var(--text-color); }
+        input, select, button { width: 100%; padding: 10px; margin-top: 6px; border-radius: 10px; border: 1px solid var(--border-color); background: #fff; color: var(--text-color); font-size: 14px; outline: none; }
+        button { background: var(--accent-color); color: #fff; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; transition: background 0.2s; border-radius: 12px; }
         button:hover { background: var(--accent-hover); }
 
-        .section { display: none; }
+        .section { display: none; padding: 15px; }
         .section.active { display: block; }
 
-        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: none; justify-content: space-around; padding: 8px 0; border-top: 2px solid var(--accent-color); z-index: 1000; box-shadow: 0 -4px 15px rgba(0,0,0,0.5); overflow-x: auto; }
-        .nav button { background: none; border: none; color: #94a3b8; font-size: 10px; cursor: pointer; width: auto; margin: 0; font-weight: normal; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: none; padding: 0; min-width: 45px; }
-        .nav button.active { color: var(--accent-color); font-weight: bold; }
-
-        .prayer-row { display: flex; justify-content: space-between; padding: 10px 12px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; margin-top: 8px; font-size: 15px; }
-        .counter-display { font-size: 60px; font-weight: bold; text-align: center; color: var(--accent-color); margin: 15px 0; }
-        
-        .video-container { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; border: 1px solid var(--border-color); }
-        
-        .mushaf-full-view { 
-            line-height: 2.8; 
-            font-size: 22px; 
-            text-align: justify; 
-            padding: 15px; 
-            background: #fbfbfa; 
-            color: #111111; 
-            border-radius: 8px; 
-            border: 2px solid var(--accent-color); 
-            margin-top: 10px; 
-            font-family: 'Amiri', serif;
-            width: 100%;
-        }
-        .ayah { padding: 3px; }
-
-        .profile-card-layout {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: var(--bg-color);
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            margin-top: 10px;
-        }
-        .profile-avatar-container {
-            flex-shrink: 0;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid var(--accent-color);
-            overflow: hidden;
-            background: #334155;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+        /* Header UI (like reference) */
+        .header-card {
+            background: var(--header-bg);
+            color: white;
+            padding: 20px 15px 35px 15px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            text-align: center;
             position: relative;
         }
-        .profile-avatar-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .header-top { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 10px; }
+        .header-next { font-size: 13px; opacity: 0.9; }
+        .header-prayer { font-size: 28px; font-weight: 700; margin: 4px 0; }
+        .header-time { font-size: 24px; font-weight: bold; }
+        .header-countdown { font-size: 12px; background: rgba(255, 255, 255, 0.2); display: inline-block; padding: 4px 12px; border-radius: 12px; margin-top: 6px; }
+
+        /* Services Grid UI */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: -20px;
+            padding: 0 10px;
         }
-        .profile-avatar-container span {
-            font-size: 11px;
-            color: #cbd5e1;
+        .grid-item {
+            background: #fff;
+            border-radius: 14px;
+            padding: 10px 4px;
             text-align: center;
-            padding: 5px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            border: 1px solid #f0f0f0;
+            cursor: pointer;
         }
-        .profile-info-lines {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 14px;
+        .grid-item .icon { font-size: 20px; margin-bottom: 4px; }
+        .grid-item .label { font-size: 11px; color: #4b5563; font-weight: 500; }
+
+        /* Bottom Nav UI */
+        .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: #ffffff; display: none; justify-content: space-around; align-items: center; height: 65px; border-top: 1px solid #e5e7eb; z-index: 1000; }
+        .nav button { background: none; border: none; color: #9ca3af; font-size: 11px; cursor: pointer; width: auto; margin: 0; font-weight: normal; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: none; padding: 0; }
+        .nav button.active { color: #10b981; font-weight: bold; }
+        .nav .center-tasbih { background: #10b981; color: white; width: 48px; height: 48px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; margin-top: -25px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4); }
+
+        .prayer-row { display: flex; justify-content: space-between; padding: 10px; background: #f9fafb; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 6px; font-size: 14px; }
+        .counter-display { font-size: 55px; font-weight: bold; text-align: center; color: var(--accent-color); margin: 10px 0; }
+        
+        .video-container { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; margin-top: 10px; }
+        
+        .mushaf-full-view { 
+            line-height: 2.6; 
+            font-size: 20px; 
+            text-align: justify; 
+            padding: 12px; 
+            background: #fffcf7; 
+            color: #111; 
+            border-radius: 8px; 
+            border: 1px solid #e5e7eb; 
+            margin-top: 10px; 
+            font-family: 'Amiri', serif;
         }
-        .profile-line {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px dashed var(--border-color);
-            padding-bottom: 4px;
-        }
+
+        .profile-card-layout { display: flex; align-items: center; gap: 12px; background: #f9fafb; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 10px; }
+        .profile-avatar-container { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--accent-color); overflow: hidden; background: #e5e7eb; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+        .profile-avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-info-lines { flex-grow: 1; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+        .profile-line { display: flex; justify-content: space-between; border-bottom: 1px dashed #e5e7eb; padding-bottom: 3px; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
 
-    <div class="corner-ornament top-right"></div>
-    <div class="corner-ornament top-left"></div>
-    <div class="corner-ornament bottom-right"></div>
-    <div class="corner-ornament bottom-left"></div>
+<div class="app-wrapper">
 
-    <div style="font-size: 22px; font-weight: bold; margin: 5px 0; text-align: center; color: var(--accent-color);">تطبيق المؤمنون ☪️</div>
+    <div style="font-size: 18px; font-weight: bold; padding: 10px 0; text-align: center; color: #10b981; background: #fff;">تطبيق المؤمنون ☪️</div>
 
     <!-- 1. تسجيل الدخول -->
-    <div id="loginSec" class="section active box">
-        <h2>تسجيل دخول النظام</h2>
-        <p class="subtitle">مرحباً بك يا سيدي يوسف، أدخل البيانات للمتابعة:</p>
-        
-        <label>اسم المستخدم:</label>
-        <input type="text" id="usernameInput" placeholder="أدخل اسمك هنا...">
-        
-        <label>كلمة المرور:</label>
-        <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور...">
+    <div id="loginSec" class="section active">
+        <div class="box">
+            <h2>تسجيل دخول النظام</h2>
+            <p class="subtitle">مرحباً بك يا سيدي يوسف، أدخل البيانات للمتابعة:</p>
+            
+            <label>اسم المستخدم:</label>
+            <input type="text" id="usernameInput" placeholder="أدخل اسمك هنا...">
+            
+            <label>كلمة المرور:</label>
+            <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور...">
 
-        <button onclick="handleLogin()">تسجيل الدخول</button>
+            <button onclick="handleLogin()">تسجيل الدخول</button>
+        </div>
     </div>
 
-    <!-- 2. مواقيت الصلاة -->
-    <div id="prayerSec" class="section box">
-        <h2>مواقيت الصلاة اليوم</h2>
-        <p id="locationDisplay" class="subtitle">حدد موقعك التلقائي أو اكتب اسم مدينتك:</p>
+    <!-- 2. مواقيت الصلاة (الواجهة الرئيسية) -->
+    <div id="prayerSec" class="section">
         
-        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-            <input type="text" id="cityNameInput" placeholder="اكتب اسم المدينة (مثال: Nice, Cairo, Riyadh)..." style="margin-top:0;">
-            <button onclick="searchByCityInput()" style="margin-top:0; width: 100px; background: var(--accent-color);">بحث 🔍</button>
+        <!-- Header Banner -->
+        <div class="header-card">
+            <div class="header-top">
+                <span id="locationDisplayHeader">تونس 📍</span>
+                <span style="cursor:pointer;" onclick="switchTab('settingsSec', 'navSet')">⚙️</span>
+            </div>
+            <div class="header-next">الصلاة القادمة</div>
+            <div class="header-prayer" id="nextPrayerName">الظهر</div>
+            <div class="header-time" id="nextPrayerTime">--:--</div>
+            <div class="header-countdown">مواقيت الصلاة اليومية</div>
         </div>
 
-        <label style="font-size: 13px; margin-top: 5px;">طريقة حساب المواقيت:</label>
-        <select id="methodSelect" onchange="onMethodChange()" style="padding: 8px; font-size: 13px; margin-top: 3px;">
-            <option value="4">مكة المكرمة (Umm al-Qura)</option>
-            <option value="2">رابطة العالم الإسلامي (Muslim World League)</option>
-            <option value="5">الهيئة المصرية العامة للمساحة</option>
-            <option value="1">جامعة العلوم الإسلامية بكراتشي</option>
-            <option value="3">جامعة أم القرى (تقويم مكة القديم)</option>
-        </select>
-
-        <div id="prayerListContainer" style="margin-top: 10px;">
-            <div class="prayer-row"><span>الفجر</span><strong id="pFajr">--:--</strong></div>
-            <div class="prayer-row"><span>الشروق</span><strong id="pSunrise">--:--</strong></div>
-            <div class="prayer-row"><span>الظهر</span><strong id="pDhuhr">--:--</strong></div>
-            <div class="prayer-row"><span>العصر</span><strong id="pAsr">--:--</strong></div>
-            <div class="prayer-row"><span>المغرب</span><strong id="pMaghrib">--:--</strong></div>
-            <div class="prayer-row"><span>العشاء</span><strong id="pIsha">--:--</strong></div>
+        <!-- Quick Access Grid -->
+        <div class="quick-grid">
+            <div class="grid-item" onclick="switchTab('prayerSec', 'navP')">
+                <div class="icon">🕌</div>
+                <div class="label">الصلاة</div>
+            </div>
+            <div class="grid-item" onclick="switchTab('quranReadSec', 'navQR')">
+                <div class="icon">📖</div>
+                <div class="label">القرآن</div>
+            </div>
+            <div class="grid-item" onclick="switchTab('tasbihSec', 'navT')">
+                <div class="icon">🤲</div>
+                <div class="label">أذكار</div>
+            </div>
+            <div class="grid-item" onclick="switchTab('liveSec', 'navL')">
+                <div class="icon">🕋</div>
+                <div class="label">البث</div>
+            </div>
+            <div class="grid-item" onclick="switchTab('tasbihSec', 'navT')">
+                <div class="icon">📿</div>
+                <div class="label">عداد</div>
+            </div>
+            <div class="grid-item" onclick="switchTab('quranAudioSec', 'navQA')">
+                <div class="icon">🎧</div>
+                <div class="label">مسموع</div>
+            </div>
+            <div class="grid-item" onclick="switchTab('accountSec', 'navAcc')">
+                <div class="icon">👤</div>
+                <div class="label">حسابي</div>
+            </div>
+            <div class="grid-item" onclick="switchTab('settingsSec', 'navSet')">
+                <div class="icon">⚙️</div>
+                <div class="label">الإعدادات</div>
+            </div>
         </div>
 
-        <button onclick="requestUserLocation()" style="background: #059669; color:#fff;">📍 تحديد الموقع تلقائياً (GPS)</button>
-        <button onclick="setupNotifications()" style="background: #2563eb; color:#fff;">🔔 تفعيل تنبيهات الإشعارات</button>
+        <div style="height: 15px;"></div>
+
+        <div class="box">
+            <h2>مواقيت الصلاة اليوم</h2>
+            <p id="locationDisplay" class="subtitle">حدد موقعك التلقائي أو اكتب اسم مدينتك:</p>
+            
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <input type="text" id="cityNameInput" placeholder="اكتب اسم المدينة (مثال: Nice, Cairo, Riyadh)..." style="margin-top:0;">
+                <button onclick="searchByCityInput()" style="margin-top:0; width: 90px;">بحث 🔍</button>
+            </div>
+
+            <label style="font-size: 12px; margin-top: 5px;">طريقة حساب المواقيت:</label>
+            <select id="methodSelect" onchange="onMethodChange()" style="padding: 8px; font-size: 13px; margin-top: 3px;">
+                <option value="4">مكة المكرمة (Umm al-Qura)</option>
+                <option value="2">رابطة العالم الإسلامي (Muslim World League)</option>
+                <option value="5">الهيئة المصرية العامة للمساحة</option>
+                <option value="1">جامعة العلوم الإسلامية بكراتشي</option>
+                <option value="3">جامعة أم القرى (تقويم مكة القديم)</option>
+            </select>
+
+            <div id="prayerListContainer" style="margin-top: 10px;">
+                <div class="prayer-row"><span>الفجر</span><strong id="pFajr">--:--</strong></div>
+                <div class="prayer-row"><span>الشروق</span><strong id="pSunrise">--:--</strong></div>
+                <div class="prayer-row"><span>الظهر</span><strong id="pDhuhr">--:--</strong></div>
+                <div class="prayer-row"><span>العصر</span><strong id="pAsr">--:--</strong></div>
+                <div class="prayer-row"><span>المغرب</span><strong id="pMaghrib">--:--</strong></div>
+                <div class="prayer-row"><span>العشاء</span><strong id="pIsha">--:--</strong></div>
+            </div>
+
+            <button onclick="requestUserLocation()" style="background: #10b981;">📍 تحديد الموقع تلقائياً (GPS)</button>
+            <button onclick="setupNotifications()" style="background: #2563eb;">🔔 تفعيل تنبيهات الإشعارات</button>
+        </div>
     </div>
 
     <!-- 3. صفحة القرآن المكتوب -->
-    <div id="quranReadSec" class="section box">
-        <h2>القرآن الكريم (قراءة مكتوبة)</h2>
-        <p class="subtitle">تصفح وقرأ السور بملء الشاشة وبتمرير يدوي حر</p>
+    <div id="quranReadSec" class="section">
+        <div class="box">
+            <h2>القرآن الكريم (قراءة مكتوبة)</h2>
+            <p class="subtitle">تصفح وقرأ السور بملء الشاشة وبتمرير يدوي حر</p>
 
-        <select id="surahReadSelect" onchange="loadFullSurah()" style="margin-top:0; padding: 10px; font-size: 14px;">
-            <option value="">اختر السورة للقراءة...</option>
-        </select>
+            <select id="surahReadSelect" onchange="loadFullSurah()" style="margin-top:0; padding: 10px; font-size: 14px;">
+                <option value="">اختر السورة للقراءة...</option>
+            </select>
 
-        <div id="mushafFullContainer" class="mushaf-full-view">
-            <span style="color: #666; display: block; text-align: center; padding: 40px;">اختر سورة من القائمة لعرض الآيات بكامل الشاشة...</span>
+            <div id="mushafFullContainer" class="mushaf-full-view">
+                <span style="color: #666; display: block; text-align: center; padding: 40px;">اختر سورة من القائمة لعرض الآيات بكامل الشاشة...</span>
+            </div>
         </div>
     </div>
 
     <!-- 4. صفحة القرآن المسموع -->
-    <div id="quranAudioSec" class="section box">
-        <h2>القرآن الكريم (القرّاء)</h2>
-        <p class="subtitle">استمع لتلاوات عذبة بأصوات نخبة من القراء</p>
+    <div id="quranAudioSec" class="section">
+        <div class="box">
+            <h2>القرآن الكريم (القرّاء)</h2>
+            <p class="subtitle">استمع لتلاوات عذبة بأصوات نخبة من القراء</p>
 
-        <label>اختر السورة للاستماع:</label>
-        <select id="surahAudioSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
-            <option value="">اختر السورة للاستماع...</option>
-        </select>
+            <label>اختر السورة للاستماع:</label>
+            <select id="surahAudioSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
+                <option value="">اختر السورة للاستماع...</option>
+            </select>
 
-        <label style="margin-top: 15px;">اختر القارئ:</label>
-        <select id="reciterSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
-            <option value="https://server11.mp3quran.net/yasser/">الشيخ ياسر الدوسري</option>
-            <option value="https://server11.mp3quran.net/sds/">الشيخ د. عبد الرحمن السديس</option>
-            <option value="https://server12.mp3quran.net/maher/">الشيخ د. ماهر المعيقلي</option>
-            <option value="https://server8.mp3quran.net/afs/">الشيخ مشاري العفاسي</option>
-            <option value="https://server7.mp3quran.net/basit/">الشيخ عبد الباسط عبد الصمد (مجود)</option>
-        </select>
+            <label style="margin-top: 15px;">اختر القارئ:</label>
+            <select id="reciterSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;">
+                <option value="https://server11.mp3quran.net/yasser/">الشيخ ياسر الدوسري</option>
+                <option value="https://server11.mp3quran.net/sds/">الشيخ د. عبد الرحمن السديس</option>
+                <option value="https://server12.mp3quran.net/maher/">الشيخ د. ماهر المعيقلي</option>
+                <option value="https://server8.mp3quran.net/afs/">الشيخ مشاري العفاسي</option>
+                <option value="https://server7.mp3quran.net/basit/">الشيخ عبد الباسط عبد الصمد (مجود)</option>
+            </select>
 
-        <div style="margin-top: 20px; background: var(--bg-color); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
-            <p style="margin: 0 0 10px 0; font-weight: bold; color: var(--accent-color);">مشغل الصوت المباشر 🎧</p>
-            <audio id="audioPlayer" controls style="width: 100%;"></audio>
+            <div style="margin-top: 20px; background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center;">
+                <p style="margin: 0 0 10px 0; font-weight: bold; color: var(--accent-color);">مشغل الصوت المباشر 🎧</p>
+                <audio id="audioPlayer" controls style="width: 100%;"></audio>
+            </div>
         </div>
     </div>
 
     <!-- 5. البث المباشر -->
-    <div id="liveSec" class="section box">
-        <h2>بث مباشر من الحرم المكي</h2>
-        <p class="subtitle">بث حي مباشر لقناة القرآن الكريم</p>
-        
-        <div class="video-container">
-            <video id="liveVideo" controls autoplay playsinline style="width: 100%; height: 100%; max-height: 320px; display: block;"></video>
+    <div id="liveSec" class="section">
+        <div class="box">
+            <h2>بث مباشر من الحرم المكي</h2>
+            <p class="subtitle">بث حي مباشر لقناة القرآن الكريم</p>
+            
+            <div class="video-container">
+                <video id="liveVideo" controls autoplay playsinline style="width: 100%; height: 100%; max-height: 320px; display: block;"></video>
+            </div>
+            
+            <button onclick="reloadStream()" style="background: #10b981; margin-top: 10px;">إعادة محاولة الاتصال بالبث 🔄</button>
         </div>
-        
-        <button onclick="reloadStream()" style="background: #059669; color: #fff; margin-top: 10px;">إعادة محاولة الاتصال بالبث 🔄</button>
     </div>
 
     <!-- 6. الأذكار والتسبيح -->
-    <div id="tasbihSec" class="section box">
-        <h2>الأذكار وعداد التسبيح</h2>
-        
-        <label>اختر الذكر المطلوب:</label>
-        <select id="dhikrSelect" onchange="changeDhikr(this.value)">
-            <option value="سُبْحَانَ اللَّهِ">سُبْحَانَ اللَّهِ</option>
-            <option value="الْحَمْدُ لِلَّهِ">الْحَمْدُ لِلَّهِ</option>
-            <option value="لَا إِلَهَ إِلَّا اللَّهُ">لَا إِلَهَ إِلَّا اللَّهُ</option>
-            <option value="اللَّهُ أَكْبَرُ">اللَّهُ أَكْبَرُ</option>
-            <option value="سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ</option>
-            <option value="أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ">أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ</option>
-        </select>
+    <div id="tasbihSec" class="section">
+        <div class="box">
+            <h2>الأذكار وعداد التسبيح</h2>
+            
+            <label>اختر الذكر المطلوب:</label>
+            <select id="dhikrSelect" onchange="changeDhikr(this.value)">
+                <option value="سُبْحَانَ اللَّهِ">سُبْحَانَ اللَّهِ</option>
+                <option value="الْحَمْدُ لِلَّهِ">الْحَمْدُ لِلَّهِ</option>
+                <option value="لَا إِلَهَ إِلَّا اللَّهُ">لَا إِلَهَ إِلَّا اللَّهُ</option>
+                <option value="اللَّهُ أَكْبَرُ">اللَّهُ أَكْبَرُ</option>
+                <option value="سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ">سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ</option>
+                <option value="أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ">أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ</option>
+            </select>
 
-        <div id="tasbihText" class="subtitle" style="font-size: 16px; font-weight: bold; color: var(--accent-color); margin-top: 10px;">سُبْحَانَ اللَّهِ</div>
-        
-        <div id="counterVal" class="counter-display">0</div>
+            <div id="tasbihText" class="subtitle" style="font-size: 16px; font-weight: bold; color: var(--accent-color); margin-top: 15px;">سُبْحَانَ اللَّهِ</div>
+            
+            <div id="counterVal" class="counter-display">0</div>
 
-        <button onclick="incrementTasbih()" style="padding: 15px; font-size: 16px;">اضغط للتسبيح 👆</button>
-        <button onclick="resetTasbih()" style="background: #dc2626; color: #fff;">إعادة للصفر 🔄</button>
+            <button onclick="incrementTasbih()" style="padding: 15px; font-size: 16px;">اضغط للتسبيح 👆</button>
+            <button onclick="resetTasbih()" style="background: #ef4444; color: #fff;">إعادة للصفر 🔄</button>
+        </div>
     </div>
 
     <!-- 7. معلومات الحساب -->
-    <div id="accountSec" class="section box">
-        <h2>معلومات الحساب</h2>
-        
-        <div class="profile-card-layout">
-            <div class="profile-avatar-container" onclick="document.getElementById('avatarInput').click()" title="اضغط لتغيير الصورة الشخصية">
-                <img id="profileImg" src="" alt="" style="display: none;">
-                <span id="avatarPlaceholder">اضغط لإضافة صورة 📷</span>
-            </div>
-            <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="loadAvatar(event)">
+    <div id="accountSec" class="section">
+        <div class="box">
+            <h2>معلومات الحساب</h2>
+            
+            <div class="profile-card-layout">
+                <div class="profile-avatar-container" onclick="document.getElementById('avatarInput').click()" title="اضغط لتغيير الصورة الشخصية">
+                    <img id="profileImg" src="" alt="" style="display: none;">
+                    <span id="avatarPlaceholder" style="font-size: 10px; text-align: center; color: #6b7280;">اضغط لإضافة صورة 📷</span>
+                </div>
+                <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="loadAvatar(event)">
 
-            <div class="profile-info-lines">
-                <div class="profile-line">
-                    <span><strong>الاسم:</strong></span>
-                    <span id="accName">--</span>
-                </div>
-                <div class="profile-line">
-                    <span><strong>الحالة:</strong></span>
-                    <span id="accStatus">نشط</span>
-                </div>
-                <div class="profile-line">
-                    <span><strong>العضوية:</strong></span>
-                    <span id="accRole">--</span>
+                <div class="profile-info-lines">
+                    <div class="profile-line">
+                        <span><strong>الاسم:</strong></span>
+                        <span id="accName">--</span>
+                    </div>
+                    <div class="profile-line">
+                        <span><strong>الحالة:</strong></span>
+                        <span id="accStatus">نشط</span>
+                    </div>
+                    <div class="profile-line">
+                        <span><strong>العضوية:</strong></span>
+                        <span id="accRole">--</span>
+                    </div>
                 </div>
             </div>
+
+            <button onclick="logout()" style="background: #ef4444; color: #fff; margin-top: 15px;">تسجيل الخروج 🚪</button>
         </div>
-
-        <button onclick="logout()" style="background: #dc2626; color: #fff; margin-top: 15px;">تسجيل الخروج 🚪</button>
     </div>
 
     <!-- 8. لوحة الإعدادات -->
-    <div id="settingsSec" class="section box">
-        <h2>إعدادات التطبيق</h2>
-        
-        <label>اختيار لون الإطارات والعناصر:</label>
-        <input type="color" id="accentPicker" value="#eab308" onchange="changeAccentColor(this.value)" style="height: 40px; cursor: pointer;">
+    <div id="settingsSec" class="section">
+        <div class="box">
+            <h2>إعدادات التطبيق</h2>
+            
+            <label>اختيار لون الإطارات والعناصر:</label>
+            <input type="color" id="accentPicker" value="#10b981" onchange="changeAccentColor(this.value)" style="height: 40px; cursor: pointer;">
 
-        <label>اختيار لون الخلفية:</label>
-        <input type="color" id="bgPicker" value="#0f172a" onchange="changeBgColor(this.value)" style="height: 40px; cursor: pointer;">
+            <label>اختيار لون الخلفية:</label>
+            <input type="color" id="bgPicker" value="#f4f7f6" onchange="changeBgColor(this.value)" style="height: 40px; cursor: pointer;">
 
-        <button onclick="saveAppSettings()" style="margin-top: 15px;">حفظ الإعدادات</button>
+            <button onclick="saveAppSettings()" style="margin-top: 15px;">حفظ الإعدادات</button>
+        </div>
     </div>
 
     <!-- الشريط السفلي -->
     <div id="navBar" class="nav">
-        <button id="navP" class="active" onclick="switchTab('prayerSec', 'navP')"><span>🕌</span><span>الصلاة</span></button>
-        <button id="navQR" onclick="switchTab('quranReadSec', 'navQR')"><span>📖</span><span>مكتوب</span></button>
-        <button id="navQA" onclick="switchTab('quranAudioSec', 'navQA')"><span>🎧</span><span>مسموع</span></button>
-        <button id="navL" onclick="switchTab('liveSec', 'navL')"><span>🕋</span><span>البث</span></button>
-        <button id="navT" onclick="switchTab('tasbihSec', 'navT')"><span>📿</span><span>الأذكار</span></button>
+        <button id="navP" class="active" onclick="switchTab('prayerSec', 'navP')"><span>🕌</span><span>الرئيسية</span></button>
+        <button id="navQR" onclick="switchTab('quranReadSec', 'navQR')"><span>📖</span><span>القرآن</span></button>
+        <div class="center-tasbih" onclick="switchTab('tasbihSec', 'navT')">📿</div>
+        <button id="navQA" onclick="switchTab('quranAudioSec', 'navQA')"><span>🎧</span><span>ذكر</span></button>
         <button id="navAcc" onclick="switchTab('accountSec', 'navAcc')"><span>👤</span><span>حسابي</span></button>
-        <button id="navSet" onclick="switchTab('settingsSec', 'navSet')"><span>⚙️</span><span>الإعدادات</span></button>
     </div>
+
+</div>
 
     <script>
         const surahsList = [
@@ -394,7 +446,7 @@
                 const data = await res.json();
                 
                 if(data.code === 200) {
-                    let html = `<div style="text-align: center; color: #b45309; font-weight: bold; margin-bottom: 15px; font-size: 20px;">سورة ${data.data.name}</div>`;
+                    let html = `<div style="text-align: center; color: #10b981; font-weight: bold; margin-bottom: 15px; font-size: 20px;">سورة ${data.data.name}</div>`;
                     
                     data.data.ayahs.forEach(ayah => {
                         html += `<span class="ayah">${ayah.text} ﴿${ayah.numberInSurah}﴾ </span>`;
@@ -478,7 +530,9 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
             document.getElementById(secId).classList.add('active');
-            document.getElementById(btnId).classList.add('active');
+            if(document.getElementById(btnId)) {
+                document.getElementById(btnId).classList.add('active');
+            }
         }
 
         function loadAvatar(event) {
@@ -513,6 +567,7 @@
 
         function requestUserLocation() {
             const locDisplay = document.getElementById("locationDisplay");
+            const locHeader = document.getElementById("locationDisplayHeader");
             if (navigator.geolocation) {
                 locDisplay.textContent = "جاري تحديث الموقع الجغرافي (GPS)...";
                 navigator.geolocation.getCurrentPosition(
@@ -521,6 +576,7 @@
                         const lon = position.coords.longitude;
                         lastCoords = { lat, lon };
                         locDisplay.textContent = `تم تحديث الموقع بدقة عبر الـ GPS 📍`;
+                        if(locHeader) locHeader.textContent = "موقعك الحالي 📍";
                         fetchPrayerTimesByCoords(lat, lon);
                     },
                     () => {
@@ -560,6 +616,7 @@
                         lastCoords = { lat: data.data.meta.latitude, lon: data.data.meta.longitude };
                     }
                     document.getElementById("locationDisplay").textContent = `تم جلب المواقيت لمدينة: ${city} بنجاح ✅`;
+                    document.getElementById("locationDisplayHeader").textContent = `${city} 📍`;
                 }
             })
             .catch(() => alert("تعذر العثور على المدينة."));
@@ -574,6 +631,8 @@
                 document.getElementById("pAsr").textContent = t.Asr;
                 document.getElementById("pMaghrib").textContent = t.Maghrib;
                 document.getElementById("pIsha").textContent = t.Isha;
+
+                document.getElementById("nextPrayerTime").textContent = t.Dhuhr;
             }
         }
 
