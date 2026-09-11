@@ -114,7 +114,7 @@
         .mushaf-container-view {
             background: var(--mushaf-bg);
             border-radius: 16px;
-            padding-bottom: 70px;
+            padding-bottom: 20px;
             border: 1px solid #e5e7eb;
             margin-top: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
@@ -192,29 +192,6 @@
             color: #9ca3af;
         }
 
-        .audio-player-bar {
-            background: #ffffff;
-            border-top: 1px solid var(--border-color);
-            padding: 12px 20px;
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.03);
-        }
-
-        .player-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }
-
-        .player-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
         .icon-btn {
             background: none;
             border: none;
@@ -230,26 +207,7 @@
             justify-content: center;
         }
         .icon-btn:hover { background: none; color: var(--accent-green); }
-
-        .play-btn {
-            width: 40px;
-            height: 40px;
-            background: var(--accent-green);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 6px rgba(45, 122, 82, 0.3);
-            margin-top: 0;
-        }
-
-        .player-actions { display: flex; gap: 12px; align-items: center; }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
 </head>
 <body>
 
@@ -276,7 +234,6 @@
         <div class="header-card">
             <div class="header-top">
                 <span id="locationDisplayHeader">📍 جاري تحديد الموقع...</span>
-                <!-- تعديل زر الإعدادات المكرر ليكون زر رجوع أو رئيسية حسب الحاجة المنطقية -->
                 <button class="icon-btn" style="color: white;" onclick="switchTab('prayerSec', 'navP')" aria-label="العودة للرئيسية">🏠</button>
             </div>
             <div class="header-next">الصلاة القادمة</div>
@@ -291,7 +248,6 @@
             <div class="grid-item" onclick="switchTab('tasbihSec', 'navT')" role="button" aria-label="قسم الأذكار"><div class="icon">🤲</div><div class="label">أذكار</div></div>
             <div class="grid-item" onclick="switchTab('liveSec', 'navL')" role="button" aria-label="البث المباشر"><div class="icon">🕋</div><div class="label">البث</div></div>
             <div class="grid-item" onclick="switchTab('tasbihSec', 'navT')" role="button" aria-label="عداد التسبيح"><div class="icon">📿</div><div class="label">عداد</div></div>
-            <div class="grid-item" onclick="switchTab('quranAudioSec', 'navQA')" role="button" aria-label="القرآن المسموع"><div class="icon">🎧</div><div class="label">مسموع</div></div>
             <div class="grid-item" onclick="switchTab('accountSec', 'navAcc')" role="button" aria-label="حسابي"><div class="icon">👤</div><div class="label">حسابي</div></div>
             <div class="grid-item" onclick="switchTab('settingsSec', 'navSet')" role="button" aria-label="الإعدادات"><div class="icon">⚙️</div><div class="label">الإعدادات</div></div>
         </div>
@@ -328,24 +284,19 @@
         </div>
     </div>
 
-    <!-- قسم القرآن الكريم -->
+    <!-- قسم القرآن الكريم (عرض المصحف) -->
     <div id="quranReadSec" class="section">
         <div class="box" style="padding: 12px;">
             <h2>القرآن الكريم (عرض المصحف)</h2>
-            <p class="subtitle">اختر السورة لمتابعة القراءة والاستماع</p>
+            <p class="subtitle">اختر السورة لمتابعة القراءة</p>
             
             <label for="surahReadSelect">اختر السورة:</label>
             <select id="surahReadSelect" onchange="loadFullSurah()" style="margin-top: 4px; padding: 10px; font-size: 14px;" aria-label="اختر السورة للقراءة">
                 <option value="">اختر السورة للقراءة...</option>
             </select>
 
-            <label for="mushafReciterSelect" style="margin-top: 8px;">القارئ للمصاحبة الصوتية:</label>
-            <select id="mushafReciterSelect" onchange="onMushafReciterChange()" style="margin-top: 4px; padding: 8px; font-size: 13px;" aria-label="اختر القارئ للمصحف">
-            </select>
-
             <div id="mushafContainer" class="mushaf-container-view">
                 <div class="surah-top-bar">
-                    <!-- زر رجوع أو إعدادات علوي دقيق -->
                     <button class="icon-btn" onclick="switchTab('prayerSec', 'navP')" aria-label="العودة للرئيسية">⬅</button>
                     <div class="surah-top-title" id="mushafHeaderTitle">
                         اختر سورة ˅
@@ -363,43 +314,6 @@
                 </div>
 
                 <div class="page-number" id="mushafPageNum">صفحة -</div>
-
-                <div class="audio-player-bar">
-                    <div class="player-info">
-                        <span id="playerReciterLabel">القارئ: --</span>
-                        <span id="playerSurahLabel">--</span>
-                    </div>
-                    <div class="player-controls">
-                        <button id="playbackSpeedBtn" class="icon-btn" onclick="togglePlaybackSpeed()" aria-label="تغيير سرعة التشغيل" style="font-size:12px; font-weight:bold; color:var(--accent-green);">1.0x</button>
-                        
-                        <div class="player-actions">
-                            <button class="icon-btn" onclick="prevSurah()" aria-label="السورة السابقة">⏮</button>
-                            <button class="play-btn" id="mushafPlayBtn" onclick="toggleMushafAudio()" aria-label="تشغيل/إيقاف مؤقت">▶</button>
-                            <button class="icon-btn" onclick="nextSurah()" aria-label="السورة التالية">⏭</button>
-                        </div>
-
-                        <button class="icon-btn" onclick="document.getElementById('surahReadSelect').focus()" aria-label="القائمة المنسدلة للسور" style="color:var(--accent-green);">˅</button>
-                    </div>
-                </div>
-            </div>
-            <audio id="mushafAudioPlayer" style="display:none;"></audio>
-        </div>
-    </div>
-
-    <div id="quranAudioSec" class="section">
-        <div class="box">
-            <h2>القرآن الكريم (القرّاء)</h2>
-            <p class="subtitle">استمع لتلاوات عذبة بأصوات نخبة من القراء</p>
-            <label for="surahAudioSelect">اختر السورة للاستماع:</label>
-            <select id="surahAudioSelect" onchange="updateAudioSourceOnly()" style="padding: 10px; font-size: 14px;" aria-label="اختر السورة للاستماع">
-                <option value="">اختر السورة للاستماع...</option>
-            </select>
-            <label for="reciterSelect" style="margin-top: 15px;">اختر القارئ:</label>
-            <select id="reciterSelect" onchange="onMainReciterChange()" style="padding: 10px; font-size: 14px;" aria-label="اختر القارئ">
-            </select>
-            <div style="margin-top: 20px; background: #f9fafb; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center;">
-                <p style="margin: 0 0 10px 0; font-weight: bold; color: var(--accent-color);">مشغل الصوت المباشر 🎧</p>
-                <audio id="audioPlayer" controls style="width: 100%;" aria-label="مشغل الصوت"></audio>
             </div>
         </div>
     </div>
@@ -480,7 +394,6 @@
         <button id="navP" class="active" onclick="switchTab('prayerSec', 'navP')" aria-label="الصفحة الرئيسية"><span>🕌</span><span>الرئيسية</span></button>
         <button id="navQR" onclick="switchTab('quranReadSec', 'navQR')" aria-label="القرآن الكريم"><span>📖</span><span>القرآن</span></button>
         <div class="center-tasbih" onclick="switchTab('tasbihSec', 'navT')" role="button" aria-label="عداد التسبيح">📿</div>
-        <button id="navQA" onclick="switchTab('quranAudioSec', 'navQA')" aria-label="القرآن المسموع"><span>🎧</span><span>ذكر</span></button>
         <button id="navAcc" onclick="switchTab('accountSec', 'navAcc')" aria-label="حسابي"><span>👤</span><span>حسابي</span></button>
     </div>
 
@@ -490,7 +403,6 @@
         const surahsList = [
             "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
             "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",
-            /* تم تصحيح الخطأ الإملائي هنا من "الأنبيائ" إلى "الأنبياء" */
             "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم",
             "لقمان", "السجدة", "الأحزاب", "سبأ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر",
             "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق",
@@ -503,22 +415,12 @@
             "المسد", "الإخلاص", "الفلق", "الناس"
         ];
 
-        const recitersList = [
-            { name: "الشيخ مشاري راشد العفاسي", url: "https://server8.mp3quran.net/afs/" },
-            { name: "الشيخ ياسر الدوسري", url: "https://server11.mp3quran.net/yasser/" },
-            { name: "الشيخ د. عبد الرحمن السديس", url: "https://server11.mp3quran.net/sds/" },
-            { name: "The Sheikh Maher Al Mueaqly", url: "https://server12.mp3quran.net/maher/" }, // مع تعديل بسيط للاسم بالإنجليزية إن أردت أو بالعربية
-            { name: "الشيخ عبد الباسط عبد الصمد (مجود)", url: "https://server7.mp3quran.net/basit/" }
-        ];
-
         let currentDhikr = "سُبْحَانَ اللَّهِ";
         let tasbihCount = 0;
         let lastCoords = null;
         let currentTimings = null;
         let targetTimezone = null;
         let timerInterval = null;
-        let currentSpeedIndex = 0;
-        const playbackSpeeds = [1.0, 1.25, 1.5, 2.0, 0.75];
 
         window.onload = function() {
             loadSavedSettings();
@@ -556,33 +458,12 @@
 
         function populateDropdowns() {
             const readSelect = document.getElementById("surahReadSelect");
-            const audioSelect = document.getElementById("surahAudioSelect");
 
             surahsList.forEach((name, index) => {
                 let optRead = document.createElement("option");
                 optRead.value = index + 1;
                 optRead.textContent = `${index + 1}. سورة ${name}`;
                 readSelect.appendChild(optRead);
-
-                let optAudio = document.createElement("option");
-                optAudio.value = index + 1;
-                optAudio.textContent = `${index + 1}. سورة ${name}`;
-                audioSelect.appendChild(optAudio);
-            });
-
-            const mushafReciter = document.getElementById("mushafReciterSelect");
-            const mainReciter = document.getElementById("reciterSelect");
-
-            recitersList.forEach(r => {
-                let opt1 = document.createElement("option");
-                opt1.value = r.url;
-                opt1.textContent = r.name;
-                mushafReciter.appendChild(opt1);
-
-                let opt2 = document.createElement("option");
-                opt2.value = r.url;
-                opt2.textContent = r.name;
-                mainReciter.appendChild(opt2);
             });
         }
 
@@ -595,7 +476,6 @@
             const headerMeta = document.getElementById("mushafHeaderMeta");
             const frameTitle = document.getElementById("mushafFrameTitle");
             const pageNum = document.getElementById("mushafPageNum");
-            const playerSurahLabel = document.getElementById("playerSurahLabel");
 
             container.innerHTML = "<div style='text-align: center; color: #6b7280; padding: 30px 0;'>جاري تحميل السورة المباركة...</div>";
 
@@ -614,107 +494,16 @@
                     } else {
                         pageNum.textContent = `سورة ${surahData.number}`;
                     }
-                    
-                    playerSurahLabel.textContent = `${surahData.name} - ${surahData.number}`;
 
                     let html = "";
                     surahData.ayahs.forEach(ayah => {
                         html += `${ayah.text} <span class="ayah-symbol">﴿${ayah.numberInSurah}﴾</span> `;
                     });
                     container.innerHTML = html;
-
-                    syncMushafAudio();
                 }
             } catch (e) {
                 container.innerHTML = "<div style='text-align: center; color: red; padding: 30px 0;'>تعذر التحميل، يرجى التأكد من الاتصال بالإنترنت.</div>";
             }
-        }
-
-        function onMushafReciterChange() {
-            const val = document.getElementById("mushafReciterSelect").value;
-            document.getElementById("reciterSelect").value = val;
-            syncMushafAudio();
-        }
-
-        function onMainReciterChange() {
-            const val = document.getElementById("reciterSelect").value;
-            document.getElementById("mushafReciterSelect").value = val;
-            syncMushafAudio();
-            updateAudioSourceOnly();
-        }
-
-        function syncMushafAudio() {
-            const id = document.getElementById("surahReadSelect").value;
-            const reciterBase = document.getElementById("mushafReciterSelect").value;
-            const reciterSelect = document.getElementById("mushafReciterSelect");
-            const selectedReciterText = reciterSelect.options[reciterSelect.selectedIndex]?.text || "";
-            
-            document.getElementById("playerReciterLabel").textContent = `القارئ: ${selectedReciterText.replace('الشيخ ', '')}`;
-
-            if (!id) return;
-            const audio = document.getElementById("mushafAudioPlayer");
-            const formattedId = String(id).padStart(3, '0');
-            audio.src = `${reciterBase}${formattedId}.mp3`;
-            document.getElementById("mushafPlayBtn").textContent = "▶";
-        }
-
-        function togglePlaybackSpeed() {
-            currentSpeedIndex = (currentSpeedIndex + 1) % playbackSpeeds.length;
-            const speed = playbackSpeeds[currentSpeedIndex];
-            
-            const mushafAudio = document.getElementById("mushafAudioPlayer");
-            const mainAudio = document.getElementById("audioPlayer");
-            
-            mushafAudio.playbackRate = speed;
-            mainAudio.playbackRate = speed;
-            
-            document.getElementById("playbackSpeedBtn").textContent = `${speed}x`;
-        }
-
-        function toggleMushafAudio() {
-            const audio = document.getElementById("mushafAudioPlayer");
-            const playBtn = document.getElementById("mushafPlayBtn");
-
-            if (!audio.src) {
-                syncMushafAudio();
-            }
-
-            if (audio.paused) {
-                audio.play().then(() => {
-                    playBtn.textContent = "⏸";
-                }).catch(e => alert("يرجى اختيار سورة أولاً."));
-            } else {
-                audio.pause();
-                playBtn.textContent = "▶";
-            }
-        }
-
-        function prevSurah() {
-            const readSelect = document.getElementById("surahReadSelect");
-            let currentVal = parseInt(readSelect.value);
-            if (currentVal > 1) {
-                readSelect.value = currentVal - 1;
-                loadFullSurah();
-            }
-        }
-
-        function nextSurah() {
-            const readSelect = document.getElementById("surahReadSelect");
-            let currentVal = parseInt(readSelect.value);
-            if (currentVal < 114) {
-                readSelect.value = currentVal + 1;
-                loadFullSurah();
-            }
-        }
-
-        function updateAudioSourceOnly() {
-            const id = document.getElementById("surahAudioSelect").value;
-            if (!id) return;
-            const audio = document.getElementById("audioPlayer");
-            const reciterBaseUrl = document.getElementById("reciterSelect").value;
-            const formattedId = String(id).padStart(3, '0');
-            audio.src = `${reciterBaseUrl}${formattedId}.mp3`;
-            audio.play().catch(e => console.log("تطلب تفاعل المستخدم"));
         }
 
         function initStream() {
@@ -769,18 +558,15 @@
             }
         }
 
-        /* دالة الصورة الشخصية المحدثة مع معالجة الأخطاء والتحقق من النوع والحجم و try/catch */
         function loadAvatar(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // 1. التحقق من نوع الملف (يجب أن يكون صورة)
             if (!file.type.startsWith('image/')) {
                 alert("⚠️ يرجى اختيار ملف صورة صالح (PNG, JPG, JPEG...)");
                 return;
             }
 
-            // 2. التحقق من حجم الملف (أقل من 5 ميجابايت مثلاً لتفادي امتلء الـ localStorage)
             const maxSizeInBytes = 5 * 1024 * 1024;
             if (file.size > maxSizeInBytes) {
                 alert("⚠️ حجم الصورة كبير جداً! يرجى اختيار صورة أقل من 5 ميجابايت.");
@@ -825,7 +611,6 @@
 
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
                     
-                    // 3. التخزين مع حماية try/catch ضد امتلء المساحة
                     try {
                         localStorage.setItem('userAvatar', compressedBase64);
                         
@@ -949,7 +734,6 @@
                 const nowStr = new Date().toLocaleString("en-US", { timeZone: targetTimezone });
                 return new Date(nowStr);
             } catch (e) {
-                console.warn("رمز المنطقة الزمنية غير صالحة، سيتم الرجوع إلى التوقيت المحلي:", e);
                 return new Date();
             }
         }
