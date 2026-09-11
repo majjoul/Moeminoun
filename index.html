@@ -13,17 +13,17 @@
 
     <style>
         :root {
-            --bg-color: #f3f4f6;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --border-color: #e5e7eb;
-            --text-color: #1f2937;
-            --accent-color: #059669;
-            --accent-hover: #047857;
-            --header-bg: linear-gradient(135deg, #1e3a8a 0%, var(--accent-color) 100%);
+            --border-color: #f1f5f9;
+            --text-color: #1e293b;
+            --accent-color: #0d9488;
+            --accent-hover: #0f766e;
+            --header-bg: linear-gradient(135deg, #0f172a 0%, #0d9488 100%);
 
             --mushaf-bg: #fcfbf7;
-            --accent-green: #2d7a52;
-            --text-dark: #1f2937;
+            --accent-green: #0d9488;
+            --text-dark: #1e293b;
         }
 
         * {
@@ -34,7 +34,7 @@
         }
 
         body {
-            background: #d1d5db;
+            background: #e2e8f0;
             color: var(--text-color);
             display: flex;
             justify-content: center;
@@ -48,131 +48,157 @@
             min-height: 100vh;
             position: relative;
             padding-bottom: 90px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         .top-app-bar {
-            font-size: 19px;
+            font-size: 18px;
             font-weight: 700;
-            padding: 14px 0;
+            padding: 16px 0;
             text-align: center;
             color: #fff;
             background: #0f172a;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .box {
             background: var(--card-bg);
-            padding: 18px;
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 24px;
             width: 100%;
             margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.02), 0 4px 6px -2px rgba(0, 0, 0, 0.01);
             border: 1px solid var(--border-color);
         }
 
         h2 {
             text-align: center;
             color: var(--accent-color);
-            margin-bottom: 8px;
-            font-size: 18px;
+            margin-bottom: 6px;
+            font-size: 19px;
             font-weight: 700;
         }
 
         .subtitle {
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             font-size: 13px;
-            color: #6b7280;
+            color: #64748b;
         }
 
         label {
             display: block;
-            margin-top: 10px;
+            margin-top: 14px;
             font-size: 13px;
-            font-weight: bold;
-            color: var(--text-color);
+            font-weight: 700;
+            color: #334155;
         }
 
         input,
         select,
         button {
             width: 100%;
-            padding: 11px;
+            padding: 12px 14px;
             margin-top: 6px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            background: #fff;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
             color: var(--text-color);
             font-size: 14px;
             outline: none;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
         }
 
         input:focus,
         select:focus {
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(5,150,105,0.08);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1);
         }
 
         button {
             background: var(--accent-color);
             color: #fff;
             border: none;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+            margin-top: 14px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+            transition: transform 0.1s ease, background 0.2s ease;
         }
 
         button:hover {
             background: var(--accent-hover);
         }
 
+        button:active {
+            transform: scale(0.98);
+        }
+
         button.secondary {
             background: #64748b;
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.25);
         }
 
         button.danger {
             background: #ef4444;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
         }
 
         button.blue {
-            background: #2563eb;
+            background: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
         }
 
         .section {
             display: none;
             padding: 16px;
+            animation: fadeIn 0.3s ease;
         }
 
         .section.active {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* تسجيل الدخول */
         .auth-logo {
             text-align: center;
-            font-size: 55px;
-            margin-bottom: 8px;
+            font-size: 50px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #0f172a 0%, #0d9488 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .auth-tabs {
             display: flex;
             gap: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 16px;
         }
 
         .auth-tab {
-            background: #f3f4f6;
-            color: #6b7280;
+            background: transparent;
+            color: #64748b;
             box-shadow: none;
             margin: 0;
+            border-radius: 12px;
+            font-weight: 600;
         }
 
         .auth-tab.active {
-            background: var(--accent-color);
-            color: white;
+            background: #fff;
+            color: var(--accent-color);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
         .password-wrapper {
@@ -185,26 +211,31 @@
 
         .password-toggle {
             position: absolute;
-            left: 7px;
-            top: 5px;
-            width: 35px;
-            height: 35px;
+            left: 6px;
+            top: 6px;
+            width: 38px;
+            height: 38px;
             padding: 0;
             margin: 0;
             background: transparent;
             color: #64748b;
             box-shadow: none;
+            border-radius: 10px;
+        }
+
+        .password-toggle:hover {
+            background: #f1f5f9;
         }
 
         /* الرئيسية */
         .header-card {
             background: var(--header-bg);
             color: white;
-            padding: 22px 18px;
-            border-radius: 24px;
+            padding: 24px 20px;
+            border-radius: 28px;
             text-align: center;
             position: relative;
-            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.25);
+            box-shadow: 0 12px 24px -6px rgba(13, 148, 136, 0.3);
             margin-bottom: 20px;
         }
 
@@ -213,72 +244,80 @@
             justify-content: space-between;
             align-items: center;
             font-size: 13px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             font-weight: 500;
         }
 
         .header-next {
             font-size: 13px;
             opacity: 0.9;
+            font-weight: 500;
         }
 
         .header-prayer {
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 700;
-            margin: 2px 0;
+            margin: 4px 0;
+            letter-spacing: -0.5px;
         }
 
         .header-time {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: bold;
             letter-spacing: 1px;
         }
 
         .header-countdown {
             font-size: 13px;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(4px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
             display: inline-block;
-            padding: 6px 16px;
+            padding: 6px 18px;
             border-radius: 20px;
-            margin-top: 10px;
-            font-weight: bold;
+            margin-top: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .quick-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
         .grid-item {
             background: #fff;
-            border-radius: 16px;
-            padding: 12px 6px;
+            border-radius: 18px;
+            padding: 14px 6px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            border: 1px solid #f0f0f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
             cursor: pointer;
-            transition: transform 0.15s ease;
+            transition: all 0.2s ease;
+        }
+
+        .grid-item:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
         }
 
         .grid-item:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
         }
 
         .grid-item .icon {
-            font-size: 24px;
-            margin-bottom: 4px;
+            font-size: 26px;
+            margin-bottom: 6px;
         }
 
         .grid-item .label {
-            font-size: 12px;
-            color: #374151;
-            font-weight: 600;
+            font-size: 11px;
+            color: #475569;
+            font-weight: 700;
         }
 
-        /* التنقل */
+        /* التنقل السفلي */
         .nav {
             position: fixed;
             bottom: 0;
@@ -286,100 +325,113 @@
             transform: translateX(-50%);
             width: 100%;
             max-width: 430px;
-            background: #fff;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
             display: none;
             justify-content: space-around;
             align-items: center;
-            height: 68px;
-            border-top: 1px solid #e5e7eb;
+            height: 72px;
+            border-top: 1px solid #f1f5f9;
             z-index: 1000;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.04);
+            box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.05);
         }
 
         .nav button {
             background: none;
             border: none;
-            color: #9ca3af;
+            color: #94a3b8;
             font-size: 11px;
             cursor: pointer;
             width: auto;
             margin: 0;
-            font-weight: normal;
+            font-weight: 600;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
             box-shadow: none;
             padding: 0;
+            transition: color 0.2s;
         }
 
         .nav button.active {
             color: var(--accent-color);
-            font-weight: bold;
         }
 
         .nav .center-tasbih {
             background: var(--accent-color);
             color: white;
-            width: 52px;
-            height: 52px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 22px;
-            margin-top: -28px;
-            box-shadow: 0 6px 14px rgba(5,150,105,0.35);
-            border: 3px solid #fff;
+            font-size: 24px;
+            margin-top: -30px;
+            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.4);
+            border: 4px solid #fff;
             cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .nav .center-tasbih:active {
+            transform: scale(0.92);
         }
 
         /* الصلاة */
         .prayer-row {
             display: flex;
             justify-content: space-between;
-            padding: 12px;
-            background: #f9fafb;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-top: 8px;
+            padding: 14px 16px;
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 14px;
+            margin-top: 10px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .prayer-row:hover {
+            background: #f1f5f9;
         }
 
         /* التسبيح */
         .counter-display {
-            font-size: 58px;
-            font-weight: bold;
+            font-size: 64px;
+            font-weight: 800;
             text-align: center;
             color: var(--accent-color);
-            margin: 10px 0;
+            margin: 14px 0;
+            letter-spacing: -1px;
         }
 
         /* الحساب */
         .profile-card-layout {
             display: flex;
             align-items: center;
-            gap: 14px;
-            background: #f9fafb;
-            padding: 14px;
-            border-radius: 14px;
-            border: 1px solid var(--border-color);
-            margin-top: 10px;
+            gap: 16px;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 18px;
+            border: 1px solid #f1f5f9;
+            margin-top: 12px;
         }
 
         .profile-avatar-container {
-            width: 78px;
-            height: 78px;
+            width: 82px;
+            height: 82px;
             border-radius: 50%;
             border: 3px solid var(--accent-color);
             overflow: hidden;
-            background: #e5e7eb;
+            background: #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         .profile-avatar-container img {
@@ -392,37 +444,38 @@
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            gap: 7px;
+            gap: 8px;
             font-size: 13px;
         }
 
         .profile-line {
             display: flex;
             justify-content: space-between;
-            border-bottom: 1px dashed #e5e7eb;
-            padding-bottom: 4px;
+            border-bottom: 1px dashed #e2e8f0;
+            padding-bottom: 5px;
             gap: 10px;
         }
 
         .profile-name-big {
             text-align: center;
-            font-size: 21px;
-            font-weight: bold;
-            margin-top: 12px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 14px;
         }
 
         .profile-username {
             text-align: center;
-            color: #6b7280;
+            color: #64748b;
             font-size: 13px;
             margin-top: 4px;
+            font-weight: 500;
         }
 
         /* محرر الحساب */
         .edit-avatar {
             display: flex;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .edit-avatar .profile-avatar-container {
@@ -435,19 +488,20 @@
             position: relative;
             width: 100%;
             background: #000;
-            border-radius: 14px;
+            border-radius: 18px;
             overflow: hidden;
-            margin-top: 10px;
+            margin-top: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
         /* المصحف */
         .mushaf-container-view {
             background: var(--mushaf-bg);
-            border-radius: 16px;
+            border-radius: 20px;
             padding-bottom: 20px;
-            border: 1px solid #e5e7eb;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid #e7e5dc;
+            margin-top: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.03);
             position: relative;
         }
 
@@ -455,10 +509,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 16px 20px;
             background: var(--mushaf-bg);
             border-bottom: 1px solid #f0efe9;
-            border-radius: 16px 16px 0 0;
+            border-radius: 20px 20px 0 0;
         }
 
         .surah-top-title {
@@ -470,19 +524,20 @@
 
         .surah-top-meta {
             font-size: 11px;
-            color: #6b7280;
-            font-weight: normal;
+            color: #64748b;
+            font-weight: 500;
         }
 
         .surah-header-frame {
-            margin: 15px auto;
+            margin: 18px auto;
             width: 85%;
             border: 2px solid var(--accent-green);
-            border-radius: 8px;
-            padding: 8px;
+            border-radius: 12px;
+            padding: 10px;
             text-align: center;
             position: relative;
             background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
 
         .surah-header-frame::before,
@@ -496,34 +551,34 @@
         }
 
         .surah-header-frame::before {
-            left: 10px;
+            left: 12px;
         }
 
         .surah-header-frame::after {
-            right: 10px;
+            right: 12px;
         }
 
         .surah-name-text {
             font-family: 'Amiri', serif;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             color: var(--accent-green);
         }
 
         .mushaf-page-content {
-            padding: 10px 20px;
+            padding: 10px 22px;
             font-family: 'Amiri', serif;
             font-size: 22px;
-            line-height: 2.6;
+            line-height: 2.7;
             text-align: justify;
             color: var(--text-dark);
             direction: rtl;
         }
 
         .ayah-symbol {
-            color: #4b5563;
+            color: #64748b;
             font-size: 16px;
-            margin: 0 3px;
+            margin: 0 4px;
             display: inline-block;
         }
 
@@ -532,26 +587,28 @@
             margin-top: 20px;
             margin-bottom: 10px;
             font-size: 13px;
-            color: #9ca3af;
+            color: #94a3b8;
+            font-weight: 600;
         }
 
         .icon-btn {
             background: none;
             border: none;
-            color: #4b5563;
+            color: #475569;
             font-size: 16px;
             cursor: pointer;
             width: auto;
             margin: 0;
-            padding: 4px;
+            padding: 6px;
             box-shadow: none;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            border-radius: 10px;
         }
 
         .icon-btn:hover {
-            background: none;
+            background: #f1f5f9;
             color: var(--accent-green);
         }
 
@@ -560,31 +617,35 @@
         }
 
         .success-message {
-            background: #dcfce7;
+            background: #f0fdf4;
             color: #166534;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 12px;
             font-size: 13px;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 12px;
             display: none;
+            border: 1px solid #dcfce7;
+            font-weight: 600;
         }
 
         .error-message {
-            background: #fee2e2;
+            background: #fef2f2;
             color: #991b1b;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 12px;
             font-size: 13px;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 12px;
             display: none;
+            border: 1px solid #fee2e2;
+            font-weight: 600;
         }
 
         .divider {
             height: 1px;
-            background: var(--border-color);
-            margin: 18px 0;
+            background: #e2e8f0;
+            margin: 20px 0;
         }
     </style>
 </head>
@@ -996,24 +1057,24 @@
             </select>
 
             <!-- قسم القرآن المسموع المدمج داخل قسم القرآن -->
-            <div style="margin-top: 15px; background: #f9fafb; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div style="margin-top: 15px; background: #f8fafc; padding: 14px; border-radius: 16px; border: 1px solid #f1f5f9;">
                 <label for="mushafReciterSelect" style="margin-top: 0; margin-bottom: 4px;">🎧 اختر القارئ للتلاوة:</label>
                 <select id="mushafReciterSelect" onchange="syncMushafAudio()">
                     <!-- يتم تعبئتها تلقائياً عبر الجافاسكريبت -->
                 </select>
 
                 <div style="margin-top: 10px;">
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6b7280; margin-bottom: 6px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748b; margin-bottom: 8px; font-weight: 500;">
                         <span id="playerReciterLabel">القارئ: --</span>
                         <span id="playerSurahLabel">--</span>
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <button id="playbackSpeedBtn" class="icon-btn" onclick="togglePlaybackSpeed()" style="font-size: 12px; background: #e5e7eb; padding: 4px 8px; border-radius: 6px;">1.0x</button>
+                        <button id="playbackSpeedBtn" class="icon-btn" onclick="togglePlaybackSpeed()" style="font-size: 12px; background: #e2e8f0; padding: 6px 10px; border-radius: 8px; font-weight: 600;">1.0x</button>
                         
-                        <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="display: flex; gap: 12px; align-items: center;">
                             <button class="icon-btn" onclick="prevSurahAudio()">⏮</button>
-                            <button id="mushafPlayBtn" onclick="toggleMushafAudio()" style="width: 38px; height: 38px; background: var(--accent-green, #059669); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">▶</button>
+                            <button id="mushafPlayBtn" onclick="toggleMushafAudio()" style="width: 42px; height: 42px; background: var(--accent-green, #0d9488); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(13, 148, 136, 0.3);">▶</button>
                             <button class="icon-btn" onclick="nextSurahAudio()">⏭</button>
                         </div>
 
@@ -1073,7 +1134,7 @@
                     class="mushaf-page-content">
 
                     <div
-                        style="text-align:center;color:#6b7280;font-size:16px;padding:30px 0">
+                        style="text-align:center;color:#64748b;font-size:16px;padding:30px 0">
 
                         يرجى اختيار سورة من القائمة أعلاه
 
@@ -1196,7 +1257,7 @@
 
             <button
                 onclick="incrementTasbih()"
-                style="padding:15px;font-size:16px">
+                style="padding:16px;font-size:16px">
                 اضغط للتسبيح 👆
             </button>
 
@@ -1447,9 +1508,9 @@
             <input
                 type="color"
                 id="accentPicker"
-                value="#059669"
+                value="#0d9488"
                 onchange="changeAccentColor(this.value)"
-                style="height:40px;cursor:pointer">
+                style="height:45px;cursor:pointer">
 
 
             <label for="bgPicker">
@@ -1459,9 +1520,9 @@
             <input
                 type="color"
                 id="bgPicker"
-                value="#f3f4f6"
+                value="#f8fafc"
                 onchange="changeBgColor(this.value)"
-                style="height:40px;cursor:pointer">
+                style="height:45px;cursor:pointer">
 
 
             <button onclick="saveAppSettings()">
@@ -2737,7 +2798,7 @@
         if (success) {
 
             el.style.background =
-                "#dcfce7";
+                "#f0fdf4";
 
             el.style.color =
                 "#166534";
@@ -2745,7 +2806,7 @@
         } else {
 
             el.style.background =
-                "#fee2e2";
+                "#fef2f2";
 
             el.style.color =
                 "#991b1b";
@@ -2970,7 +3031,7 @@
 
 
         container.innerHTML =
-            "<div style='text-align:center;color:#6b7280;padding:30px 0'>جاري تحميل السورة المباركة...</div>";
+            "<div style='text-align:center;color:#64748b;padding:30px 0'>جاري تحميل السورة المباركة...</div>";
 
 
         try {
@@ -3892,7 +3953,7 @@
 
         } else {
 
-            alert(
+            alt(
                 "تم رفض إذن الإشعارات."
             );
 
