@@ -233,25 +233,22 @@
         <span class="name">chat</span>
       </div>
       <h1 id="authHeading">مرحباً بك</h1>
-      <p class="sub" id="authSub">سجل دخولك أو أنشئ حساباً جديداً للمراسلة</p>
+      <p class="sub" id="authSub">اكتب اسمك وكلمة المرور للمراسلة</p>
       
       <div class="auth-tabs">
         <button class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل دخول</button>
         <button class="auth-tab" id="tabSignup" onclick="switchAuthMode('signup')">حساب جديد</button>
       </div>
 
-      <div class="field" id="usernameField" style="display:none;">
+      <div class="field">
         <input id="usernameInput" type="text" placeholder="اسم المستخدم (مثال: yosef)">
       </div>
       <div class="field">
-        <input id="emailInput" type="email" placeholder="البريد الإلكتروني">
-      </div>
-      <div class="field">
-        <input id="passwordInput" type="password" placeholder="كلمة المرور">
+        <input id="passwordInput" type="password" placeholder="كلمة المرور الخاصة بك">
       </div>
 
       <button class="btn-primary" id="authBtn">دخول</button>
-      <div class="auth-hint" id="authHint">النظام محمي ومربوط بحسابات حقيقية</div>
+      <div class="auth-hint" id="authHint">ادخل بنفس الاسم وكلمة المرور دائماً</div>
     </div>
   </div>
 
@@ -303,11 +300,15 @@ let currentReceiver = '';
 let friends = [];
 let isSignUp = false;
 
-// التحقق من وجود جلسة سابقة عند فتح التطبيق
-window.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (session) {
-    await fetchUsernameAndEnter(session.user.id);
+// التحقق من وجود الجلسة مخزنة في متصفح المستخدم المحلي
+window.addEventListener('DOMContentLoaded', () => {
+  const savedUser = localStorage.getItem('chat_current_user');
+  if (savedUser) {
+    currentUsername = savedUser;
+    document.getElementById('meName').innerText = currentUsername;
+    showScreen('screen-friends');
+    loadExistingChats();
+    subscribeToRealtime();
   }
 });
 
@@ -326,100 +327,91 @@ function switchAuthMode(mode) {
   const heading = document.getElementById('authHeading');
   const sub = document.getElementById('authSub');
   const btn = document.getElementById('authBtn');
-  const usernameField = document.getElementById('usernameField');
   const tabLogin = document.getElementById('tabLogin');
   const tabSignup = document.getElementById('tabSignup');
 
   if (isSignUp) {
     heading.innerText = 'حساب جديد';
-    sub.innerText = 'أنشئ حساباً ببريدك، كلمة المرور واسم المستخدم';
+    sub.innerText = 'اختر اسماً وكلمة مرور خاصة بك';
     btn.innerText = 'تسجيل وحفظ';
-    usernameField.style.display = 'block';
     tabSignup.classList.add('active');
     tabLogin.classList.remove('active');
   } else {
     heading.innerText = 'مرحباً بك';
-    sub.innerText = 'سجل دخولك ببريدك وكلمة المرور';
+    sub.innerText = 'اكتب اسمك وكلمة المرور للدخول';
     btn.innerText = 'دخول';
-    usernameField.style.display = 'none';
     tabLogin.classList.add('active');
     tabSignup.classList.remove('active');
   }
 }
 
 document.getElementById('authBtn').onclick = async () => {
-  const email = document.getElementById('emailInput').value.trim();
-  const password = document.getElementById('passwordInput').value.trim();
   const username = document.getElementById('usernameInput').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
 
-  if (!email || !password) {
-    alert('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
+  if (!username || !password) {
+    alert('الرجاء إدخال اسم المستخدم وكلمة المرور');
     return;
   }
 
   if (isSignUp) {
-    if (!username) {
-      alert('الرجاء إدخال اسم المستخدم');
+    // 1. التأكد هل الاسم مستخدم مسبقاً؟
+    const { data: existing } = await supabaseClient
+      .from('profiles')
+      .select('username')
+      .eq('username', username)
+      .single();
+
+    if (existing) {
+      alert('اسم المستخدم هذا مستخدم مسبقاً، اختر اسمًا آخر أو سجل دخولك.');
       return;
     }
 
-    // 1. إنشاء الحساب في Supabase Auth
-    const { data: authData, error: authError } = await supabaseClient.auth.signUp({ email, password });
-    if (authError) {
-      alert('خطأ في التسجيل: ' + authError.message);
+    // 2. إنشاء حساب جديد في جدول profiles بـ الاسم وكلمة المرور
+    const { error } = await supabaseClient
+      .from('profiles')
+      .insert([{ username: username, password: password }]);
+
+    if (error) {
+      alert('خطأ في إنشاء الحساب: ' + error.message);
       return;
     }
 
-    if (authData.user) {
-      // 2. ربط وحفظ اسم المستخدم في جدول profiles
-      const { error: profileError } = await supabaseClient
-        .from('profiles')
-        .insert([{ id: authData.user.id, username: username }]);
+    loginSuccess(username);
 
-      if (profileError) {
-        alert('خطأ في حفظ اسم المستخدم: ' + profileError.message);
-      } else {
-        await fetchUsernameAndEnter(authData.user.id);
-      }
-    }
   } else {
-    // تسجيل الدخول
-    const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({ email, password });
-    if (authError) {
-      alert('خطأ في تسجيل الدخول: البريد أو كلمة المرور غير صحيحة');
+    // تسجيل الدخول بالاسم وكلمة المرور
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('username', username)
+      .eq('password', password)
+      .single();
+
+    if (error || !data) {
+      alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
       return;
     }
-    if (authData.user) {
-      await fetchUsernameAndEnter(authData.user.id);
-    }
+
+    loginSuccess(username);
   }
 };
 
-async function fetchUsernameAndEnter(userId) {
-  const { data, error } = await supabaseClient
-    .from('profiles')
-    .select('username')
-    .eq('id', userId)
-    .single();
-
-  if (data && data.username) {
-    currentUsername = data.username;
-    document.getElementById('meName').innerText = currentUsername;
-    showScreen('screen-friends');
-    loadExistingChats();
-    subscribeToRealtime();
-  } else {
-    alert('لم يتم العثور على الملف الشخصي المرتبط بهذا الحساب.');
-  }
+function loginSuccess(username) {
+  currentUsername = username;
+  localStorage.setItem('chat_current_user', username);
+  document.getElementById('meName').innerText = currentUsername;
+  showScreen('screen-friends');
+  loadExistingChats();
+  subscribeToRealtime();
 }
 
-document.getElementById('logoutBtn').onclick = async () => {
-  await supabaseClient.auth.signOut();
+document.getElementById('logoutBtn').onclick = () => {
+  localStorage.removeItem('chat_current_user');
   currentUsername = '';
   friends = [];
-  document.getElementById('emailInput').value = '';
-  document.getElementById('passwordInput').value = '';
   document.getElementById('usernameInput').value = '';
+  document.getElementById('passwordInput').value = '';
   showScreen('screen-auth');
 };
 
