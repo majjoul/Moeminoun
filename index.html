@@ -3,42 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تطبيق المراسلة الآمن</title>
+<title>Message App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
-    --wa-bg: #111b21;
-    --wa-header: #202c33;
-    --wa-surface: #111b21;
-    --wa-panel: #222d34;
-    --wa-green: #00a884;
-    --wa-light-green: #005c4b;
-    --wa-incoming: #202c33;
-    --wa-text: #e9edef;
-    --wa-muted: #8696a0;
-    --wa-border: #222d34;
-    --wa-danger: #ea0038;
+    --app-bg: #0d1117;
+    --app-header: #161b22;
+    --app-surface: #161b22;
+    --app-panel: #21262d;
+    --app-primary: #3b82f6; /* الأزرق العصري الجذاب */
+    --app-primary-hover: #2563eb;
+    --app-light-primary: #1e3a8a;
+    --app-incoming: #21262d;
+    --app-text: #f0f6fc;
+    --app-muted: #8b949e;
+    --app-border: #30363d;
+    --app-danger: #f85149;
   }
   *{ box-sizing:border-box; margin:0; padding:0; user-select: none; }
   html,body{ height:100%; overflow: hidden; }
   body{
     font-family:'Cairo', sans-serif;
-    background: #0b141a;
-    color: var(--wa-text);
+    background: #010409;
+    color: var(--app-text);
     display:flex; justify-content:center; align-items:center;
     min-height:100vh;
   }
   .shell{
     width:100%; max-width:480px; height:100vh; max-height:920px;
-    background: var(--wa-bg);
+    background: var(--app-bg);
     display:flex; flex-direction:column;
     overflow:hidden;
     position:relative;
   }
   @media (min-width:550px){
-    .shell{ border-radius:16px; height:94vh; box-shadow:0 20px 40px rgba(0,0,0,.7); border:1px solid #222d34; }
+    .shell{ border-radius:20px; height:94vh; box-shadow:0 25px 50px rgba(0,0,0,.8); border:1px solid var(--app-border); }
   }
   .screen{ display:none; flex-direction:column; height:100%; }
   .screen.active{ display:flex; }
@@ -51,7 +52,7 @@
     justify-content:center;
     padding: 32px 28px;
     overflow-y:auto;
-    background: radial-gradient(circle at top right, #1f3440 0%, #111b21 60%);
+    background: radial-gradient(circle at top right, #1e3a8a 0%, #0d1117 60%);
     position: relative;
   }
   .auth-header-card {
@@ -61,12 +62,12 @@
   .auth-brand-icon {
     width: 72px;
     height: 72px;
-    background: linear-gradient(135deg, #00a884 0%, #005c4b 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     border-radius: 22px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 25px rgba(0, 168, 132, 0.35);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
     margin-bottom: 16px;
     position: relative;
     animation: floatIcon 3s ease-in-out infinite;
@@ -77,13 +78,19 @@
   }
   .auth-brand-icon svg{ width: 40px; height: 40px; fill: #fff; }
   .auth-wrap h1{ font-size: 28px; font-weight: 900; color: #fff; letter-spacing: .5px; margin-bottom: 6px; }
-  .auth-wrap p.sub{ color: var(--wa-muted); font-size: 14.5px; font-weight: 500; }
+  .auth-wrap p.sub{ color: var(--app-muted); font-size: 14.5px; font-weight: 500; }
+
+  /* اسم التطبيق بالشكل المطلوب وباللون الأزرق */
+  .brand-title-blue {
+    color: #60a5fa;
+    font-weight: 900;
+  }
 
   .auth-tabs{
     display:flex;
     width:100%;
     margin-bottom: 24px;
-    background: rgba(34, 45, 52, 0.7);
+    background: rgba(33, 38, 45, 0.7);
     backdrop-filter: blur(10px);
     border-radius: 14px;
     padding: 5px;
@@ -99,41 +106,41 @@
     font-family: inherit;
     font-weight: 700;
     font-size: 14.5px;
-    color: var(--wa-muted);
+    color: var(--app-muted);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .auth-tab.active{
-    background: linear-gradient(135deg, #00a884 0%, #008f72 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: #fff;
-    box-shadow: 0 4px 15px rgba(0, 168, 132, 0.4);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
   }
 
   .field{ margin-bottom: 18px; position: relative; }
-  .field label { display:block; font-size: 13px; color: var(--wa-muted); margin-bottom: 6px; font-weight: 700; }
+  .field label { display:block; font-size: 13px; color: var(--app-muted); margin-bottom: 6px; font-weight: 700; }
   .field input{
     width: 100%;
     padding: 16px 18px;
-    background: rgba(34, 45, 52, 0.8);
+    background: rgba(33, 38, 45, 0.8);
     backdrop-filter: blur(5px);
-    border: 1.5px solid rgba(255, 255, 255, 0.06);
+    border: 1.5px solid var(--app-border);
     border-radius: 14px;
-    color: var(--wa-text);
+    color: var(--app-text);
     font-family: inherit;
     font-size: 15px;
     outline: none;
     transition: all 0.3s ease;
   }
   .field input:focus{
-    border-color: var(--wa-green);
-    background: rgba(34, 45, 52, 1);
-    box-shadow: 0 0 0 4px rgba(0, 168, 132, 0.15);
+    border-color: var(--app-primary);
+    background: rgba(33, 38, 45, 1);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
   }
-  .field input::placeholder{ color: #667781; }
+  .field input::placeholder{ color: #484f58; }
 
   .btn-primary{
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #00a884 0%, #008f72 100%);
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: #fff;
     border: none;
     border-radius: 14px;
@@ -142,118 +149,119 @@
     font-weight: 800;
     cursor: pointer;
     margin-top: 8px;
-    box-shadow: 0 8px 25px rgba(0, 168, 132, 0.4);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
   }
   .btn-primary:hover{
     transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(0, 168, 132, 0.5);
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.5);
   }
   .btn-primary:active{
     transform: translateY(1px);
-    box-shadow: 0 4px 15px rgba(0, 168, 132, 0.3);
   }
   .auth-hint{
     text-align: center;
-    color: var(--wa-muted);
+    color: var(--app-muted);
     font-size: 13px;
     margin-top: 22px;
     font-weight: 500;
   }
 
-  /* ---------- WHATSAPP HEADER & CHATS LIST ---------- */
-  .wa-top-bar{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--wa-header); }
-  .wa-top-bar h1{ font-size:21px; font-weight:700; color:var(--wa-text); }
-  .wa-top-actions{ display:flex; gap:16px; align-items:center; }
-  .wa-icon-btn{ background:none; border:none; color:var(--wa-muted); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-  .wa-icon-btn:hover{ color:var(--wa-text); }
+  /* ---------- APP HEADER & CHATS LIST ---------- */
+  .app-top-bar{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--app-header); border-bottom: 1px solid var(--app-border); }
+  .app-top-bar h1{ font-size:20px; font-weight:800; color:var(--app-text); }
+  .app-top-actions{ display:flex; gap:16px; align-items:center; }
+  .app-icon-btn{ background:none; border:none; color:var(--app-muted); font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .app-icon-btn:hover{ color:var(--app-text); }
 
-  .me-chip{ display:flex; align-items:center; padding:8px 16px; font-size:13px; color:var(--wa-muted); background:var(--wa-bg); border-bottom:1px solid rgba(255,255,255,0.05); }
+  .me-chip{ display:flex; align-items:center; padding:8px 16px; font-size:13px; color:var(--app-muted); background:var(--app-bg); border-bottom:1px solid var(--app-border); }
 
-  .search-row{ display:flex; gap:10px; padding:10px 16px; background:var(--wa-bg); }
+  .search-row{ display:flex; gap:10px; padding:10px 16px; background:var(--app-bg); }
   .search-row input{
-    flex:1; padding:10px 14px; background:var(--wa-panel); border:none;
-    border-radius:8px; color:var(--wa-text); font-family:inherit; font-size:14px; outline:none;
+    flex:1; padding:10px 14px; background:var(--app-panel); border:1px solid var(--app-border);
+    border-radius:10px; color:var(--app-text); font-family:inherit; font-size:14px; outline:none;
   }
-  .search-row input::placeholder{ color:#667781; }
+  .search-row input::placeholder{ color:#484f58; }
   .search-row button{
-    padding:0 16px; background:var(--wa-green); color:#fff; border:none; border-radius:8px;
-    font-family:inherit; font-weight:700; font-size:14px; cursor:pointer;
+    padding:0 18px; background:var(--app-primary); color:#fff; border:none; border-radius:10px;
+    font-family:inherit; font-weight:700; font-size:14px; cursor:pointer; transition: background 0.2s;
   }
+  .search-row button:hover{ background: var(--app-primary-hover); }
 
-  .friends-scroll{ flex:1; overflow-y:auto; background:var(--wa-bg); }
-  .friend-row{ display:flex; align-items:center; gap:14px; padding:12px 16px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.03); }
-  .friend-row:active, .friend-row:hover{ background:var(--wa-panel); }
+  .friends-scroll{ flex:1; overflow-y:auto; background:var(--app-bg); }
+  .friend-row{ display:flex; align-items:center; gap:14px; padding:12px 16px; cursor:pointer; border-bottom:1px solid rgba(48,54,61,0.5); }
+  .friend-row:active, .friend-row:hover{ background:var(--app-panel); }
   .avatar{
     width:48px; height:48px; border-radius:50%;
-    background:#667781;
+    background:#30363d;
     display:flex; align-items:center; justify-content:center;
     font-weight:700; font-size:17px; color:#fff; flex-shrink:0;
+    border: 1px solid rgba(255,255,255,0.05);
   }
   .friend-meta{ flex:1; min-width:0; }
-  .friend-meta .name{ font-weight:600; font-size:16px; margin-bottom:3px; color:var(--wa-text); }
-  .friend-meta .preview{ font-size:13.5px; color:var(--wa-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .empty-note{ text-align:center; color:var(--wa-muted); font-size:14px; padding:80px 30px; line-height:1.8; }
+  .friend-meta .name{ font-weight:600; font-size:16px; margin-bottom:3px; color:var(--app-text); }
+  .friend-meta .preview{ font-size:13.5px; color:var(--app-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .empty-note{ text-align:center; color:var(--app-muted); font-size:14px; padding:80px 30px; line-height:1.8; }
 
   /* ---------- SETTINGS SCREEN ---------- */
-  .settings-wrap{ flex:1; overflow-y:auto; padding:20px; background:var(--wa-bg); }
-  .permission-box{ background:var(--wa-panel); border-radius:10px; padding:16px; margin-bottom:20px; }
-  .permission-box h4{ font-size:15px; margin-bottom:8px; color:var(--wa-green); }
-  .permission-box p{ font-size:13px; color:var(--wa-muted); margin-bottom:12px; line-height:1.5; }
+  .settings-wrap{ flex:1; overflow-y:auto; padding:20px; background:var(--app-bg); }
+  .permission-box{ background:var(--app-panel); border-radius:12px; padding:16px; margin-bottom:20px; border:1px solid var(--app-border); }
+  .permission-box h4{ font-size:15px; margin-bottom:8px; color:var(--app-primary); }
+  .permission-box p{ font-size:13px; color:var(--app-muted); margin-bottom:12px; line-height:1.5; }
 
   /* ---------- CHAT SCREEN ---------- */
-  .chat-top{ display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--wa-header); border-bottom:1px solid rgba(0,0,0,0.2); }
+  .chat-top{ display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--app-header); border-bottom:1px solid var(--app-border); }
   .chat-left-info{ display:flex; align-items:center; gap:10px; }
   .chat-top .avatar{ width:40px; height:40px; font-size:15px; }
-  .chat-top .who h3{ font-size:16px; font-weight:600; color:var(--wa-text); }
-  .chat-top .who span{ font-size:12px; color:var(--wa-muted); }
+  .chat-top .who h3{ font-size:16px; font-weight:600; color:var(--app-text); }
+  .chat-top .who span{ font-size:12px; color:var(--app-muted); }
   .chat-actions{ display:flex; gap:18px; align-items:center; }
-  .back-icon{ background:none; border:none; color:var(--wa-muted); font-size:20px; cursor:pointer; padding:4px; display:flex; align-items:center; }
+  .back-icon{ background:none; border:none; color:var(--app-muted); font-size:20px; cursor:pointer; padding:4px; display:flex; align-items:center; }
 
   .messages{ 
     flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:8px; 
-    background-color: #0b141a;
-    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0);
+    background-color: #0d1117;
+    background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 0);
     background-size: 24px 24px;
   }
-  .bubble{ max-width:78%; padding:8px 12px; border-radius:8px; font-size:14.5px; line-height:1.45; word-wrap:break-word; position:relative; }
-  .bubble.me{ align-self:flex-start; background:var(--wa-light-green); border-top-right-radius:0; color:#e9edef; }
-  .bubble.them{ align-self:flex-end; background:var(--wa-incoming); border-top-left-radius:0; color:#e9edef; }
+  .bubble{ max-width:78%; padding:10px 14px; border-radius:12px; font-size:14.5px; line-height:1.45; word-wrap:break-word; position:relative; }
+  .bubble.me{ align-self:flex-start; background: var(--app-light-primary); border-top-right-radius:0; color:#f0f6fc; border: 1px solid rgba(59, 130, 246, 0.3); }
+  .bubble.them{ align-self:flex-end; background:var(--app-incoming); border-top-left-radius:0; color:#f0f6fc; border: 1px solid var(--app-border); }
   
-  .composer{ display:flex; gap:8px; padding:10px 16px; background:var(--wa-header); align-items:center; }
+  .composer{ display:flex; gap:8px; padding:10px 16px; background:var(--app-header); align-items:center; border-top: 1px solid var(--app-border); }
   .composer input{
-    flex:1; padding:10px 16px; border-radius:8px; background:var(--wa-panel);
-    border:none; color:var(--wa-text); font-family:inherit; font-size:14.5px; outline:none;
+    flex:1; padding:11px 16px; border-radius:10px; background:var(--app-panel);
+    border:1px solid var(--app-border); color:var(--app-text); font-family:inherit; font-size:14.5px; outline:none;
   }
-  .composer input::placeholder{ color:#667781; }
+  .composer input::placeholder{ color:#484f58; }
   .composer button{
-    width:42px; height:42px; border-radius:50%; background:var(--wa-green);
+    width:42px; height:42px; border-radius:50%; background:var(--app-primary);
     color:#fff; border:none; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    transition: background 0.2s;
   }
+  .composer button:hover { background: var(--app-primary-hover); }
   .composer button.recording {
-    background: var(--wa-danger);
+    background: var(--app-danger);
     animation: pulseRec 1.2s infinite;
   }
   @keyframes pulseRec {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234, 0, 56, 0.7); }
-    70% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(234, 0, 56, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234, 0, 56, 0); }
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(248, 81, 73, 0.7); }
+    70% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(248, 81, 73, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(248, 81, 73, 0); }
   }
 
   audio.voice-player {
     width: 200px;
     height: 36px;
-    accent-color: var(--wa-green);
+    accent-color: var(--app-primary);
   }
 
-  /* ---------- FULLSCREEN WHATSAPP VIDEO CALL SCREEN ---------- */
+  /* ---------- FULLSCREEN VIDEO CALL SCREEN ---------- */
   #video-container {
     display: none;
     position: absolute;
     inset: 0;
-    background: #0b141a;
+    background: #010409;
     z-index: 100;
     flex-direction: column;
     justify-content: space-between;
@@ -272,12 +280,12 @@
     z-index: 5;
     padding: 30px 20px;
     text-align: center;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
   }
   .call-header-info h2 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-  .call-header-info span { font-size: 13px; color: #cbd5e1; }
+  .call-header-info span { font-size: 13px; color: #94a3b8; }
 
-  /* نافذة الكاميرا الخاصة بك (القابلة للسحب والتحرك يميناً ويساراً) */
+  /* نافذة الكاميرا المصغرة القابلة للسحب والتحرك بحرية */
   #localVideo {
     position: absolute;
     top: 110px;
@@ -286,11 +294,11 @@
     height: 160px;
     object-fit: cover;
     border-radius: 12px;
-    border: 2px solid rgba(255,255,255,0.3);
+    border: 2px solid rgba(59, 130, 246, 0.5);
     z-index: 10;
     cursor: grab;
     touch-action: none;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.7);
   }
   #localVideo:active { cursor: grabbing; }
 
@@ -302,14 +310,14 @@
     justify-content: center;
     align-items: center;
     gap: 16px;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
   }
   .call-ctrl-btn {
     width: 52px;
     height: 52px;
     border-radius: 50%;
     border: none;
-    background: #1f2c34;
+    background: #21262d;
     color: #fff;
     font-size: 20px;
     cursor: pointer;
@@ -318,9 +326,9 @@
     justify-content: center;
     transition: background 0.2s;
   }
-  .call-ctrl-btn:hover { background: #32444d; }
+  .call-ctrl-btn:hover { background: #30363d; }
   .call-ctrl-btn.end-call {
-    background: var(--wa-danger);
+    background: var(--app-danger);
     width: 64px;
     height: 64px;
     font-size: 24px;
@@ -329,35 +337,35 @@
 
   /* ---------- INCOMING CALL MODAL ---------- */
   #incomingCall{
-    display:none; position:absolute; inset:0; background:rgba(11,20,26,0.96);
+    display:none; position:absolute; inset:0; background:rgba(1,4,9,0.96);
     z-index:150; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:30px;
   }
   #incomingCall.active{ display:flex; }
-  #incomingCall .avatar{ width:100px; height:100px; font-size:36px; background:#222d34; }
-  #incomingCall h3{ font-size:22px; font-weight:700; color:var(--wa-text); }
-  #incomingCall p{ color:var(--wa-muted); font-size:14px; }
+  #incomingCall .avatar{ width:100px; height:100px; font-size:36px; background:#21262d; }
+  #incomingCall h3{ font-size:22px; font-weight:700; color:var(--app-text); }
+  #incomingCall p{ color:var(--app-muted); font-size:14px; }
   .incoming-actions{ display:flex; gap:40px; margin-top:20px; }
   .call-btn{
     width:60px; height:60px; border-radius:50%; border:none;
     font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center;
   }
-  .call-btn.end{ background:var(--wa-danger); color:#fff; }
-  .call-btn.accept{ background:var(--wa-green); color:#fff; }
+  .call-btn.end{ background:var(--app-danger); color:#fff; }
+  .call-btn.accept{ background:#238636; color:#fff; }
 </style>
 </head>
 <body>
 
 <div class="shell">
 
-  <!-- ============ ULTRA-CHIC AUTH ============ -->
+  <!-- ============ ULTRA-CHIC AUTH (Message App) ============ -->
   <div id="screen-auth" class="screen active">
     <div class="auth-wrap">
       <div class="auth-header-card">
         <div class="auth-brand-icon">
-          <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2zM12.04 20.1c-1.42 0-2.81-.38-4.03-1.1l-.29-.17-3.04.8.81-2.96-.19-.31c-.81-1.31-1.23-2.83-1.23-4.38 0-4.58 3.73-8.31 8.31-8.31 2.22 0 4.31.87 5.88 2.45 1.57 1.58 2.44 3.68 2.44 5.9 0 4.58-3.73 8.31-8.31 8.31zm4.56-6.22c-.25-.12-1.47-.73-1.7-.81-.23-.08-.4-.12-.57.12-.17.25-.66.81-.81.98-.15.17-.3.19-.55.06-.25-.12-1.05-.39-2-1.24-.74-.66-1.24-1.47-1.39-1.72-.15-.25-.02-.39.11-.51.11-.11.25-.3.37-.45.12-.15.16-.25.24-.42.08-.17.04-.31-.02-.44-.06-.12-.57-1.38-.79-1.89-.21-.49-.43-.42-.59-.43h-.5c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.02 2.61.12.17 1.77 2.7 4.29 3.78.6.26 1.07.42 1.44.54.61.19 1.17.16 1.61.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
         </div>
-        <h1 id="authHeading">أهلاً بك</h1>
-        <p class="sub" id="authSub">قم بتسجيل الدخول للاستمتاع بالمراسلة الفورية</p>
+        <h1>أهلاً بك في <span class="brand-title-blue">Message App</span></h1>
+        <p class="sub">منصة التراسل الآمنة والذكية بتصميم عصري فائق</p>
       </div>
 
       <div class="auth-tabs">
@@ -375,21 +383,21 @@
       </div>
 
       <button class="btn-primary" id="authBtn">متابعة</button>
-      <div class="auth-hint" id="authHint">بياناتك آمنة ومشفرة بالكامل 🔒</div>
+      <div class="auth-hint">بياناتك آمنة ومشفرة بالكامل 🔒</div>
     </div>
   </div>
 
   <!-- ============ FRIENDS LIST ============ -->
   <div id="screen-friends" class="screen">
-    <div class="wa-top-bar">
-      <h1>WhatsApp</h1>
-      <div class="wa-top-actions">
-        <button class="wa-icon-btn" id="settingsNavBtn" title="الإعدادات">⚙️</button>
-        <button class="wa-icon-btn" id="logoutBtn" title="خروج">⏻</button>
+    <div class="app-top-bar">
+      <h1><span class="brand-title-blue">Message App</span></h1>
+      <div class="app-top-actions">
+        <button class="app-icon-btn" id="settingsNavBtn" title="الإعدادات">⚙️</button>
+        <button class="app-icon-btn" id="logoutBtn" title="خروج">⏻</button>
       </div>
     </div>
     <div class="me-chip">
-      <span>الحساب: <b id="meName" style="color:var(--wa-text)"></b></span>
+      <span>الحساب: <b id="meName" style="color:var(--app-text)"></b></span>
     </div>
     <div class="search-row">
       <input id="newFriendInput" type="text" placeholder="بحث أو بدء محادثة جديدة...">
@@ -402,7 +410,7 @@
 
   <!-- ============ SETTINGS SCREEN ============ -->
   <div id="screen-settings" class="screen">
-    <div class="wa-top-bar">
+    <div class="app-top-bar">
       <div class="chat-left-info">
         <button class="back-icon" id="settingsBackBtn">✕</button>
         <h1 style="font-size:18px;">الإعدادات والحساب</h1>
@@ -415,8 +423,8 @@
         <button class="btn-primary" id="requestPermissionsBtn" style="margin-top:0;">منح الأذونات 📷🎙️</button>
       </div>
 
-      <div style="background:var(--wa-panel); border-radius:10px; padding:16px;">
-        <h4 style="margin-bottom:14px; font-size:15px; color:var(--wa-text);">تعديل بيانات الحساب</h4>
+      <div style="background:var(--app-panel); border-radius:12px; padding:16px; border: 1px solid var(--app-border);">
+        <h4 style="margin-bottom:14px; font-size:15px; color:var(--app-text);">تعديل بيانات الحساب</h4>
         <div class="field" style="margin-bottom:12px;">
           <label>اسم المستخدم الجديد</label>
           <input id="editUsernameInput" type="text" style="padding:12px 14px;">
@@ -442,8 +450,8 @@
         </div>
       </div>
       <div class="chat-actions">
-        <button class="wa-icon-btn" id="videoCallBtn" title="مكالمة فيديو">📹</button>
-        <button class="wa-icon-btn" id="audioCallBtn" title="مكالمة صوتية">📞</button>
+        <button class="app-icon-btn" id="videoCallBtn" title="مكالمة فيديو">📹</button>
+        <button class="app-icon-btn" id="audioCallBtn" title="مكالمة صوتية">📞</button>
       </div>
     </div>
 
@@ -551,14 +559,14 @@ function switchAuthMode(mode) {
   const tabSignup = document.getElementById('tabSignup');
 
   if (isSignUp) {
-    heading.innerText = 'حساب جديد';
-    sub.innerText = 'أنشئ حسابك الخاص وابدأ التواصل';
+    document.getElementById('screen-auth').querySelector('h1').innerHTML = 'حساب جديد في <span class="brand-title-blue">Message App</span>';
+    document.getElementById('screen-auth').querySelector('p.sub').innerText = 'أنشئ حسابك الخاص وابدأ التواصل الآمن';
     btn.innerText = 'إنشاء الحساب';
     tabSignup.classList.add('active');
     tabLogin.classList.remove('active');
   } else {
-    heading.innerText = 'أهلاً بك';
-    sub.innerText = 'قم بتسجيل الدخول للاستمتاع بالمراسلة الفورية';
+    document.getElementById('screen-auth').querySelector('h1').innerHTML = 'أهلاً بك في <span class="brand-title-blue">Message App</span>';
+    document.getElementById('screen-auth').querySelector('p.sub').innerText = 'منصة التراسل الآمنة والذكية بتصميم عصري فائق';
     btn.innerText = 'متابعة';
     tabLogin.classList.add('active');
     tabSignup.classList.remove('active');
@@ -779,14 +787,12 @@ document.getElementById('voiceBtn').onclick = async () => {
 
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-        // تحويل المقطع الصوتي إلى Data URL لحفظه مباشرة في قاعدة البيانات النصية
         const reader = new FileReader();
         reader.readAsDataURL(audioBlob);
         reader.onloadend = async () => {
           const base64Audio = reader.result;
           await sendMessage('🎤 [مقطع صوتي]', base64Audio);
         };
-        // إيقاف خطوط المايك
         stream.getTracks().forEach(t => t.stop());
       };
 
