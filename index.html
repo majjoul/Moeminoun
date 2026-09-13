@@ -524,9 +524,14 @@ function subscribeToRealtime(){
 }
 
 /* =========================================================================
-   مكالمات صوت/فيديو حقيقية (WebRTC + Supabase Realtime Broadcast للإشارة)
+   مكالمات صوت/فيديو (WebRTC + Supabase Realtime Broadcast)
    ========================================================================= */
-const RTC_CONFIG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+const RTC_CONFIG = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' }
+  ]
+};
 
 let myInboxChannel = null;
 let peerConnection = null;
@@ -561,7 +566,6 @@ async function handleIncomingSignal(payload){
     document.getElementById('incomingCall').classList.add('active');
     window._pendingOffer = payload.sdp;
 
-    // تشغيل نغمة الرنين عند استقبال الاتصال
     ringtone.play().catch(e => console.log('Autoplay blocked:', e));
 
     if (window.Notification && Notification.permission === "granted") {
@@ -598,7 +602,6 @@ async function startCall(toUser, withVideo){
   await openCallUI();
   document.getElementById('localVideo').style.display = withVideo ? 'block' : 'none';
 
-  // تشغيل نغمة الانتظار عند بدء الاتصال
   ringtone.play().catch(e => console.log('Autoplay blocked:', e));
 
   try{
@@ -606,7 +609,7 @@ async function startCall(toUser, withVideo){
   }catch(e){
     ringtone.pause();
     ringtone.currentTime = 0;
-    alert('تعذر الوصول إلى ' + (withVideo ? 'الكاميرا/المايكروفون' : 'المايكروفون') + ': ' + e.message);
+    alert('تعذر الوصول إلى الأذونات: ' + e.message);
     document.getElementById('video-container').style.display = 'none';
     return;
   }
@@ -614,7 +617,12 @@ async function startCall(toUser, withVideo){
 
   peerConnection = new RTCPeerConnection(RTC_CONFIG);
   localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
-  peerConnection.ontrack = e => { document.getElementById('remoteVideo').srcObject = e.streams[0]; };
+  peerConnection.ontrack = e => { 
+    ringtone.pause();
+    ringtone.currentTime = 0;
+    document.getElementById('callStatusLabel').innerText = 'متصل الآن';
+    document.getElementById('remoteVideo').srcObject = e.streams[0]; 
+  };
   peerConnection.onicecandidate = e => { if(e.candidate) sendSignal(toUser, { kind:'candidate', candidate:e.candidate }); };
 
   const offer = await peerConnection.createOffer();
@@ -633,7 +641,7 @@ async function acceptCall(){
   try{
     localStream = await navigator.mediaDevices.getUserMedia({ video: currentCallHasVideo, audio: true });
   }catch(e){
-    alert('تعذر الوصول إلى ' + (currentCallHasVideo ? 'الكاميرا/المايكروفون' : 'المايكروفون') + ': ' + e.message);
+    alert('تعذر الوصول إلى الأذونات: ' + e.message);
     document.getElementById('video-container').style.display = 'none';
     sendSignal(callPeerName, { kind:'hangup' });
     return;
