@@ -14,9 +14,9 @@
         button:hover { background: #006dd9; }
         #chat-section { display: none; }
         #chat-box { height: 250px; border: 1px solid #ddd; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #fafafa; border-radius: 5px; display: flex; flex-direction: column; }
-        .message { margin-bottom: 8px; padding: 8px; border-radius: 5px; background: #e4e6eb; max-width: 80%; align-self: flex-start; text-align: right; }
+        .message { margin-bottom: 8px; padding: 8px; border-radius: 5px; background: #e4e6eb; max-width: 80%; align-self: flex-start; text-align: right; word-break: break-word; }
         .my-message { background: #dcf8c6; align-self: flex-end; text-align: right; }
-        .friend-item { padding: 8px; background: #e9ecef; margin: 5px 0; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .friend-item { padding: 10px; background: #e9ecef; margin: 6px 0; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .friend-item:hover { background: #dde2e6; }
     </style>
 </head>
@@ -33,19 +33,21 @@
     <div class="container" id="chat-section">
         <h3>مرحباً، <span id="current-user" style="color: #0084ff;"></span></h3>
         
-        <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;">
+        <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;" id="friends-section">
             <h4>قائمة الأصدقاء</h4>
-            <input type="text" id="new-friend-name" placeholder="اسم صديق جديد للإضافة">
-            <button onclick="addFriend()" style="background: #28a745;">إضافة صديق ➕</button>
-            <div id="friends-list" style="max-height: 120px; overflow-y: auto; margin-top: 5px;"></div>
+            <input type="text" id="new-friend-name" placeholder="اسم صديق جديد للمراسلة">
+            <button onclick="startChatWithNewFriend()" style="background: #28a745;">بدء محادثة ➕</button>
+            <div id="friends-list" style="max-height: 140px; overflow-y: auto; margin-top: 5px;"></div>
         </div>
 
         <div id="active-chat-box" style="display:none;">
-            <h4>المحادثة مع: <span id="chat-with" style="color: #28a745;"></span></h4>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <h4 style="margin: 0;">المحادثة مع: <span id="chat-with" style="color: #28a745;"></span></h4>
+                <button onclick="backToFriends()" style="background: #6c757d; width: auto; padding: 5px 12px; margin: 0;">العودة للأصدقاء</button>
+            </div>
             <div id="chat-box"></div>
             <input type="text" id="message-text" placeholder="اكتب رسالتك هنا..." onkeypress="checkEnter(event)">
             <button onclick="sendMessage()">إرسال ✈️</button>
-            <button onclick="backToFriends()" style="background: #6c757d; margin-top: 5px;">العودة للأصدقاء</button>
         </div>
     </div>
 
@@ -69,22 +71,42 @@
             document.getElementById('chat-section').style.display = 'block';
             document.getElementById('current-user').innerText = currentUser;
             
-            loadFriends();
+            loadExistingChats();
             subscribeToRealtime();
         }
 
-        function addFriend() {
+        // بدء محادثة مباشرة مع أي صديق يتم إدخاله دون أخطاء
+        function startChatWithNewFriend() {
             const friendName = document.getElementById('new-friend-name').value.trim();
             if (!friendName || friendName === currentUser) {
-                alert('الرجاء إدخال اسم صديق صالح!');
+                alert('الرجاء إدخال اسم صديق صالح يختلف عن اسمك!');
                 return;
             }
+            
             if (!friends.includes(friendName)) {
                 friends.push(friendName);
                 renderFriends();
-                document.getElementById('new-friend-name').value = '';
-            } else {
-                alert('هذا الصديق موجود مسبقاً في القائمة!');
+            }
+            
+            document.getElementById('new-friend-name').value = '';
+            openChat(friendName);
+        }
+
+        async function loadExistingChats() {
+            // جلب الأصدقاء السابقين الذين تم مراسلتهم من قاعدة البيانات تلقائياً
+            const { data, error } = await supabaseClient
+                .from('message')
+                .select('sender, receiver')
+                .or(`sender.eq.${currentUser},receiver.eq.${currentUser}`);
+
+            if (!error && data) {
+                data.forEach(msg => {
+                    let otherUser = msg.sender === currentUser ? msg.receiver : msg.sender;
+                    if (otherUser && !friends.includes(otherUser)) {
+                        friends.push(otherUser);
+                    }
+                });
+                renderFriends();
             }
         }
 
@@ -92,13 +114,13 @@
             const listDiv = document.getElementById('friends-list');
             listDiv.innerHTML = '';
             if (friends.length === 0) {
-                listDiv.innerHTML = '<p style="color: #888; font-size: 14px;">لا يوجد أصدقاء مضافين حالياً.</p>';
+                listDiv.innerHTML = '<p style="color: #888; font-size: 13px; text-align:center;">لا توجد محادثات سابقة. أضف اسماً للبدء!</p>';
                 return;
             }
             friends.forEach(friend => {
                 const div = document.createElement('div');
                 div.className = 'friend-item';
-                div.innerHTML = `<span>${friend}</span> <button style="width: auto; padding: 5px 10px; margin:0;" onclick="openChat('${friend}')">مراسلة</button>`;
+                div.innerHTML = `<span>👤 ${friend}</span> <button style="width: auto; padding: 5px 12px; margin:0;" onclick="openChat('${friend}')">فتح المحادثة</button>`;
                 listDiv.appendChild(div);
             });
         }
@@ -106,20 +128,22 @@
         function openChat(friend) {
             currentReceiver = friend;
             document.getElementById('chat-with').innerText = friend;
+            document.getElementById('friends-section').style.display = 'none';
             document.getElementById('active-chat-box').style.display = 'block';
             loadMessages();
         }
 
         function backToFriends() {
             document.getElementById('active-chat-box').style.display = 'none';
+            document.getElementById('friends-section').style.display = 'block';
             currentReceiver = '';
+            loadExistingChats(); // تحديث القائمة عند العودة
         }
 
         async function sendMessage() {
             const text = document.getElementById('message-text').value.trim();
             if (!text || !currentReceiver) return;
 
-            // تم التعديل هنا لاستخدام جدول message بدلاً من messages
             const { error } = await supabaseClient
                 .from('message')
                 .insert([{ sender: currentUser, receiver: currentReceiver, text: text }]);
@@ -138,7 +162,6 @@
         }
 
         async function loadMessages() {
-            // تم التعديل هنا لاستخدام جدول message بدلاً من messages
             const { data, error } = await supabaseClient
                 .from('message')
                 .select('*')
@@ -167,24 +190,19 @@
                 const chatBox = document.getElementById('chat-box');
                 const div = document.createElement('div');
                 div.className = 'message' + (msg.sender === currentUser ? ' my-message' : '');
-                div.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+                div.innerHTML = `<strong>${msg.sender === currentUser ? 'أنا' : msg.sender}:</strong> ${msg.text}`;
                 chatBox.appendChild(div);
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
         }
 
         function subscribeToRealtime() {
-            // تم التعديل هنا لاستخدام جدول message بدلاً من messages
             supabaseClient
                 .channel('public:message')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'message' }, payload => {
                     appendMessageToUI(payload.new);
                 })
                 .subscribe();
-        }
-
-        function loadFriends() {
-            renderFriends();
         }
     </script>
 </body>
