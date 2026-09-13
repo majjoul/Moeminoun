@@ -270,6 +270,10 @@ let friends = [];
 let isSignUp = false;
 let localStream = null;
 
+// تعريف صوت الرنين
+const ringtone = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
+ringtone.loop = true;
+
 window.addEventListener('DOMContentLoaded', () => {
   const savedUser = localStorage.getItem('chat_current_user');
   if (savedUser) {
@@ -557,6 +561,9 @@ async function handleIncomingSignal(payload){
     document.getElementById('incomingCall').classList.add('active');
     window._pendingOffer = payload.sdp;
 
+    // تشغيل نغمة الرنين عند استقبال الاتصال
+    ringtone.play().catch(e => console.log('Autoplay blocked:', e));
+
     if (window.Notification && Notification.permission === "granted") {
       new Notification(`${currentCallHasVideo ? '📹 مكالمة فيديو' : '📞 مكالمة صوتية'} من ${payload.from}`, {
         body: 'اضغط لفتح التطبيق والرد',
@@ -565,6 +572,8 @@ async function handleIncomingSignal(payload){
     }
   }
   else if(payload.kind === 'answer'){
+    ringtone.pause();
+    ringtone.currentTime = 0;
     if(peerConnection) await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.sdp));
     document.getElementById('callStatusLabel').innerText = 'متصل الآن';
   }
@@ -589,9 +598,14 @@ async function startCall(toUser, withVideo){
   await openCallUI();
   document.getElementById('localVideo').style.display = withVideo ? 'block' : 'none';
 
+  // تشغيل نغمة الانتظار عند بدء الاتصال
+  ringtone.play().catch(e => console.log('Autoplay blocked:', e));
+
   try{
     localStream = await navigator.mediaDevices.getUserMedia({ video: withVideo, audio: true });
   }catch(e){
+    ringtone.pause();
+    ringtone.currentTime = 0;
     alert('تعذر الوصول إلى ' + (withVideo ? 'الكاميرا/المايكروفون' : 'المايكروفون') + ': ' + e.message);
     document.getElementById('video-container').style.display = 'none';
     return;
@@ -609,6 +623,8 @@ async function startCall(toUser, withVideo){
 }
 
 async function acceptCall(){
+  ringtone.pause();
+  ringtone.currentTime = 0;
   document.getElementById('incomingCall').classList.remove('active');
   await openCallUI();
   document.getElementById('localVideo').style.display = currentCallHasVideo ? 'block' : 'none';
@@ -636,12 +652,16 @@ async function acceptCall(){
 }
 
 function declineCall(){
+  ringtone.pause();
+  ringtone.currentTime = 0;
   document.getElementById('incomingCall').classList.remove('active');
   if(callPeerName) sendSignal(callPeerName, { kind:'hangup' });
   callPeerName = '';
 }
 
 function endCall(notifyPeer){
+  ringtone.pause();
+  ringtone.currentTime = 0;
   if(notifyPeer && callPeerName) sendSignal(callPeerName, { kind:'hangup' });
   if(peerConnection){ peerConnection.close(); peerConnection = null; }
   if(localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
