@@ -314,11 +314,18 @@ document.getElementById('authSwitch').addEventListener('click', (e) => {
 });
 
 /* ---------------- Auth submit ---------------- */
-// Supabase Auth يتطلب إيميل تقنيًا، فنحوّل اسم المستخدم تلقائيًا لإيميل داخلي
-// ثابت (بدون ما يشوفه المستخدم أو يكتبه بنفسه)
+// Supabase Auth يتطلب إيميل تقنيًا بصيغة ASCII صالحة، فنحوّل اسم المستخدم
+// (حتى لو بالعربي) لرمز ثابت بالإنجليزي بدل الاعتماد على الأحرف نفسها
+function hashUsername(str){
+  let hash = 0;
+  for(let i = 0; i < str.length; i++){
+    hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+  }
+  return hash.toString(16);
+}
 function usernameToPseudoEmail(username){
-  const clean = username.trim().toLowerCase().replace(/\s+/g, '_');
-  return clean + '@chatapp.local';
+  const key = username.trim().toLowerCase();
+  return 'user' + hashUsername(key) + '@chatapp.local';
 }
 
 document.getElementById('authBtn').onclick = async () => {
