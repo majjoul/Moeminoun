@@ -383,16 +383,15 @@
         <div id="auth-screen">
             <div class="auth-logo">🔐</div>
             <h2 id="auth-title">تسجيل الدخول</h2>
-            <p id="auth-desc">أدخل بيانات حسابك للمتابعة بأمان</p>
+            <p id="auth-desc">أدخل اسم المستخدم وكلمة المرور للمتابعة</p>
             
             <div class="auth-tabs">
                 <button class="auth-tab active" id="tab-login" onclick="switchAuthMode('login')">تسجيل دخول</button>
                 <button class="auth-tab" id="tab-signup" onclick="switchAuthMode('signup')">حساب جديد</button>
             </div>
 
-            <input type="text" id="auth-username" placeholder="اسم المستخدم الخاص بك..." style="display:none;">
-            <input type="email" id="auth-email" placeholder="البريد الإلكتروني">
-            <input type="password" id="auth-password" placeholder="كلمة المرور">
+            <input type="text" id="auth-username" placeholder="اسم المستخدم...">
+            <input type="password" id="auth-password" placeholder="كلمة المرور...">
             
             <button id="auth-btn" onclick="handleAuth()">دخول 🚀</button>
         </div>
@@ -457,19 +456,17 @@
         let friends = [];
         let isSignUpMode = false;
 
-        // التحقق من الجلسة المحفوظة تلقائياً عند فتح التطبيق
-        window.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session && session.user) {
-                // جلب اسم المستخدم المخزن في الـ metadata
-                currentUser = session.user.user_metadata.username || session.user.email.split('@')[0];
+        // التحقق من الجلسة المخزنة محلياً عند فتح التطبيق
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('chat_current_user');
+            if (savedUser) {
+                currentUser = savedUser;
                 enterAppUI();
             }
         });
 
         function switchAuthMode(mode) {
             isSignUpMode = (mode === 'signup');
-            const usernameInput = document.getElementById('auth-username');
             const authTitle = document.getElementById('auth-title');
             const authDesc = document.getElementById('auth-desc');
             const authBtn = document.getElementById('auth-btn');
@@ -477,16 +474,14 @@
             const tabSignup = document.getElementById('tab-signup');
 
             if (isSignUpMode) {
-                usernameInput.style.display = 'block';
                 authTitle.innerText = 'إنشاء حساب جديد';
-                authDesc.innerText = 'أنشئ حساباً مربوطاً ببريدك وكلمة مرور آمنة';
+                authDesc.innerText = 'اختر اسم مستخدم وكلمة مرور خاصة بك';
                 authBtn.innerText = 'تسجيل حساب جديد 🚀';
                 tabSignup.classList.add('active');
                 tabLogin.classList.remove('active');
             } else {
-                usernameInput.style.display = 'none';
                 authTitle.innerText = 'تسجيل الدخول';
-                authDesc.innerText = 'أدخل بيانات حسابك للمتابعة بأمان';
+                authDesc.innerText = 'أدخل اسم المستخدم وكلمة المرور للمتابعة';
                 authBtn.innerText = 'دخول 🚀';
                 tabLogin.classList.add('active');
                 tabSignup.classList.remove('active');
@@ -494,48 +489,54 @@
         }
 
         async function handleAuth() {
-            const email = document.getElementById('auth-email').value.trim();
+            const username = document.getElementById('auth-username').value.trim();
             const password = document.getElementById('auth-password').value.trim();
             
-            if (!email || !password) {
-                alert('الرجاء إدخال البريد الإلكتروني وكلمة المرور!');
+            if (!username || !password) {
+                alert('الرجاء إدخال اسم المستخدم وكلمة المرور!');
                 return;
             }
 
             if (isSignUpMode) {
-                const username = document.getElementById('auth-username').value.trim();
-                if (!username) {
-                    alert('الرجاء إدخال اسم المستخدم!');
+                // التحقق مما إذا كان المستخدم موجود مسبقاً
+                const { data: existingUser } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .single();
+
+                if (existingUser) {
+                    alert('اسم المستخدم هذا مستخدم مسبقاً، اختر اسمًا آخر!');
                     return;
                 }
 
-                // تسجيل حساب جديد في Supabase Auth
-                const { data, error } = await supabaseClient.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: { username: username }
-                    }
-                });
+                // تسجيل حساب جديد في جدول users
+                const { error } = await supabaseClient
+                    .from('users')
+                    .insert([{ username: username, password: password }]);
 
                 if (error) {
-                    alert('خطأ في إنشاء الحساب: ' + error.message);
+                    alert('خطأ في إنشاء الحساب: تأكد من إنشاء جدول users في Supabase أولاً.');
                 } else {
                     currentUser = username;
+                    localStorage.setItem('chat_current_user', currentUser);
                     alert('تم إنشاء الحساب وتسجيل الدخول بنجاح!');
                     enterAppUI();
                 }
             } else {
-                // تسجيل الدخول لحساب موجود
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+                // التحقق من بيانات الدخول من جدول users
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .eq('password', password)
+                    .single();
 
-                if (error) {
-                    alert('خطأ في تسجيل الدخول: تأكد من البريد أو كلمة المرور!');
+                if (error || !data) {
+                    alert('خطأ في تسجيل الدخول: اسم المستخدم أو كلمة المرور غير صحيحة!');
                 } else {
-                    currentUser = data.user.user_metadata.username || email.split('@')[0];
+                    currentUser = username;
+                    localStorage.setItem('chat_current_user', currentUser);
                     enterAppUI();
                 }
             }
@@ -551,8 +552,8 @@
             subscribeToRealtime();
         }
 
-        async function logout() {
-            await supabaseClient.auth.signOut();
+        function logout() {
+            localStorage.removeItem('chat_current_user');
             location.reload();
         }
 
