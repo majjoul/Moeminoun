@@ -556,6 +556,13 @@ async function handleIncomingSignal(payload){
     document.getElementById('incomingType').innerText = currentCallHasVideo ? 'مكالمة فيديو واردة...' : 'مكالمة صوتية واردة...';
     document.getElementById('incomingCall').classList.add('active');
     window._pendingOffer = payload.sdp;
+
+    if (window.Notification && Notification.permission === "granted") {
+      new Notification(`${currentCallHasVideo ? '📹 مكالمة فيديو' : '📞 مكالمة صوتية'} من ${payload.from}`, {
+        body: 'اضغط لفتح التطبيق والرد',
+        icon: 'https://cdn-icons-png.flaticon.com/512/733/733585.png'
+      });
+    }
   }
   else if(payload.kind === 'answer'){
     if(peerConnection) await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.sdp));
