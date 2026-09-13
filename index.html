@@ -298,9 +298,9 @@
     </div>
     <div class="settings-wrap">
       <div class="permission-box">
-        <h4>أذونات الكاميرا والمايكروفون</h4>
-        <p>إذا كانت المكالمات أو الصوت لا يعمل، اضغط هنا لمنح الأذونات للمتصفح:</p>
-        <button class="btn-primary" id="requestPermissionsBtn" style="margin-top:0;">منح الأذونات 📷🎙️</button>
+        <h4>أذونات الإشعارات والكاميرا والمايكروفون</h4>
+        <p>لتفعيل نغمة الرنين والمكالمات في الخلفية، اضغط هنا للسماح بالأذونات:</p>
+        <button class="btn-primary" id="requestPermissionsBtn" style="margin-top:0;">منح الأذونات الشاملة 🔔📷🎙️</button>
       </div>
 
       <div style="background:var(--app-panel); border-radius:12px; padding:16px; border: 1px solid var(--app-border);">
@@ -403,17 +403,18 @@ window.addEventListener('DOMContentLoaded', () => {
   initDraggableLocalVideo();
 });
 
-function requestNotificationPermission() {
+async function requestNotificationPermission() {
   if (window.Notification && Notification.permission !== "granted") {
-    Notification.requestPermission();
+    await Notification.requestPermission();
   }
 }
 
 document.getElementById('requestPermissionsBtn').onclick = async () => {
   try {
+    await requestNotificationPermission();
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     stream.getTracks().forEach(track => track.stop());
-    alert('تم منح الأذونات بنجاح!');
+    alert('تم منح أذونات الإشعارات والكاميرا والمايكروفون بنجاح!');
   } catch (e) {
     alert('خطأ في الأذونات: ' + e.message);
   }
@@ -694,12 +695,30 @@ async function handleIncomingSignal(payload){
   if(payload.kind === 'offer'){
     callPeerName = payload.from;
     currentCallHasVideo = !!payload.hasVideo;
+    
+    // تشغيل نغمة الرنين داخل التطبيق
+    ringbackTone.play().catch(e => {});
+
+    // إظهار إشعار النظام (يعمل حتى لو التطبيق في الخلفية أو خارج المتصفح)
+    if (window.Notification && Notification.permission === "granted") {
+      try {
+        const notif = new Notification("مكالمة واردة 📞", {
+          body: `${payload.from} يتصل بك الآن...`,
+          icon: "https://cdn-icons-png.flaticon.com/512/724/724715.png",
+          vibrate: [200, 100, 200]
+        });
+        notif.onclick = () => {
+          window.focus();
+          notif.close();
+        };
+      } catch(err) {}
+    }
+
     document.getElementById('incomingAvatar').innerText = initials(payload.from);
     document.getElementById('incomingName').innerText = payload.from;
     document.getElementById('incomingType').innerText = currentCallHasVideo ? 'مكالمة فيديو واردة...' : 'مكالمة صوتية واردة...';
     document.getElementById('incomingCall').classList.add('active');
     window._pendingOffer = payload.sdp;
-    ringbackTone.play().catch(e => {});
   }
   else if(payload.kind === 'answer'){
     ringbackTone.pause(); ringbackTone.currentTime = 0;
