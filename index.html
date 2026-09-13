@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>تطبيق المراسلة الآمن</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -38,35 +38,130 @@
     position:relative;
   }
   @media (min-width:550px){
-    .shell{ border-radius:12px; height:94vh; box-shadow:0 10px 30px rgba(0,0,0,.6); border:1px solid #222d34; }
+    .shell{ border-radius:16px; height:94vh; box-shadow:0 20px 40px rgba(0,0,0,.7); border:1px solid #222d34; }
   }
   .screen{ display:none; flex-direction:column; height:100%; }
   .screen.active{ display:flex; }
 
-  /* ---------- AUTH ---------- */
-  .auth-wrap{ flex:1; display:flex; flex-direction:column; justify-content:center; padding:36px 30px; overflow-y:auto; background:var(--wa-bg); }
-  .auth-brand{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-  .auth-brand svg{ width:48px; height:48px; fill:var(--wa-green); }
-  .auth-brand span.name{ font-size:24px; font-weight:800; color:var(--wa-text); letter-spacing:.5px; }
-  .auth-wrap h1{ font-size:26px; font-weight:800; margin:10px 0 6px; color:var(--wa-text); }
-  .auth-wrap p.sub{ color:var(--wa-muted); font-size:14px; margin-bottom:24px; }
-  .auth-tabs{ display:flex; width:100%; margin-bottom:20px; background:var(--wa-panel); border-radius:8px; padding:4px; }
-  .auth-tab{ flex:1; padding:10px; background:transparent; border:none; border-radius:6px; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; color:var(--wa-muted); transition:all .3s; }
-  .auth-tab.active{ background:var(--wa-green); color:#fff; }
-  .field{ margin-bottom:16px; }
-  .field label { display:block; font-size:13px; color:var(--wa-muted); margin-bottom:6px; font-weight:600; }
+  /* ---------- ULTRA-CHIC AUTH SCREEN ---------- */
+  .auth-wrap{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding: 32px 28px;
+    overflow-y:auto;
+    background: radial-gradient(circle at top right, #1f3440 0%, #111b21 60%);
+    position: relative;
+  }
+  .auth-header-card {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .auth-brand-icon {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #00a884 0%, #005c4b 100%);
+    border-radius: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(0, 168, 132, 0.35);
+    margin-bottom: 16px;
+    position: relative;
+    animation: floatIcon 3s ease-in-out infinite;
+  }
+  @keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .auth-brand-icon svg{ width: 40px; height: 40px; fill: #fff; }
+  .auth-wrap h1{ font-size: 28px; font-weight: 900; color: #fff; letter-spacing: .5px; margin-bottom: 6px; }
+  .auth-wrap p.sub{ color: var(--wa-muted); font-size: 14.5px; font-weight: 500; }
+
+  .auth-tabs{
+    display:flex;
+    width:100%;
+    margin-bottom: 24px;
+    background: rgba(34, 45, 52, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 14px;
+    padding: 5px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .auth-tab{
+    flex:1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--wa-muted);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .auth-tab.active{
+    background: linear-gradient(135deg, #00a884 0%, #008f72 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(0, 168, 132, 0.4);
+  }
+
+  .field{ margin-bottom: 18px; position: relative; }
+  .field label { display:block; font-size: 13px; color: var(--wa-muted); margin-bottom: 6px; font-weight: 700; }
   .field input{
-    width:100%; padding:14px 16px; background:var(--wa-panel); border:1px solid transparent;
-    border-radius:8px; color:var(--wa-text); font-family:inherit; font-size:15px; outline:none; transition:border .2s;
+    width: 100%;
+    padding: 16px 18px;
+    background: rgba(34, 45, 52, 0.8);
+    backdrop-filter: blur(5px);
+    border: 1.5px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    color: var(--wa-text);
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s ease;
   }
-  .field input:focus{ border-color:var(--wa-green); }
-  .field input::placeholder{ color:#667781; }
+  .field input:focus{
+    border-color: var(--wa-green);
+    background: rgba(34, 45, 52, 1);
+    box-shadow: 0 0 0 4px rgba(0, 168, 132, 0.15);
+  }
+  .field input::placeholder{ color: #667781; }
+
   .btn-primary{
-    width:100%; padding:14px; background:var(--wa-green); color:#fff; border:none; border-radius:8px;
-    font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; margin-top:6px; transition:opacity .2s;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #00a884 0%, #008f72 100%);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 8px;
+    box-shadow: 0 8px 25px rgba(0, 168, 132, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
   }
-  .btn-primary:active{ opacity:.85; }
-  .auth-hint{ text-align:center; color:var(--wa-muted); font-size:13px; margin-top:18px; }
+  .btn-primary:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 168, 132, 0.5);
+  }
+  .btn-primary:active{
+    transform: translateY(1px);
+    box-shadow: 0 4px 15px rgba(0, 168, 132, 0.3);
+  }
+  .auth-hint{
+    text-align: center;
+    color: var(--wa-muted);
+    font-size: 13px;
+    margin-top: 22px;
+    font-weight: 500;
+  }
 
   /* ---------- WHATSAPP HEADER & CHATS LIST ---------- */
   .wa-top-bar{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; background:var(--wa-header); }
@@ -118,12 +213,12 @@
   .back-icon{ background:none; border:none; color:var(--wa-muted); font-size:20px; cursor:pointer; padding:4px; display:flex; align-items:center; }
 
   .messages{ 
-    flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:6px; 
+    flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:8px; 
     background-color: #0b141a;
     background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0);
     background-size: 24px 24px;
   }
-  .bubble{ max-width:75%; padding:8px 12px; border-radius:8px; font-size:14.5px; line-height:1.45; word-wrap:break-word; position:relative; }
+  .bubble{ max-width:78%; padding:8px 12px; border-radius:8px; font-size:14.5px; line-height:1.45; word-wrap:break-word; position:relative; }
   .bubble.me{ align-self:flex-start; background:var(--wa-light-green); border-top-right-radius:0; color:#e9edef; }
   .bubble.them{ align-self:flex-end; background:var(--wa-incoming); border-top-left-radius:0; color:#e9edef; }
   
@@ -136,6 +231,21 @@
   .composer button{
     width:42px; height:42px; border-radius:50%; background:var(--wa-green);
     color:#fff; border:none; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .composer button.recording {
+    background: var(--wa-danger);
+    animation: pulseRec 1.2s infinite;
+  }
+  @keyframes pulseRec {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234, 0, 56, 0.7); }
+    70% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(234, 0, 56, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(234, 0, 56, 0); }
+  }
+
+  audio.voice-player {
+    width: 200px;
+    height: 36px;
+    accent-color: var(--wa-green);
   }
 
   /* ---------- FULLSCREEN WHATSAPP VIDEO CALL SCREEN ---------- */
@@ -184,7 +294,6 @@
   }
   #localVideo:active { cursor: grabbing; }
 
-  /* أشرطة التحكم السفلية مطابقة للصورة الثانية تماماً */
   .call-footer-controls {
     position: relative;
     z-index: 5;
@@ -240,15 +349,16 @@
 
 <div class="shell">
 
-  <!-- ============ AUTH ============ -->
+  <!-- ============ ULTRA-CHIC AUTH ============ -->
   <div id="screen-auth" class="screen active">
     <div class="auth-wrap">
-      <div class="auth-brand">
-        <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2zM12.04 20.1c-1.42 0-2.81-.38-4.03-1.1l-.29-.17-3.04.8.81-2.96-.19-.31c-.81-1.31-1.23-2.83-1.23-4.38 0-4.58 3.73-8.31 8.31-8.31 2.22 0 4.31.87 5.88 2.45 1.57 1.58 2.44 3.68 2.44 5.9 0 4.58-3.73 8.31-8.31 8.31zm4.56-6.22c-.25-.12-1.47-.73-1.7-.81-.23-.08-.4-.12-.57.12-.17.25-.66.81-.81.98-.15.17-.3.19-.55.06-.25-.12-1.05-.39-2-1.24-.74-.66-1.24-1.47-1.39-1.72-.15-.25-.02-.39.11-.51.11-.11.25-.3.37-.45.12-.15.16-.25.24-.42.08-.17.04-.31-.02-.44-.06-.12-.57-1.38-.79-1.89-.21-.49-.43-.42-.59-.43h-.5c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.02 2.61.12.17 1.77 2.7 4.29 3.78.6.26 1.07.42 1.44.54.61.19 1.17.16 1.61.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
-        <span class="name">WhatsApp</span>
+      <div class="auth-header-card">
+        <div class="auth-brand-icon">
+          <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2zM12.04 20.1c-1.42 0-2.81-.38-4.03-1.1l-.29-.17-3.04.8.81-2.96-.19-.31c-.81-1.31-1.23-2.83-1.23-4.38 0-4.58 3.73-8.31 8.31-8.31 2.22 0 4.31.87 5.88 2.45 1.57 1.58 2.44 3.68 2.44 5.9 0 4.58-3.73 8.31-8.31 8.31zm4.56-6.22c-.25-.12-1.47-.73-1.7-.81-.23-.08-.4-.12-.57.12-.17.25-.66.81-.81.98-.15.17-.3.19-.55.06-.25-.12-1.05-.39-2-1.24-.74-.66-1.24-1.47-1.39-1.72-.15-.25-.02-.39.11-.51.11-.11.25-.3.37-.45.12-.15.16-.25.24-.42.08-.17.04-.31-.02-.44-.06-.12-.57-1.38-.79-1.89-.21-.49-.43-.42-.59-.43h-.5c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.02 2.61.12.17 1.77 2.7 4.29 3.78.6.26 1.07.42 1.44.54.61.19 1.17.16 1.61.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28z"/></svg>
+        </div>
+        <h1 id="authHeading">أهلاً بك</h1>
+        <p class="sub" id="authSub">قم بتسجيل الدخول للاستمتاع بالمراسلة الفورية</p>
       </div>
-      <h1 id="authHeading">أهلاً بك</h1>
-      <p class="sub" id="authSub">قم بتسجيل الدخول للبدء</p>
 
       <div class="auth-tabs">
         <button class="auth-tab active" id="tabLogin" onclick="switchAuthMode('login')">تسجيل دخول</button>
@@ -256,14 +366,16 @@
       </div>
 
       <div class="field">
-        <input id="usernameInput" type="text" placeholder="اسم المستخدم">
+        <label>اسم المستخدم</label>
+        <input id="usernameInput" type="text" placeholder="أدخل اسمك هنا...">
       </div>
       <div class="field">
-        <input id="passwordInput" type="password" placeholder="كلمة المرور">
+        <label>كلمة المرور</label>
+        <input id="passwordInput" type="password" placeholder="••••••••">
       </div>
 
-      <button class="btn-primary" id="authBtn">التالي</button>
-      <div class="auth-hint" id="authHint">استخدم نفس البيانات دائماً للوصول لمحادثاتك</div>
+      <button class="btn-primary" id="authBtn">متابعة</button>
+      <div class="auth-hint" id="authHint">بياناتك آمنة ومشفرة بالكامل 🔒</div>
     </div>
   </div>
 
@@ -299,19 +411,19 @@
     <div class="settings-wrap">
       <div class="permission-box">
         <h4>أذونات الكاميرا والمايكروفون</h4>
-        <p>إذا كانت المكالمات لا تعمل أو الصوت مقطوع، اضغط هنا للسماح بالأذونات:</p>
+        <p>إذا كانت المكالمات أو الرسائل الصوتية لا تعمل، اضغط هنا للسماح بالأذونات:</p>
         <button class="btn-primary" id="requestPermissionsBtn" style="margin-top:0;">منح الأذونات 📷🎙️</button>
       </div>
 
       <div style="background:var(--wa-panel); border-radius:10px; padding:16px;">
         <h4 style="margin-bottom:14px; font-size:15px; color:var(--wa-text);">تعديل بيانات الحساب</h4>
-        <div class="field">
+        <div class="field" style="margin-bottom:12px;">
           <label>اسم المستخدم الجديد</label>
-          <input id="editUsernameInput" type="text">
+          <input id="editUsernameInput" type="text" style="padding:12px 14px;">
         </div>
-        <div class="field">
+        <div class="field" style="margin-bottom:16px;">
           <label>كلمة المرور الجديدة</label>
-          <input id="editPasswordInput" type="password" placeholder="اتركها فارغة إذا لم ترد التغيير">
+          <input id="editPasswordInput" type="password" placeholder="اتركها فارغة إذا لم ترد التغيير" style="padding:12px 14px;">
         </div>
         <button class="btn-primary" id="saveProfileBtn">حفظ التعديلات</button>
       </div>
@@ -338,11 +450,12 @@
     <div class="messages" id="messagesEl"></div>
     <div class="composer">
       <input id="msgInput" type="text" placeholder="اكتب رسالة...">
-      <button id="sendBtn">➤</button>
+      <button id="sendBtn" title="إرسال نص">➤</button>
+      <button id="voiceBtn" title="تسجيل صوتي">🎙️</button>
     </div>
   </div>
 
-  <!-- ============ FULLSCREEN VIDEO CALL SCREEN (مثل الصورة الثانية) ============ -->
+  <!-- ============ FULLSCREEN VIDEO CALL SCREEN ============ -->
   <div id="video-container">
     <video id="remoteVideo" autoplay playsinline></video>
     
@@ -351,7 +464,6 @@
       <span id="callStatusLabel">Appel en cours...</span>
     </div>
 
-    <!-- نافذة الفيديو الخاصة بك المصغرة (قابلة للسحب يميناً ويساراً وأعلى ولسفل) -->
     <video id="localVideo" autoplay playsinline muted></video>
 
     <div class="call-footer-controls">
@@ -386,7 +498,7 @@ let friends = [];
 let isSignUp = false;
 let localStream = null;
 
-// صوت رنين حقيقي مطابق لجوّال الشخص المتصل عليه
+// صوت رنين حقيقي
 const ringbackTone = new Audio('https://actions.google.com/sounds/v1/telephones/telephone_ring_tone.ogg');
 ringbackTone.loop = true;
 
@@ -440,14 +552,14 @@ function switchAuthMode(mode) {
 
   if (isSignUp) {
     heading.innerText = 'حساب جديد';
-    sub.innerText = 'أنشئ حساباً للبدء';
-    btn.innerText = 'تسجيل';
+    sub.innerText = 'أنشئ حسابك الخاص وابدأ التواصل';
+    btn.innerText = 'إنشاء الحساب';
     tabSignup.classList.add('active');
     tabLogin.classList.remove('active');
   } else {
     heading.innerText = 'أهلاً بك';
-    sub.innerText = 'قم بتسجيل الدخول للبدء';
-    btn.innerText = 'التالي';
+    sub.innerText = 'قم بتسجيل الدخول للاستمتاع بالمراسلة الفورية';
+    btn.innerText = 'متابعة';
     tabLogin.classList.add('active');
     tabSignup.classList.remove('active');
   }
@@ -624,23 +736,76 @@ document.getElementById('backBtn').onclick = () => {
   loadExistingChats();
 };
 
-async function sendMessage(){
+async function sendMessage(textToSend = null, audioUrlToSend = null){
   const input = document.getElementById('msgInput');
-  const text = input.value.trim();
-  if(!text || !currentReceiver) return;
-  input.value = '';
+  const text = textToSend !== null ? textToSend : input.value.trim();
+  
+  if(!text && !audioUrlToSend) return;
+  if(textToSend === null) input.value = '';
 
-  const { error } = await supabaseClient
-    .from('message')
-    .insert([{ sender: currentUsername, receiver: currentReceiver, text }]);
+  const payload = { 
+    sender: currentUsername, 
+    receiver: currentReceiver, 
+    text: text || '',
+    audio_url: audioUrlToSend || null
+  };
 
+  const { error } = await supabaseClient.from('message').insert([payload]);
   if(error) alert('خطأ في الإرسال: ' + error.message);
 }
 
-document.getElementById('sendBtn').onclick = sendMessage;
+document.getElementById('sendBtn').onclick = () => sendMessage();
 document.getElementById('msgInput').addEventListener('keypress', e => {
   if(e.key === 'Enter') sendMessage();
 });
+
+/* ---------- Voice Message Handling ---------- */
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+
+document.getElementById('voiceBtn').onclick = async () => {
+  const btn = document.getElementById('voiceBtn');
+  
+  if (!isRecording) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = e => {
+        if(e.data.size > 0) audioChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        // تحويل المقطع الصوتي إلى Data URL لحفظه مباشرة في قاعدة البيانات النصية
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = async () => {
+          const base64Audio = reader.result;
+          await sendMessage('🎤 [مقطع صوتي]', base64Audio);
+        };
+        // إيقاف خطوط المايك
+        stream.getTracks().forEach(t => t.stop());
+      };
+
+      mediaRecorder.start();
+      isRecording = true;
+      btn.classList.add('recording');
+      btn.title = 'إيقاف وإرسال الصوت';
+    } catch (e) {
+      alert('تعذر الوصول للمايكروفون: ' + e.message);
+    }
+  } else {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      mediaRecorder.stop();
+    }
+    isRecording = false;
+    btn.classList.remove('recording');
+    btn.title = 'تسجيل صوتي';
+  }
+};
 
 async function loadMessages(){
   const { data, error } = await supabaseClient
@@ -663,7 +828,16 @@ function appendMessage(msg){
   const box = document.getElementById('messagesEl');
   const div = document.createElement('div');
   div.className = 'bubble ' + (msg.sender === currentUsername ? 'me' : 'them');
-  div.innerText = msg.text;
+
+  if(msg.audio_url){
+    div.innerHTML = `
+      <div style="font-size:12px; margin-bottom:4px; opacity:0.8;">🎤 رسالة صوتية</div>
+      <audio controls class="voice-player" src="${msg.audio_url}"></audio>
+    `;
+  } else {
+    div.innerText = msg.text;
+  }
+
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
 }
@@ -681,7 +855,7 @@ function subscribeToRealtime(){
         }
         if (window.Notification && Notification.permission === "granted") {
           new Notification(`رسالة جديدة من: ${msg.sender}`, {
-            body: msg.text,
+            body: msg.audio_url ? '🎤 مقطع صوتي' : msg.text,
             icon: 'https://cdn-icons-png.flaticon.com/512/733/733585.png'
           });
         }
@@ -868,7 +1042,6 @@ function endCall(notifyPeer){
   callPeerName = '';
 }
 
-/* أزرار التحكم السفلية داخل المكالمة */
 let isMuted = false;
 document.getElementById('toggleMuteBtn').onclick = () => {
   if(localStream){
@@ -901,7 +1074,6 @@ document.getElementById('toggleAudioBtn').onclick = () => {
   document.getElementById('toggleAudioBtn').classList.toggle('active-state', !isSpeakerOn);
 };
 
-/* برمجة نافذة الفيديو الخاصة بك لتكون قابلة للسحب (Draggable) في كل الاتجاهات (يمين ويسار وأعلى وأسفل) */
 function initDraggableLocalVideo(){
   const el = document.getElementById('localVideo');
   let isDragging = false;
@@ -936,7 +1108,6 @@ function initDraggableLocalVideo(){
     const parentRect = el.parentElement.getBoundingClientRect();
     const elRect = el.getBoundingClientRect();
     
-    // حدود الحاوية
     if (newLeft < 0) newLeft = 0;
     if (newLeft + elRect.width > parentRect.width) newLeft = parentRect.width - elRect.width;
     
