@@ -60,6 +60,7 @@
   .auth-tab{ flex:1; padding:10px; background:transparent; border:none; border-radius:10px; cursor:pointer; font-family:inherit; font-weight:700; font-size:14px; color:var(--muted); transition:all .3s; }
   .auth-tab.active{ background:var(--accent); color:#04231c; }
   .field{ margin-bottom:14px; }
+  .field label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; font-weight:600; }
   .field input{
     width:100%; padding:15px 16px; background:var(--surface-2); border:1px solid var(--line);
     border-radius:14px; color:var(--text); font-family:inherit; font-size:15px; outline:none;
@@ -70,14 +71,19 @@
     width:100%; padding:15px; background:var(--accent); color:#04231c; border:none; border-radius:14px;
     font-family:inherit; font-size:15px; font-weight:700; cursor:pointer; margin-top:6px; transition:opacity .2s;
   }
-  .btn-primary:active{ opacity:.85; }
+  .btn-secondary{
+    width:100%; padding:13px; background:var(--surface-2); color:var(--text); border:1px solid var(--line); border-radius:14px;
+    font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; margin-top:10px; transition:background .2s;
+  }
+  .btn-primary:active, .btn-secondary:active{ opacity:.85; }
   .auth-hint{ text-align:center; color:var(--muted); font-size:13px; margin-top:18px; }
 
   /* ---------- FRIENDS LIST ---------- */
   .top-bar{ display:flex; align-items:center; justify-content:space-between; padding:20px 20px 14px; }
   .top-bar .title-block{ display:flex; align-items:center; gap:10px; }
   .top-bar h1{ font-size:24px; font-weight:800; }
-  .me-chip{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); }
+  .top-actions{ display:flex; gap:8px; }
+  .me-chip{ display:flex; align-items:center; justify-content:space-between; padding:0 20px 14px; font-size:13px; color:var(--muted); }
   .icon-btn{
     background:var(--surface-2); border:1px solid var(--line); color:var(--muted);
     width:38px; height:38px; border-radius:12px; display:flex; align-items:center; justify-content:center;
@@ -105,6 +111,13 @@
   .friend-meta .name{ font-weight:700; font-size:15.5px; margin-bottom:3px; }
   .friend-meta .preview{ font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .empty-note{ text-align:center; color:var(--muted); font-size:13.5px; padding:60px 30px; line-height:1.7; }
+
+  /* ---------- SETTINGS SCREEN ---------- */
+  .settings-wrap{ flex:1; overflow-y:auto; padding:20px; }
+  .settings-wrap h2{ font-size:20px; font-weight:800; margin-bottom:20px; }
+  .permission-box{ background:var(--surface-2); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:20px; }
+  .permission-box h4{ font-size:15px; margin-bottom:8px; color:var(--accent); }
+  .permission-box p{ font-size:13px; color:var(--muted); margin-bottom:12px; line-height:1.5; }
 
   /* ---------- CHAT SCREEN ---------- */
   .chat-top{ display:flex; align-items:center; justify-content:space-between; padding:18px 18px; border-bottom:1px solid var(--line); }
@@ -202,15 +215,50 @@
         <span class="brand-dot"></span>
         <h1>chat</h1>
       </div>
-      <button class="icon-btn" id="logoutBtn" title="خروج">⏻</button>
+      <div class="top-actions">
+        <button class="icon-btn" id="settingsNavBtn" title="الإعدادات والحساب">⚙️</button>
+        <button class="icon-btn" id="logoutBtn" title="خروج">⏻</button>
+      </div>
     </div>
-    <div class="me-chip" style="padding:0 20px 14px;">المستخدم الحالي: <b id="meName" style="color:var(--text)"></b></div>
+    <div class="me-chip">
+      <span>المستخدم الحالي: <b id="meName" style="color:var(--text)"></b></span>
+    </div>
     <div class="search-row">
       <input id="newFriendInput" type="text" placeholder="اسم صديق جديد...">
       <button id="startChatBtn">فتح</button>
     </div>
     <div class="friends-scroll" id="friendsScroll">
       <div class="empty-note">ما عندك محادثات بعد.<br>اكتب اسم صديقك بالأعلى وابدأ أول محادثة.</div>
+    </div>
+  </div>
+
+  <!-- ============ SETTINGS & PROFILE SCREEN ============ -->
+  <div id="screen-settings" class="screen">
+    <div class="top-bar">
+      <div class="chat-left-info">
+        <button class="back-icon" id="settingsBackBtn">→</button>
+        <h1 style="font-size:20px;">حسابي وإعدادات الأذونات</h1>
+      </div>
+    </div>
+    <div class="settings-wrap">
+      <div class="permission-box">
+        <h4>منح أذونات الكاميرا والمايكروفون (للـ APK)</h4>
+        <p>إذا كانت مكالمات الفيديو لا تعمل في تطبيق الـ APK، اضغط هنا لطلب أذونات النظام بشكل مباشر:</p>
+        <button class="btn-primary" id="requestPermissionsBtn" style="margin-top:0;">تفعيل الأذونات الكاملة 📷🎙️</button>
+      </div>
+
+      <div style="background:var(--surface-2); border:1px solid var(--line); border-radius:16px; padding:16px;">
+        <h4 style="margin-bottom:14px; font-size:16px;">تعديل بيانات الحساب</h4>
+        <div class="field">
+          <label>اسم المستخدم الجديد</label>
+          <input id="editUsernameInput" type="text" placeholder="اسم المستخدم">
+        </div>
+        <div class="field">
+          <label>كلمة المرور الجديدة</label>
+          <input id="editPasswordInput" type="password" placeholder="كلمة المرور">
+        </div>
+        <button class="btn-primary" id="saveProfileBtn">حفظ التعديلات</button>
+      </div>
     </div>
   </div>
 
@@ -292,6 +340,17 @@ function requestNotificationPermission() {
     Notification.requestPermission();
   }
 }
+
+// دالة طلب الأذونات الصريحة للـ APK (الكاميرا والمايك)
+document.getElementById('requestPermissionsBtn').onclick = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    stream.getTracks().forEach(track => track.stop()); // إيقاف الاستخدام المؤقت بعد منح الإذن
+    alert('تم منح أذونات الكاميرا والمايكروفون بنجاح!');
+  } catch (e) {
+    alert('تعذر الحصول على الأذونات: تأكد من السماح للتطبيق من إعدادات الهاتف (Permissions). التفاصيل: ' + e.message);
+  }
+};
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -394,6 +453,47 @@ document.getElementById('logoutBtn').onclick = () => {
   document.getElementById('usernameInput').value = '';
   document.getElementById('passwordInput').value = '';
   showScreen('screen-auth');
+};
+
+/* ---------------- Settings / Profile ---------------- */
+document.getElementById('settingsNavBtn').onclick = () => {
+  document.getElementById('editUsernameInput').value = currentUsername;
+  document.getElementById('editPasswordInput').value = '';
+  showScreen('screen-settings');
+};
+
+document.getElementById('settingsBackBtn').onclick = () => {
+  showScreen('screen-friends');
+};
+
+document.getElementById('saveProfileBtn').onclick = async () => {
+  const newName = document.getElementById('editUsernameInput').value.trim();
+  const newPass = document.getElementById('editPasswordInput').value.trim();
+
+  if (!newName) {
+    alert('اسم المستخدم لا يمكن أن يكون فارغاً');
+    return;
+  }
+
+  // تحديث الحساب في جدول profiles
+  const updateData = { username: newName };
+  if (newPass) updateData.password = newPass;
+
+  const { error } = await supabaseClient
+    .from('profiles')
+    .update(updateData)
+    .eq('username', currentUsername);
+
+  if (error) {
+    alert('خطأ في تحديث البيانات: ' + error.message);
+    return;
+  }
+
+  currentUsername = newName;
+  localStorage.setItem('chat_current_user', currentUsername);
+  document.getElementById('meName').innerText = currentUsername;
+  alert('تم حفظ وتحديث الحساب بنجاح!');
+  showScreen('screen-friends');
 };
 
 /* ---------------- Friends list ---------------- */
@@ -609,7 +709,7 @@ async function startCall(toUser, withVideo){
   }catch(e){
     ringtone.pause();
     ringtone.currentTime = 0;
-    alert('تعذر الوصول إلى الأذونات: ' + e.message);
+    alert('تعذر الوصول إلى الأذونات: تأكد من منح الأذونات في إعدادات التطبيق. التفاصيل: ' + e.message);
     document.getElementById('video-container').style.display = 'none';
     return;
   }
@@ -669,7 +769,7 @@ function declineCall(){
 
 function endCall(notifyPeer){
   ringtone.pause();
-  ringtone.currentTime = 0;
+  ringtone.currentTime, 0;
   if(notifyPeer && callPeerName) sendSignal(callPeerName, { kind:'hangup' });
   if(peerConnection){ peerConnection.close(); peerConnection = null; }
   if(localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
