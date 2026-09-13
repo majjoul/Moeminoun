@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق المراسلة الفورية العصري</title>
+    <title>تطبيق المراسلة الفورية الآمن</title>
     <!-- مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -44,9 +44,9 @@
             position: relative;
         }
 
-        /* شاشة تسجيل الدخول */
+        /* شاشة المصادقة (تسجيل الدخول / إنشاء حساب) */
         #auth-screen {
-            padding: 40px 25px;
+            padding: 30px 25px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -54,32 +54,62 @@
             height: 100%;
             text-align: center;
             box-sizing: border-box;
+            overflow-y: auto;
         }
 
         .auth-logo {
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             background: linear-gradient(135deg, #0084ff, #00c6ff);
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 36px;
+            font-size: 32px;
             color: white;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 8px 15px rgba(0,132,255,0.3);
         }
 
         #auth-screen h2 {
-            margin-bottom: 8px;
-            font-size: 24px;
+            margin-bottom: 5px;
+            font-size: 22px;
             color: #1c1e21;
         }
 
         #auth-screen p {
             color: var(--text-muted);
-            font-size: 14px;
-            margin-bottom: 25px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            width: 100%;
+            margin-bottom: 15px;
+            background: #f0f2f5;
+            border-radius: 10px;
+            padding: 3px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 8px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-muted);
+            box-shadow: none;
+            margin: 0;
+        }
+
+        .auth-tab.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         /* العناصر المشتركة */
@@ -90,7 +120,7 @@
             border: 1.5px solid var(--border-color); 
             border-radius: 12px; 
             box-sizing: border-box; 
-            font-size: 15px;
+            font-size: 14px;
             outline: none;
             transition: all 0.3s ease;
             background: #fdfdfd;
@@ -120,10 +150,6 @@
         button:hover { 
             background: var(--primary-hover); 
             transform: translateY(-1px);
-        }
-
-        button:active {
-            transform: translateY(1px);
         }
 
         /* شاشة المحادثات الرئيسية */
@@ -187,7 +213,6 @@
 
         .icon-btn:hover {
             background: #e4e6eb;
-            transform: none;
         }
 
         /* قائمة الأصدقاء */
@@ -354,13 +379,22 @@
 <body>
 
     <div class="app-wrapper">
-        <!-- شاشة تسجيل الدخول -->
+        <!-- شاشة تسجيل الدخول / إنشاء حساب -->
         <div id="auth-screen">
-            <div class="auth-logo">💬</div>
-            <h2>تطبيق المراسلة</h2>
-            <p>أدخل اسم المستخدم للبدء في الدردشة الفورية</p>
-            <input type="text" id="username" placeholder="اسم المستخدم...">
-            <button onclick="login()">دخول للتطبيق 🚀</button>
+            <div class="auth-logo">🔐</div>
+            <h2 id="auth-title">تسجيل الدخول</h2>
+            <p id="auth-desc">أدخل بيانات حسابك للمتابعة بأمان</p>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-login" onclick="switchAuthMode('login')">تسجيل دخول</button>
+                <button class="auth-tab" id="tab-signup" onclick="switchAuthMode('signup')">حساب جديد</button>
+            </div>
+
+            <input type="text" id="auth-username" placeholder="اسم المستخدم الخاص بك..." style="display:none;">
+            <input type="email" id="auth-email" placeholder="البريد الإلكتروني">
+            <input type="password" id="auth-password" placeholder="كلمة المرور">
+            
+            <button id="auth-btn" onclick="handleAuth()">دخول 🚀</button>
         </div>
 
         <!-- الشاشة الرئيسية (قائمة الأصدقاء) -->
@@ -370,12 +404,12 @@
                     <div class="mini-avatar" id="header-user-initial">U</div>
                     <div>
                         <h4 id="current-user" style="margin:0; font-size: 15px; color: #1c1e21;"></h4>
-                        <span style="font-size: 11px; color: #28a745;">● متصل الآن</span>
+                        <span style="font-size: 11px; color: #28a745;">● متصل بأمان</span>
                     </div>
                 </div>
                 <div class="header-actions">
                     <button class="icon-btn" onclick="openAddModal()" title="إضافة صديق">➕</button>
-                    <button class="icon-btn" onclick="location.reload()" title="تسجيل خروج">🚪</button>
+                    <button class="icon-btn" onclick="logout()" title="تسجيل خروج">🚪</button>
                 </div>
             </div>
             
@@ -388,7 +422,7 @@
             <div id="add-friend-modal">
                 <div class="modal-content">
                     <h3 style="margin-top: 0; font-size: 18px;">إضافة صديق جديد</h3>
-                    <input type="text" id="new-friend-name" placeholder="اسم الصديق...">
+                    <input type="text" id="new-friend-name" placeholder="اسم الصديق (اسم المستخدم)...">
                     <button onclick="startChatWithNewFriend()" style="background: #28a745; margin-top: 10px;">إضافة ومراسلة</button>
                     <button onclick="closeAddModal()" style="background: #6c757d; margin-top: 5px;">إلغاء</button>
                 </div>
@@ -421,13 +455,93 @@
         let currentUser = '';
         let currentReceiver = '';
         let friends = [];
+        let isSignUpMode = false;
 
-        function login() {
-            currentUser = document.getElementById('username').value.trim();
-            if (!currentUser) {
-                alert('الرجاء إدخال اسم المستخدم!');
+        // التحقق من الجلسة المحفوظة تلقائياً عند فتح التطبيق
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session && session.user) {
+                // جلب اسم المستخدم المخزن في الـ metadata
+                currentUser = session.user.user_metadata.username || session.user.email.split('@')[0];
+                enterAppUI();
+            }
+        });
+
+        function switchAuthMode(mode) {
+            isSignUpMode = (mode === 'signup');
+            const usernameInput = document.getElementById('auth-username');
+            const authTitle = document.getElementById('auth-title');
+            const authDesc = document.getElementById('auth-desc');
+            const authBtn = document.getElementById('auth-btn');
+            const tabLogin = document.getElementById('tab-login');
+            const tabSignup = document.getElementById('tab-signup');
+
+            if (isSignUpMode) {
+                usernameInput.style.display = 'block';
+                authTitle.innerText = 'إنشاء حساب جديد';
+                authDesc.innerText = 'أنشئ حساباً مربوطاً ببريدك وكلمة مرور آمنة';
+                authBtn.innerText = 'تسجيل حساب جديد 🚀';
+                tabSignup.classList.add('active');
+                tabLogin.classList.remove('active');
+            } else {
+                usernameInput.style.display = 'none';
+                authTitle.innerText = 'تسجيل الدخول';
+                authDesc.innerText = 'أدخل بيانات حسابك للمتابعة بأمان';
+                authBtn.innerText = 'دخول 🚀';
+                tabLogin.classList.add('active');
+                tabSignup.classList.remove('active');
+            }
+        }
+
+        async function handleAuth() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            
+            if (!email || !password) {
+                alert('الرجاء إدخال البريد الإلكتروني وكلمة المرور!');
                 return;
             }
+
+            if (isSignUpMode) {
+                const username = document.getElementById('auth-username').value.trim();
+                if (!username) {
+                    alert('الرجاء إدخال اسم المستخدم!');
+                    return;
+                }
+
+                // تسجيل حساب جديد في Supabase Auth
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: { username: username }
+                    }
+                });
+
+                if (error) {
+                    alert('خطأ في إنشاء الحساب: ' + error.message);
+                } else {
+                    currentUser = username;
+                    alert('تم إنشاء الحساب وتسجيل الدخول بنجاح!');
+                    enterAppUI();
+                }
+            } else {
+                // تسجيل الدخول لحساب موجود
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    alert('خطأ في تسجيل الدخول: تأكد من البريد أو كلمة المرور!');
+                } else {
+                    currentUser = data.user.user_metadata.username || email.split('@')[0];
+                    enterAppUI();
+                }
+            }
+        }
+
+        function enterAppUI() {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('chat-section').style.display = 'flex';
             document.getElementById('current-user').innerText = currentUser;
@@ -435,6 +549,11 @@
             
             loadExistingChats();
             subscribeToRealtime();
+        }
+
+        async function logout() {
+            await supabaseClient.auth.signOut();
+            location.reload();
         }
 
         function openAddModal() {
