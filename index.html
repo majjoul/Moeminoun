@@ -21,8 +21,8 @@
     --wa-border: #222d34;
     --wa-danger: #ea0038;
   }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html,body{ height:100%; }
+  *{ box-sizing:border-box; margin:0; padding:0; user-select: none; }
+  html,body{ height:100%; overflow: hidden; }
   body{
     font-family:'Cairo', sans-serif;
     background: #0b141a;
@@ -43,7 +43,7 @@
   .screen{ display:none; flex-direction:column; height:100%; }
   .screen.active{ display:flex; }
 
-  /* ---------- AUTH (WhatsApp Style) ---------- */
+  /* ---------- AUTH ---------- */
   .auth-wrap{ flex:1; display:flex; flex-direction:column; justify-content:center; padding:36px 30px; overflow-y:auto; background:var(--wa-bg); }
   .auth-brand{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
   .auth-brand svg{ width:48px; height:48px; fill:var(--wa-green); }
@@ -108,7 +108,7 @@
   .permission-box h4{ font-size:15px; margin-bottom:8px; color:var(--wa-green); }
   .permission-box p{ font-size:13px; color:var(--wa-muted); margin-bottom:12px; line-height:1.5; }
 
-  /* ---------- CHAT SCREEN (WhatsApp Style) ---------- */
+  /* ---------- CHAT SCREEN ---------- */
   .chat-top{ display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--wa-header); border-bottom:1px solid rgba(0,0,0,0.2); }
   .chat-left-info{ display:flex; align-items:center; gap:10px; }
   .chat-top .avatar{ width:40px; height:40px; font-size:15px; }
@@ -116,23 +116,6 @@
   .chat-top .who span{ font-size:12px; color:var(--wa-muted); }
   .chat-actions{ display:flex; gap:18px; align-items:center; }
   .back-icon{ background:none; border:none; color:var(--wa-muted); font-size:20px; cursor:pointer; padding:4px; display:flex; align-items:center; }
-
-  /* نافذة الفيديو بتصميم واتساب حديث */
-  #video-container{ display:none; position:relative; width:100%; height:260px; background:#000; border-bottom:1px solid #222d34; }
-  #remoteVideo{ width:100%; height:100%; object-fit:cover; }
-  #localVideo{
-    position:absolute; bottom:12px; left:12px; width:85px; height:120px;
-    object-fit:cover; border-radius:8px; border:2px solid rgba(255,255,255,0.2);
-  }
-  .call-end-btn{
-    position:absolute; bottom:12px; right:12px;
-    width:48px; height:48px; border-radius:50%;
-    background:var(--wa-danger); color:#fff; border:none; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  }
-  .call-status-label{
-    position:absolute; top:12px; left:0; right:0; text-align:center;
-    color:#fff; font-size:13px; font-weight:600; background:rgba(0,0,0,0.4); padding:4px;
-  }
 
   .messages{ 
     flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:6px; 
@@ -155,10 +138,90 @@
     color:#fff; border:none; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;
   }
 
-  /* ---------- INCOMING CALL MODAL (WhatsApp Style) ---------- */
+  /* ---------- FULLSCREEN WHATSAPP VIDEO CALL SCREEN ---------- */
+  #video-container {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: #0b141a;
+    z-index: 100;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  #remoteVideo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .call-header-info {
+    position: relative;
+    z-index: 5;
+    padding: 30px 20px;
+    text-align: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+  }
+  .call-header-info h2 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .call-header-info span { font-size: 13px; color: #cbd5e1; }
+
+  /* نافذة الكاميرا الخاصة بك (القابلة للسحب والتحرك يميناً ويساراً) */
+  #localVideo {
+    position: absolute;
+    top: 110px;
+    right: 20px;
+    width: 110px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.3);
+    z-index: 10;
+    cursor: grab;
+    touch-action: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  }
+  #localVideo:active { cursor: grabbing; }
+
+  /* أشرطة التحكم السفلية مطابقة للصورة الثانية تماماً */
+  .call-footer-controls {
+    position: relative;
+    z-index: 5;
+    padding: 30px 20px 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  }
+  .call-ctrl-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: #1f2c34;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .call-ctrl-btn:hover { background: #32444d; }
+  .call-ctrl-btn.end-call {
+    background: var(--wa-danger);
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+  }
+  .call-ctrl-btn.active-state { background: #fff; color: #000; }
+
+  /* ---------- INCOMING CALL MODAL ---------- */
   #incomingCall{
     display:none; position:absolute; inset:0; background:rgba(11,20,26,0.96);
-    z-index:60; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:30px;
+    z-index:150; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:30px;
   }
   #incomingCall.active{ display:flex; }
   #incomingCall .avatar{ width:100px; height:100px; font-size:36px; background:#222d34; }
@@ -236,7 +299,7 @@
     <div class="settings-wrap">
       <div class="permission-box">
         <h4>أذونات الكاميرا والمايكروفون</h4>
-        <p>إذا كانت المكالمات لا تعمل، اضغط هنا للسماح بالأذونات:</p>
+        <p>إذا كانت المكالمات لا تعمل أو الصوت مقطوع، اضغط هنا للسماح بالأذونات:</p>
         <button class="btn-primary" id="requestPermissionsBtn" style="margin-top:0;">منح الأذونات 📷🎙️</button>
       </div>
 
@@ -272,18 +335,30 @@
       </div>
     </div>
 
-    <!-- شاشة عرض الفيديو -->
-    <div id="video-container">
-      <div class="call-status-label" id="callStatusLabel">جارِ الاتصال...</div>
-      <video id="remoteVideo" autoplay playsinline></video>
-      <video id="localVideo" autoplay playsinline muted></video>
-      <button class="call-end-btn" id="endCallBtn">✕</button>
-    </div>
-
     <div class="messages" id="messagesEl"></div>
     <div class="composer">
       <input id="msgInput" type="text" placeholder="اكتب رسالة...">
       <button id="sendBtn">➤</button>
+    </div>
+  </div>
+
+  <!-- ============ FULLSCREEN VIDEO CALL SCREEN (مثل الصورة الثانية) ============ -->
+  <div id="video-container">
+    <video id="remoteVideo" autoplay playsinline></video>
+    
+    <div class="call-header-info">
+      <h2 id="callTargetName">اسم الشخص</h2>
+      <span id="callStatusLabel">Appel en cours...</span>
+    </div>
+
+    <!-- نافذة الفيديو الخاصة بك المصغرة (قابلة للسحب يميناً ويساراً وأعلى ولسفل) -->
+    <video id="localVideo" autoplay playsinline muted></video>
+
+    <div class="call-footer-controls">
+      <button class="call-ctrl-btn" id="toggleCamBtn" title="الكاميرا">📷</button>
+      <button class="call-ctrl-btn" id="toggleAudioBtn" title="مكبر الصوت">🔊</button>
+      <button class="call-ctrl-btn" id="toggleMuteBtn" title="كتم الصوت">🎙️</button>
+      <button class="call-ctrl-btn end-call" id="endCallBtn">✕</button>
     </div>
   </div>
 
@@ -311,8 +386,9 @@ let friends = [];
 let isSignUp = false;
 let localStream = null;
 
-const ringtone = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
-ringtone.loop = true;
+// صوت رنين حقيقي مطابق لجوّال الشخص المتصل عليه
+const ringbackTone = new Audio('https://actions.google.com/sounds/v1/telephones/telephone_ring_tone.ogg');
+ringbackTone.loop = true;
 
 window.addEventListener('DOMContentLoaded', () => {
   const savedUser = localStorage.getItem('chat_current_user');
@@ -325,6 +401,7 @@ window.addEventListener('DOMContentLoaded', () => {
     subscribeToCallSignaling();
     requestNotificationPermission();
   }
+  initDraggableLocalVideo();
 });
 
 function requestNotificationPermission() {
@@ -613,7 +690,7 @@ function subscribeToRealtime(){
     .subscribe();
 }
 
-/* ---------------- WebRTC Calls ---------------- */
+/* ---------------- WebRTC Calls & Draggable Video ---------------- */
 const RTC_CONFIG = {
   iceServers: [
     { urls: 'stun:stun.l.google.com:19302' },
@@ -654,17 +731,17 @@ async function handleIncomingSignal(payload){
     document.getElementById('incomingCall').classList.add('active');
     window._pendingOffer = payload.sdp;
 
-    ringtone.play().catch(e => console.log(e));
+    ringbackTone.play().catch(e => console.log(e));
 
     if (window.Notification && Notification.permission === "granted") {
       new Notification(`مكالمة من ${payload.from}`, { body: 'انقر للفتح والرد' });
     }
   }
   else if(payload.kind === 'answer'){
-    ringtone.pause();
-    ringtone.currentTime = 0;
+    ringbackTone.pause();
+    ringbackTone.currentTime = 0;
     if(peerConnection) await peerConnection.setRemoteDescription(new RTCSessionDescription(payload.sdp));
-    document.getElementById('callStatusLabel').innerText = 'متصل الآن';
+    document.getElementById('callStatusLabel').innerText = 'Appel en cours...';
   }
   else if(payload.kind === 'candidate'){
     if(peerConnection && payload.candidate){
@@ -676,24 +753,28 @@ async function handleIncomingSignal(payload){
   }
 }
 
-async function openCallUI(){
-  document.getElementById('video-container').style.display = 'block';
-  document.getElementById('callStatusLabel').innerText = 'جارِ الاتصال...';
+async function openCallUI(targetName){
+  document.getElementById('callTargetName').innerText = targetName;
+  document.getElementById('video-container').style.display = 'flex';
+  document.getElementById('callStatusLabel').innerText = 'Appel en cours...';
 }
 
 async function startCall(toUser, withVideo){
   callPeerName = toUser;
   currentCallHasVideo = withVideo;
-  await openCallUI();
+  await openCallUI(toUser);
   document.getElementById('localVideo').style.display = withVideo ? 'block' : 'none';
 
-  ringtone.play().catch(e => console.log(e));
+  ringbackTone.play().catch(e => console.log(e));
 
   try{
-    localStream = await navigator.mediaDevices.getUserMedia({ video: withVideo, audio: true });
+    localStream = await navigator.mediaDevices.getUserMedia({ 
+      video: withVideo ? { width: 1280, height: 720 } : false, 
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
+    });
   }catch(e){
-    ringtone.pause();
-    ringtone.currentTime = 0;
+    ringbackTone.pause();
+    ringbackTone.currentTime = 0;
     alert('تعذر الوصول للكاميرا/المايك: ' + e.message);
     document.getElementById('video-container').style.display = 'none';
     return;
@@ -701,14 +782,23 @@ async function startCall(toUser, withVideo){
   document.getElementById('localVideo').srcObject = localStream;
 
   peerConnection = new RTCPeerConnection(RTC_CONFIG);
-  localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
+  localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
   peerConnection.ontrack = e => { 
-    ringtone.pause();
-    ringtone.currentTime = 0;
+    ringbackTone.pause();
+    ringbackTone.currentTime = 0;
     document.getElementById('callStatusLabel').innerText = 'متصل الآن';
-    document.getElementById('remoteVideo').srcObject = e.streams[0]; 
+    
+    const remoteVideoEl = document.getElementById('remoteVideo');
+    if (remoteVideoEl.srcObject !== e.streams[0]) {
+      remoteVideoEl.srcObject = e.streams[0];
+      remoteVideoEl.play().catch(err => console.log("Audio play error:", err));
+    }
   };
-  peerConnection.onicecandidate = e => { if(e.candidate) sendSignal(toUser, { kind:'candidate', candidate:e.candidate }); };
+  
+  peerConnection.onicecandidate = e => { 
+    if(e.candidate) sendSignal(toUser, { kind:'candidate', candidate:e.candidate }); 
+  };
 
   const offer = await peerConnection.createOffer();
   await peerConnection.setLocalDescription(offer);
@@ -716,15 +806,18 @@ async function startCall(toUser, withVideo){
 }
 
 async function acceptCall(){
-  ringtone.pause();
-  ringtone.currentTime = 0;
+  ringbackTone.pause();
+  ringbackTone.currentTime = 0;
   document.getElementById('incomingCall').classList.remove('active');
-  await openCallUI();
+  await openCallUI(callPeerName);
   document.getElementById('localVideo').style.display = currentCallHasVideo ? 'block' : 'none';
   document.getElementById('callStatusLabel').innerText = 'متصل الآن';
 
   try{
-    localStream = await navigator.mediaDevices.getUserMedia({ video: currentCallHasVideo, audio: true });
+    localStream = await navigator.mediaDevices.getUserMedia({ 
+      video: currentCallHasVideo ? { width: 1280, height: 720 } : false, 
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
+    });
   }catch(e){
     alert('خطأ بالأذونات: ' + e.message);
     document.getElementById('video-container').style.display = 'none';
@@ -734,9 +827,19 @@ async function acceptCall(){
   document.getElementById('localVideo').srcObject = localStream;
 
   peerConnection = new RTCPeerConnection(RTC_CONFIG);
-  localStream.getTracks().forEach(t => peerConnection.addTrack(t, localStream));
-  peerConnection.ontrack = e => { document.getElementById('remoteVideo').srcObject = e.streams[0]; };
-  peerConnection.onicecandidate = e => { if(e.candidate) sendSignal(callPeerName, { kind:'candidate', candidate:e.candidate }); };
+  localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+  peerConnection.ontrack = e => { 
+    const remoteVideoEl = document.getElementById('remoteVideo');
+    if (remoteVideoEl.srcObject !== e.streams[0]) {
+      remoteVideoEl.srcObject = e.streams[0];
+      remoteVideoEl.play().catch(err => console.log("Audio play error:", err));
+    }
+  };
+  
+  peerConnection.onicecandidate = e => { 
+    if(e.candidate) sendSignal(callPeerName, { kind:'candidate', candidate:e.candidate }); 
+  };
 
   await peerConnection.setRemoteDescription(new RTCSessionDescription(window._pendingOffer));
   const answer = await peerConnection.createAnswer();
@@ -745,16 +848,16 @@ async function acceptCall(){
 }
 
 function declineCall(){
-  ringtone.pause();
-  ringtone.currentTime = 0;
+  ringbackTone.pause();
+  ringbackTone.currentTime = 0;
   document.getElementById('incomingCall').classList.remove('active');
   if(callPeerName) sendSignal(callPeerName, { kind:'hangup' });
   callPeerName = '';
 }
 
 function endCall(notifyPeer){
-  ringtone.pause();
-  ringtone.currentTime = 0;
+  ringbackTone.pause();
+  ringbackTone.currentTime = 0;
   if(notifyPeer && callPeerName) sendSignal(callPeerName, { kind:'hangup' });
   if(peerConnection){ peerConnection.close(); peerConnection = null; }
   if(localStream){ localStream.getTracks().forEach(t => t.stop()); localStream = null; }
@@ -763,6 +866,91 @@ function endCall(notifyPeer){
   document.getElementById('remoteVideo').srcObject = null;
   document.getElementById('localVideo').srcObject = null;
   callPeerName = '';
+}
+
+/* أزرار التحكم السفلية داخل المكالمة */
+let isMuted = false;
+document.getElementById('toggleMuteBtn').onclick = () => {
+  if(localStream){
+    const audioTrack = localStream.getAudioTracks()[0];
+    if(audioTrack){
+      audioTrack.enabled = !audioTrack.enabled;
+      isMuted = !audioTrack.enabled;
+      document.getElementById('toggleMuteBtn').classList.toggle('active-state', isMuted);
+    }
+  }
+};
+
+let isCameraOff = false;
+document.getElementById('toggleCamBtn').onclick = () => {
+  if(localStream){
+    const videoTrack = localStream.getVideoTracks()[0];
+    if(videoTrack){
+      videoTrack.enabled = !videoTrack.enabled;
+      isCameraOff = !videoTrack.enabled;
+      document.getElementById('toggleCamBtn').classList.toggle('active-state', isCameraOff);
+    }
+  }
+};
+
+let isSpeakerOn = true;
+document.getElementById('toggleAudioBtn').onclick = () => {
+  isSpeakerOn = !isSpeakerOn;
+  const remoteVideoEl = document.getElementById('remoteVideo');
+  remoteVideoEl.muted = !isSpeakerOn;
+  document.getElementById('toggleAudioBtn').classList.toggle('active-state', !isSpeakerOn);
+};
+
+/* برمجة نافذة الفيديو الخاصة بك لتكون قابلة للسحب (Draggable) في كل الاتجاهات (يمين ويسار وأعلى وأسفل) */
+function initDraggableLocalVideo(){
+  const el = document.getElementById('localVideo');
+  let isDragging = false;
+  let startX, startY, initialLeft, initialTop;
+
+  el.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    el.setPointerCapture(e.pointerId);
+    startX = e.clientX;
+    startY = e.clientY;
+    
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.parentElement.getBoundingClientRect();
+    
+    initialLeft = rect.left - parentRect.left;
+    initialTop = rect.top - parentRect.top;
+    
+    el.style.right = 'auto';
+    el.style.bottom = 'auto';
+    el.style.left = initialLeft + 'px';
+    el.style.top = initialTop + 'px';
+  });
+
+  el.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    
+    let newLeft = initialLeft + dx;
+    let newTop = initialTop + dy;
+    
+    const parentRect = el.parentElement.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    
+    // حدود الحاوية
+    if (newLeft < 0) newLeft = 0;
+    if (newLeft + elRect.width > parentRect.width) newLeft = parentRect.width - elRect.width;
+    
+    if (newTop < 0) newTop = 0;
+    if (newTop + elRect.height > parentRect.height) newTop = parentRect.height - elRect.height;
+
+    el.style.left = newLeft + 'px';
+    el.style.top = newTop + 'px';
+  });
+
+  el.addEventListener('pointerup', (e) => {
+    isDragging = false;
+    try { el.releasePointerCapture(e.pointerId); } catch(err){}
+  });
 }
 
 document.getElementById('videoCallBtn').onclick = () => {
