@@ -3,51 +3,412 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تطبيق المراسلة الفورية</title>
+    <title>تطبيق المراسلة الفورية العصري</title>
     <!-- مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Tahoma, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; direction: rtl; }
-        .container { max-width: 450px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        input, button { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { background: #0084ff; color: white; border: none; cursor: pointer; font-weight: bold; }
-        button:hover { background: #006dd9; }
-        #chat-section { display: none; }
-        #chat-box { height: 250px; border: 1px solid #ddd; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #fafafa; border-radius: 5px; display: flex; flex-direction: column; }
-        .message { margin-bottom: 8px; padding: 8px; border-radius: 5px; background: #e4e6eb; max-width: 80%; align-self: flex-start; text-align: right; word-break: break-word; }
-        .my-message { background: #dcf8c6; align-self: flex-end; text-align: right; }
-        .friend-item { padding: 10px; background: #e9ecef; margin: 6px 0; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .friend-item:hover { background: #dde2e6; }
+        :root {
+            --primary-color: #0084ff;
+            --primary-hover: #006dd9;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #65676b;
+            --border-color: #e4e6eb;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg-color); 
+            margin: 0; 
+            padding: 0; 
+            direction: rtl; 
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-wrapper {
+            width: 100%;
+            max-width: 420px;
+            height: 90vh;
+            max-height: 750px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* شاشة تسجيل الدخول */
+        #auth-screen {
+            padding: 40px 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0084ff, #00c6ff);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 15px rgba(0,132,255,0.3);
+        }
+
+        #auth-screen h2 {
+            margin-bottom: 8px;
+            font-size: 24px;
+            color: #1c1e21;
+        }
+
+        #auth-screen p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        /* العناصر المشتركة */
+        input { 
+            width: 100%; 
+            padding: 12px 16px; 
+            margin: 8px 0; 
+            border: 1.5px solid var(--border-color); 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #fdfdfd;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(0,132,255,0.1);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 8px 0; 
+            background: var(--primary-color); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 15px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,132,255,0.2);
+        }
+
+        button:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        /* شاشة المحادثات الرئيسية */
+        #chat-section { 
+            display: none; 
+            flex-direction: column; 
+            height: 100%; 
+            box-sizing: border-box;
+        }
+
+        .app-header {
+            padding: 16px 20px;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mini-avatar {
+            width: 40px;
+            height: 40px;
+            background: #e4e6eb;
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: #f0f2f5;
+            color: var(--text-main);
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: none;
+            margin: 0;
+            padding: 0;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #e4e6eb;
+            transform: none;
+        }
+
+        /* قائمة الأصدقاء */
+        #friends-section {
+            padding: 15px 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        #friends-section h4 {
+            margin-top: 0;
+            color: var(--text-muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .friend-item { 
+            padding: 10px 14px; 
+            background: #ffffff; 
+            margin: 8px 0; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+
+        .friend-item:hover { 
+            background: #f8f9fa; 
+            border-color: #cbd3d9;
+            transform: translateX(-3px);
+        }
+
+        .friend-info-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .friend-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        /* نافذة إضافة صديق (Modal) */
+        #add-friend-modal {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            animation: modalPop 0.3s ease;
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* شاشة المحادثة النشطة */
+        #active-chat-box { 
+            display: none; 
+            flex-direction: column; 
+            height: 100%; 
+            box-sizing: border-box;
+        }
+
+        .chat-header {
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #chat-box { 
+            flex: 1; 
+            border: none; 
+            overflow-y: scroll; 
+            padding: 15px; 
+            background: #f7f8fa; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px;
+        }
+
+        .message { 
+            padding: 10px 14px; 
+            border-radius: 14px; 
+            background: #ffffff; 
+            max-width: 75%; 
+            align-self: flex-start; 
+            text-align: right; 
+            word-break: break-word; 
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            font-size: 14px;
+            line-height: 1.4;
+            border-bottom-right-radius: 4px;
+        }
+
+        .my-message { 
+            background: #dcf8c6; 
+            align-self: flex-end; 
+            border-bottom-right-radius: 14px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-area {
+            padding: 12px 16px;
+            background: white;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chat-input-area input {
+            margin: 0;
+            border-radius: 20px;
+            background: #f0f2f5;
+            border: none;
+            padding: 10px 16px;
+        }
+
+        .chat-input-area button {
+            width: auto;
+            padding: 10px 18px;
+            margin: 0;
+            border-radius: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- شاشة تسجيل الدخول -->
-    <div class="container" id="auth-screen">
-        <h2>تسجيل الدخول</h2>
-        <input type="text" id="username" placeholder="ادخل اسم المستخدم الخاص بك">
-        <button onclick="login()">دخول</button>
-    </div>
-
-    <!-- الشاشة الرئيسية -->
-    <div class="container" id="chat-section">
-        <h3>مرحباً، <span id="current-user" style="color: #0084ff;"></span></h3>
-        
-        <div style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 10px;" id="friends-section">
-            <h4>قائمة الأصدقاء</h4>
-            <input type="text" id="new-friend-name" placeholder="اسم صديق جديد للمراسلة">
-            <button onclick="startChatWithNewFriend()" style="background: #28a745;">بدء محادثة ➕</button>
-            <div id="friends-list" style="max-height: 140px; overflow-y: auto; margin-top: 5px;"></div>
+    <div class="app-wrapper">
+        <!-- شاشة تسجيل الدخول -->
+        <div id="auth-screen">
+            <div class="auth-logo">💬</div>
+            <h2>تطبيق المراسلة</h2>
+            <p>أدخل اسم المستخدم للبدء في الدردشة الفورية</p>
+            <input type="text" id="username" placeholder="اسم المستخدم...">
+            <button onclick="login()">دخول للتطبيق 🚀</button>
         </div>
 
-        <div id="active-chat-box" style="display:none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                <h4 style="margin: 0;">المحادثة مع: <span id="chat-with" style="color: #28a745;"></span></h4>
-                <button onclick="backToFriends()" style="background: #6c757d; width: auto; padding: 5px 12px; margin: 0;">العودة للأصدقاء</button>
+        <!-- الشاشة الرئيسية (قائمة الأصدقاء) -->
+        <div id="chat-section">
+            <div class="app-header">
+                <div class="user-info">
+                    <div class="mini-avatar" id="header-user-initial">U</div>
+                    <div>
+                        <h4 id="current-user" style="margin:0; font-size: 15px; color: #1c1e21;"></h4>
+                        <span style="font-size: 11px; color: #28a745;">● متصل الآن</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="openAddModal()" title="إضافة صديق">➕</button>
+                    <button class="icon-btn" onclick="location.reload()" title="تسجيل خروج">🚪</button>
+                </div>
             </div>
-            <div id="chat-box"></div>
-            <input type="text" id="message-text" placeholder="اكتب رسالتك هنا..." onkeypress="checkEnter(event)">
-            <button onclick="sendMessage()">إرسال ✈️</button>
+            
+            <div id="friends-section">
+                <h4>المحادثات النشطة والأصدقاء</h4>
+                <div id="friends-list" style="margin-top: 8px;"></div>
+            </div>
+
+            <!-- نافذة منبثقة لإضافة صديق -->
+            <div id="add-friend-modal">
+                <div class="modal-content">
+                    <h3 style="margin-top: 0; font-size: 18px;">إضافة صديق جديد</h3>
+                    <input type="text" id="new-friend-name" placeholder="اسم الصديق...">
+                    <button onclick="startChatWithNewFriend()" style="background: #28a745; margin-top: 10px;">إضافة ومراسلة</button>
+                    <button onclick="closeAddModal()" style="background: #6c757d; margin-top: 5px;">إلغاء</button>
+                </div>
+            </div>
+
+            <!-- شاشة المحادثة النشطة -->
+            <div id="active-chat-box">
+                <div class="chat-header">
+                    <button class="icon-btn" onclick="backToFriends()" style="width: 32px; height: 32px; font-size: 14px;">⬅</button>
+                    <div class="friend-avatar" id="chat-avatar-mini" style="width: 35px; height: 35px; font-size: 14px;">?</div>
+                    <h4 id="chat-with" style="margin: 0; font-size: 16px; color: #1c1e21;"></h4>
+                </div>
+                
+                <div id="chat-box"></div>
+                
+                <div class="chat-input-area">
+                    <input type="text" id="message-text" placeholder="اكتب رسالتك هنا..." onkeypress="checkEnter(event)">
+                    <button onclick="sendMessage()">إرسال</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -68,14 +429,22 @@
                 return;
             }
             document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('chat-section').style.display = 'block';
+            document.getElementById('chat-section').style.display = 'flex';
             document.getElementById('current-user').innerText = currentUser;
+            document.getElementById('header-user-initial').innerText = currentUser.charAt(0).toUpperCase();
             
             loadExistingChats();
             subscribeToRealtime();
         }
 
-        // بدء محادثة مباشرة مع أي صديق يتم إدخاله دون أخطاء
+        function openAddModal() {
+            document.getElementById('add-friend-modal').style.display = 'flex';
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-friend-modal').style.display = 'none';
+        }
+
         function startChatWithNewFriend() {
             const friendName = document.getElementById('new-friend-name').value.trim();
             if (!friendName || friendName === currentUser) {
@@ -89,11 +458,11 @@
             }
             
             document.getElementById('new-friend-name').value = '';
+            closeAddModal();
             openChat(friendName);
         }
 
         async function loadExistingChats() {
-            // جلب الأصدقاء السابقين الذين تم مراسلتهم من قاعدة البيانات تلقائياً
             const { data, error } = await supabaseClient
                 .from('message')
                 .select('sender, receiver')
@@ -114,13 +483,24 @@
             const listDiv = document.getElementById('friends-list');
             listDiv.innerHTML = '';
             if (friends.length === 0) {
-                listDiv.innerHTML = '<p style="color: #888; font-size: 13px; text-align:center;">لا توجد محادثات سابقة. أضف اسماً للبدء!</p>';
+                listDiv.innerHTML = '<div style="text-align: center; color: var(--text-muted); margin-top: 40px;"><p style="font-size: 32px; margin: 0 0 10px 0;">📭</p><p style="font-size: 14px;">لا توجد محادثات سابقة.<br>اضغط على زر (➕) فوق لإضافة صديق!</p></div>';
                 return;
             }
             friends.forEach(friend => {
+                const initial = friend.charAt(0).toUpperCase();
                 const div = document.createElement('div');
                 div.className = 'friend-item';
-                div.innerHTML = `<span>👤 ${friend}</span> <button style="width: auto; padding: 5px 12px; margin:0;" onclick="openChat('${friend}')">فتح المحادثة</button>`;
+                div.onclick = () => openChat(friend);
+                div.innerHTML = `
+                    <div class="friend-info-group">
+                        <div class="friend-avatar">${initial}</div>
+                        <div>
+                            <strong style="font-size: 15px; color: #1c1e21; display: block;">${friend}</strong>
+                            <span style="font-size: 12px; color: var(--text-muted);">انقر لفتح المحادثة</span>
+                        </div>
+                    </div>
+                    <span style="color: var(--primary-color); font-size: 18px;">‹</span>
+                `;
                 listDiv.appendChild(div);
             });
         }
@@ -128,8 +508,9 @@
         function openChat(friend) {
             currentReceiver = friend;
             document.getElementById('chat-with').innerText = friend;
+            document.getElementById('chat-avatar-mini').innerText = friend.charAt(0).toUpperCase();
             document.getElementById('friends-section').style.display = 'none';
-            document.getElementById('active-chat-box').style.display = 'block';
+            document.getElementById('active-chat-box').style.display = 'flex';
             loadMessages();
         }
 
@@ -137,7 +518,7 @@
             document.getElementById('active-chat-box').style.display = 'none';
             document.getElementById('friends-section').style.display = 'block';
             currentReceiver = '';
-            loadExistingChats(); // تحديث القائمة عند العودة
+            loadExistingChats();
         }
 
         async function sendMessage() {
