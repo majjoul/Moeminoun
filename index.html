@@ -309,8 +309,15 @@ window.addEventListener('DOMContentLoaded', () => {
     showScreen('screen-friends');
     loadExistingChats();
     subscribeToRealtime();
+    requestNotificationPermission();
   }
 });
+
+function requestNotificationPermission() {
+  if (window.Notification && Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+}
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -354,8 +361,9 @@ document.getElementById('authBtn').onclick = async () => {
     return;
   }
 
+  requestNotificationPermission();
+
   if (isSignUp) {
-    // 1. التأكد هل الاسم مستخدم مسبقاً؟
     const { data: existing } = await supabaseClient
       .from('profiles')
       .select('username')
@@ -367,7 +375,6 @@ document.getElementById('authBtn').onclick = async () => {
       return;
     }
 
-    // 2. إنشاء حساب جديد في جدول profiles بـ الاسم وكلمة المرور
     const { error } = await supabaseClient
       .from('profiles')
       .insert([{ username: username, password: password }]);
@@ -380,7 +387,6 @@ document.getElementById('authBtn').onclick = async () => {
     loginSuccess(username);
 
   } else {
-    // تسجيل الدخول بالاسم وكلمة المرور
     const { data, error } = await supabaseClient
       .from('profiles')
       .select('*')
@@ -523,7 +529,25 @@ function subscribeToRealtime(){
   supabaseClient
     .channel('public:message')
     .on('postgres_changes', { event:'INSERT', schema:'public', table:'message' }, payload => {
-      appendMessage(payload.new);
+      const msg = payload.new;
+      
+      // 1. إضافة الرسالة للدردشة المفتوحة إن وجدت
+      appendMessage(msg);
+
+      // 2. إطلاق إشعار نظام إذا كانت الرسالة موجهة للمستخدم الحالي وليست منه
+      if (msg.receiver === currentUsername) {
+        // إضافة الصديق لقائمة الأصدقاء إن لم يكن موجوداً لضمان ظهور المحادثة لاحقاً
+        if (!friends.includes(msg.sender)) {
+          friends.push(msg.sender);
+        }
+
+        if (window.Notification && Notification.permission === "granted") {
+          new Notification(`رسالة جديدة من: ${msg.sender}`, {
+            body: msg.text,
+            icon: 'https://cdn-icons-png.flaticon.com/512/733/733585.png'
+          });
+        }
+      }
     })
     .subscribe();
 }
