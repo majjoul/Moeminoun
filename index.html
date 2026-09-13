@@ -13,9 +13,9 @@
         button { background: #0084ff; color: white; border: none; cursor: pointer; font-weight: bold; }
         button:hover { background: #006dd9; }
         #chat-section { display: none; }
-        #chat-box { height: 250px; border: 1px solid #ddd; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #fafafa; border-radius: 5px; }
-        .message { margin-bottom: 8px; padding: 8px; border-radius: 5px; background: #e4e6eb; max-width: 80%; }
-        .my-message { background: #dcf8c6; margin-right: auto; text-align: left; }
+        #chat-box { height: 250px; border: 1px solid #ddd; overflow-y: scroll; padding: 10px; margin-bottom: 10px; background: #fafafa; border-radius: 5px; display: flex; flex-direction: column; }
+        .message { margin-bottom: 8px; padding: 8px; border-radius: 5px; background: #e4e6eb; max-width: 80%; align-self: flex-start; text-align: right; }
+        .my-message { background: #dcf8c6; align-self: flex-end; text-align: right; }
         .friend-item { padding: 8px; background: #e9ecef; margin: 5px 0; border-radius: 5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .friend-item:hover { background: #dde2e6; }
     </style>
@@ -43,14 +43,13 @@
         <div id="active-chat-box" style="display:none;">
             <h4>المحادثة مع: <span id="chat-with" style="color: #28a745;"></span></h4>
             <div id="chat-box"></div>
-            <input type="text" id="message-text" placeholder="اكتب رسالتك هنا...">
+            <input type="text" id="message-text" placeholder="اكتب رسالتك هنا..." onkeypress="checkEnter(event)">
             <button onclick="sendMessage()">إرسال ✈️</button>
             <button onclick="backToFriends()" style="background: #6c757d; margin-top: 5px;">العودة للأصدقاء</button>
         </div>
     </div>
 
     <script>
-        // تم دمج بيانات الاتصال الخاصة بك هنا مباشرة
         const SUPABASE_URL = 'https://roqpinipcgwqeqqfpcjm.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_BHglXdT_SHbruwO_mluYOQ_DG6twygK';
         
@@ -118,10 +117,11 @@
 
         async function sendMessage() {
             const text = document.getElementById('message-text').value.trim();
-            if (!text) return;
+            if (!text || !currentReceiver) return;
 
+            // تم التعديل هنا لاستخدام جدول message بدلاً من messages
             const { error } = await supabaseClient
-                .from('messages')
+                .from('message')
                 .insert([{ sender: currentUser, receiver: currentReceiver, text: text }]);
 
             if (error) {
@@ -131,19 +131,32 @@
             }
         }
 
+        function checkEnter(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
         async function loadMessages() {
+            // تم التعديل هنا لاستخدام جدول message بدلاً من messages
             const { data, error } = await supabaseClient
-                .from('messages')
+                .from('message')
                 .select('*')
+                .or(`and(sender.eq.${currentUser},receiver.eq.${currentReceiver}),and(sender.eq.${currentReceiver},receiver.eq.${currentUser})`)
                 .order('created_at', { ascending: true });
 
-            if (error) return;
+            if (error) {
+                console.error('خطأ في تحميل الرسائل:', error.message);
+                return;
+            }
 
             const chatBox = document.getElementById('chat-box');
             chatBox.innerHTML = '';
-            data.forEach(msg => {
-                appendMessageToUI(msg);
-            });
+            if (data) {
+                data.forEach(msg => {
+                    appendMessageToUI(msg);
+                });
+            }
         }
 
         function appendMessageToUI(msg) {
@@ -161,9 +174,10 @@
         }
 
         function subscribeToRealtime() {
+            // تم التعديل هنا لاستخدام جدول message بدلاً من messages
             supabaseClient
-                .channel('public:messages')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+                .channel('public:message')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'message' }, payload => {
                     appendMessageToUI(payload.new);
                 })
                 .subscribe();
