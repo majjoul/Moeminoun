@@ -696,10 +696,10 @@ async function handleIncomingSignal(payload){
     callPeerName = payload.from;
     currentCallHasVideo = !!payload.hasVideo;
     
-    // تشغيل نغمة الرنين داخل التطبيق
+    // تشغيل نغمة الرنين
     ringbackTone.play().catch(e => {});
 
-    // إظهار إشعار النظام (يعمل حتى لو التطبيق في الخلفية أو خارج المتصفح)
+    // إشعار النظام
     if (window.Notification && Notification.permission === "granted") {
       try {
         const notif = new Notification("مكالمة واردة 📞", {
